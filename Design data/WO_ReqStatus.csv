@@ -1,0 +1,8 @@
+ReqStatusId;ReqStatus
+1;Closed
+2;Finished at Plant
+3;Completed
+4;In Progress
+5;Waiting for Material
+6;Waiting for S/D
+7;Need MOC

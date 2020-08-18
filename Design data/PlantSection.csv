@@ -1,0 +1,12 @@
+SectId;DeptId;SectName
+1;1;Syngas
+2;1;Utility
+3;1;Octanol
+4;2;Mechanical
+5;2;Electrical Instrumentation
+6;3;QCA
+7;3;Safety
+8;4;HRDGA
+9;4;Purchasing
+10;5;Marketing
+11;5;Off Site

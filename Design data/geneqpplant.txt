@@ -1,0 +1,149 @@
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `geneqpplant` AS
+    SELECT 
+        `ac`.`Tagnumber` AS `Tagnumber`,
+        `ac`.`Unitid` AS `UnitId`,
+        `ac`.`Eqpid` AS `EqpId`,
+        `ac`.`Description` AS `Description`,
+        `ac`.`Location` AS `Location`
+    FROM
+        `ac` 
+    UNION SELECT 
+        `aly`.`Tagnumber` AS `Tagnumber`,
+        `aly`.`UnitId` AS `UnitId`,
+        `aly`.`EqpId` AS `EqpId`,
+        `aly`.`Description` AS `Description`,
+        `aly`.`Location` AS `Location`
+    FROM
+        `aly` 
+    UNION SELECT 
+        `cv`.`Tagnumber` AS `Tagnumber`,
+        `cv`.`UnitId` AS `UnitId`,
+        `cv`.`EqpId` AS `EqpId`,
+        `cv`.`Description` AS `Description`,
+        `cv`.`Location` AS `Location`
+    FROM
+        `cv` 
+    UNION SELECT 
+        `ft`.`Tagnumber` AS `Tagnumber`,
+        `ft`.`UnitId` AS `UnitId`,
+        `ft`.`EqpId` AS `EqpId`,
+        `ft`.`Description` AS `Description`,
+        `ft`.`Location` AS `Location`
+    FROM
+        `ft` 
+    UNION SELECT 
+        `gd`.`Tagnumber` AS `Tagnumber`,
+        `gd`.`Unitid` AS `UnitId`,
+        `gd`.`Eqpid` AS `EqpId`,
+        `gd`.`Description` AS `Description`,
+        `gd`.`Location` AS `Location`
+    FROM
+        `gd` 
+    UNION SELECT 
+        `gen`.`Tagnumber` AS `Tagnumber`,
+        `gen`.`unitid` AS `UnitId`,
+        `gen`.`eqpid` AS `EqpId`,
+        `gen`.`description` AS `Description`,
+        `gen`.`location` AS `Location`
+    FROM
+        `gen` 
+    UNION SELECT 
+        `it`.`Tagnumber` AS `Tagnumber`,
+        `it`.`Unitid` AS `UnitId`,
+        `it`.`Eqpid` AS `EqpId`,
+        `it`.`Description` AS `Description`,
+        `it`.`location` AS `Location`
+    FROM
+        `it` 
+    UNION SELECT 
+        `lg`.`Tagnumber` AS `Tagnumber`,
+        `lg`.`UnitId` AS `UnitId`,
+        `lg`.`EqpId` AS `EqpId`,
+        `lg`.`Description` AS `Description`,
+        `lg`.`Location` AS `Location`
+    FROM
+        `lg` 
+    UNION SELECT 
+        `lt`.`Tagnumber` AS `Tagnumber`,
+        `lt`.`UnitId` AS `UnitId`,
+        `lt`.`EqpId` AS `EqpId`,
+        `lt`.`Description` AS `Description`,
+        `lt`.`Location` AS `Location`
+    FROM
+        `lt` 
+    UNION SELECT 
+        `mac`.`Tagnumber` AS `Tagnumber`,
+        `mac`.`UnitId` AS `UnitId`,
+        `mac`.`EqpId` AS `EqpId`,
+        `mac`.`Description` AS `Description`,
+        `mac`.`Location` AS `Location`
+    FROM
+        `mac` 
+    UNION SELECT 
+        `pg`.`Tagnumber` AS `Tagnumber`,
+        `pg`.`UnitId` AS `UnitId`,
+        `pg`.`EqpId` AS `EqpId`,
+        `pg`.`Description` AS `Description`,
+        `pg`.`Location` AS `Location`
+    FROM
+        `pg` 
+    UNION SELECT 
+        `pt`.`Tagnumber` AS `Tagnumber`,
+        `pt`.`UnitId` AS `UnitId`,
+        `pt`.`EqpId` AS `EqpId`,
+        `pt`.`Description` AS `Description`,
+        `pt`.`Location` AS `Location`
+    FROM
+        `pt` 
+    UNION SELECT 
+        `ptc`.`Tagnumber` AS `Tagnumber`,
+        `ptc`.`Unitid` AS `UnitId`,
+        `ptc`.`Eqpid` AS `EqpId`,
+        `ptc`.`Description` AS `Description`,
+        `ptc`.`Location` AS `Location`
+    FROM
+        `ptc` 
+    UNION SELECT 
+        `rd`.`Tagnumber` AS `Tagnumber`,
+        `rd`.`Unitid` AS `UnitId`,
+        `rd`.`Eqpid` AS `EqpId`,
+        `rd`.`Description` AS `Description`,
+        `rd`.`location` AS `Location`
+    FROM
+        `rd` 
+    UNION SELECT 
+        `tg`.`Tagnumber` AS `Tagnumber`,
+        `tg`.`UnitId` AS `UnitId`,
+        `tg`.`EqpId` AS `EqpId`,
+        `tg`.`Description` AS `Description`,
+        `tg`.`Location` AS `Location`
+    FROM
+        `tg` 
+    UNION SELECT 
+        `ti`.`Tagnumber` AS `Tagnumber`,
+        `ti`.`UnitId` AS `UnitId`,
+        `ti`.`EqpId` AS `EqpId`,
+        `ti`.`Description` AS `Description`,
+        `ti`.`Location` AS `Location`
+    FROM
+        `ti` 
+    UNION SELECT 
+        `trf`.`Tagnumber` AS `Tagnumber`,
+        `trf`.`unitid` AS `UnitId`,
+        `trf`.`eqpid` AS `EqpId`,
+        `trf`.`description` AS `Description`,
+        `trf`.`location` AS `Location`
+    FROM
+        `trf` 
+    UNION SELECT 
+        `vs`.`Tagnumber` AS `Tagnumber`,
+        `vs`.`unitid` AS `UnitId`,
+        `vs`.`eqpid` AS `EqpId`,
+        `vs`.`description` AS `Description`,
+        `vs`.`location` AS `Location`
+    FROM
+        `vs`

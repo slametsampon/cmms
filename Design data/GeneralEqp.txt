@@ -1,0 +1,35 @@
+select Tagnumber,Unitid,Eqpid,Description,location from cv
+union
+select Tagnumber,Unitid,Eqpid,Description,location from ft
+union
+select Tagnumber,Unitid,Eqpid,Description,location from it
+union
+select Tagnumber,Unitid,Eqpid,Description,location from ti
+union
+select Tagnumber,Unitid,Eqpid,Description,location from tg
+union
+select Tagnumber,Unitid,Eqpid,Description,location from lt
+union
+select Tagnumber,Unitid,Eqpid,Description,location from lg
+union
+select Tagnumber,Unitid,Eqpid,Description,location from pt
+union
+select Tagnumber,Unitid,Eqpid,Description,location from ptc
+union
+select Tagnumber,Unitid,Eqpid,Description,location from pg
+union
+select Tagnumber,Unitid,Eqpid,Description,location from vs
+union
+select Tagnumber,Unitid,Eqpid,Description,location from mac
+union
+select Tagnumber,Unitid,Eqpid,Description,location from gen
+union
+select Tagnumber,Unitid,Eqpid,Description,location from aly
+union
+select Tagnumber,Unitid,Eqpid,Description,location from adp
+union
+select Tagnumber,Unitid,Eqpid,Description,location from gd
+union
+select Tagnumber,Unitid,Eqpid,Description,location from rd
+union
+select Tagnumber,Unitid,Eqpid,Description,location from trf

@@ -1,0 +1,59 @@
+UnitId;UnitName;AreaId
+1;Desulphurization/ Reforming;1
+2;C02 Removal;1
+3;Membrane Unit;1
+4;PSA Unit;1
+5;Guard Bed;1
+10;Oxo Reaction Section;2
+11;Oxo Reaction Section;2
+12;Oxo Reaction Section;2
+13;Oxo Reaction Section;2
+14;Aldehyde Separation Section;2
+15;Aldehyde Separation Section;2
+16;Aldehyde Separation Section;2
+20;Catalyst Recovery Section;2
+21;Catalyst Recovery Section;2
+22;Catalyst Recovery Section;2
+23;Catalyst Recovery Section;2
+24;Catalyst Recovery Section;2
+25;Catalyst Recovery Section;2
+30;Condensation Reaction Section;2
+31;Condensation Reaction Section;2
+32;Condensation Reaction Section;2
+40;2EH Section;2
+41;2EH Section;2
+42;2EH Section;2
+43;2EH Section;2
+44;2EH Section;2
+45;2EH Section;2
+50;NBA Section;2
+51;NBA Section;2
+52;NBA Section;2
+53;NBA Section;2
+54;NBA Section;2
+55;NBA Section;2
+60;IBA Section;2
+61;IBA Section;2
+62;IBA Section;2
+63;IBA Section;2
+64;IBA Section;2
+71;Propylene Receiving;4
+72;Product Stroge & Shipping;4
+73;Laboratory Facilities;11
+74;Maintenance Facilities;13
+75;Safety/ Fire Fighting Facilities;12
+76;Administration Facilities;5
+77;General;6
+80;WWT (Activated Sludge);3
+85;WWT (Incinerator);3
+91;Power Generation & Distribution;3
+92;Boiler;3
+93;Water receiving, potable water & Demin Water;3
+94;Cooling Water & Chilled Water System;3
+95;Flare system;3
+96;Fuel gas/ Fuel Oil System;3
+97;WWT in Process Area;3
+98;WWT in Process Area;3
+99;Plant air, Instrument air, N2 distribution system;3
+;;
+;49;
