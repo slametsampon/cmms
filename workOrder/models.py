@@ -1,5 +1,6 @@
 from django.db import models
 
+# development password : start1234
 # Create your models here.
 # https://studygyaan.com/django/how-to-extend-django-user-model#OneToOneLink
 from django.contrib.auth.models import User
@@ -137,6 +138,10 @@ class Work_order(models.Model):
     
     class Meta:
         ordering = ['originator','status','wo_number']
+
+    def get_absolute_url(self):
+        """Returns the url to access a detail record for this work order."""
+        return reverse('Work_order-detail', args=[str(self.id)])
 
     def __str__(self):
         """String for representing the Model object."""

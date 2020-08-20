@@ -1,0 +1,10 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>WO Number: {{ work_order.wo_number }}</h1>
+
+  <p><strong>Tagnumber:</strong> {{ work_order.tagnumber }}</p>
+  <p><strong>Problem:</strong> {{ work_order.problem }}</p>
+  <p><strong>Status:</strong> {{ work_order.status }}</p> 
+
+{% endblock %}

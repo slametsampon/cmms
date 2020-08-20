@@ -1,0 +1,6 @@
+id;name;initial;description;role
+1;Production;Prod;Production responsible on operate equipment for produce product;o
+2;Maintenance;Mntc;Maintenance responsible for keep reliable assets on OEM specification;e
+3;QCA & Safety;QCAS;;
+4;HRDGA & Purchasing;HRGA;;
+5;Marketing & Off Site;Mark;;
