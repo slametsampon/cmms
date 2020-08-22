@@ -8,8 +8,8 @@ urlpatterns = [
 ]
 
 urlpatterns += [  
-    path('work_order/create/', views.Work_orderCreate.as_view(), name='author_create'),
-    path('work_order/<int:pk>/update/', views.Work_orderUpdate.as_view(), name='author_update'),
+    path('work_order/create/', views.Work_orderCreate.as_view(), name='work_order_create'),
+    path('work_order/<int:pk>/update/', views.Work_orderUpdate.as_view(), name='work_order_update'),
 ]
 
 urlpatterns += [  

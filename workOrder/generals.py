@@ -1,38 +1,26 @@
-from django.contrib.auth.models import User
-from workOrder.models import Profile
+from workOrder.models import User, Profile
 
-class Work_order_status():
-    SPV_ORG_ACTION = (('op','Open'),
-                    ('cl','Close'))
-
-    SPTD_ORG_ACTION = (('ch','Check'),
-                    ('rv','Revise'))
-
-    MGR_ORG_ACTION = (('ap','Approve'),
-                    ('rc','Re-Check'))
-
-    MGR_EXE_ACTION = ('rw','Review')
-
-    SPTD_EXE_ACTION = (('sc','Schedule'),
-                    ('rj','Reject'))
-
-    SPV_EXE_ACTION = (('cm','Complete'),
-                    ('ns','Need Shutdown'),
-                    ('nm','Need Material'),
-                    ('nc','Neen MOC'),
-                    ('nr','Need Regulation'),
-                    ('ot','Other'))
-
-    FRM_EXE_ACTION = (('','Finish'),
-                    ('','Cancel'))
+class WoMisc():
 
     def __init__(self, user):
-        self.user = user
+        usersCmp = User.objects.all().select_related('profile')
 
-    def getWoStatus(self):
+        self.user = user
+        print(f'user : {self.user}')
+        print(f'user : {self.user.username}')
+
+    def getWoStatus(self, action):
         for g in self.user.groups.all():
-            print(f'user groups : {g.name}')
-        if g.name == 'ORG_SPV':
-            return self.SPV_ORG_ACTION
+            #print(f'user groups : {g.name}')
+            if 'ORG_SPV' == g.name:
+                if action == 'f': #forward action
+                    return 'op' # Open
+                elif action == 'r': #return
+                    return 'cl' #Close
+                else :
+                    return action
+            else:
+                return 'ot' #other
+
 
 

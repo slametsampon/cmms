@@ -26,7 +26,7 @@ class Work_orderDetailView(generic.DetailView):
 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from workOrder.generals import Work_order_status as WS
+from workOrder.generals import WoMisc as WM
 
 class Work_orderCreate(CreateView):
     model = Work_order
@@ -41,7 +41,27 @@ class Work_orderCreate(CreateView):
     initial ={'date_open' : datetime.date.today(),
                 'wo_number' : 'Prod001',
             }
-    
+
+    def get_initial(self):
+
+        return self.initial
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        wm = WM(self.request.user)
+
+        #self.object.MyField_2 = 4
+        #set work_order wo_number
+        print(f"form_valid => self.request.POST.get('wo_number') : {self.request.POST.get('wo_number')}")
+
+        #set work_order status
+        status = wm.getWoStatus(self.object.action)
+        self.object.status = status
+        #print(f"form_valid => self.object.action : {self.object.action}")
+        #print(f"form_valid => status : {status}")
+
+        self.object.save()
+        return super(Work_orderCreate,self).form_valid(form)    
 
 class Work_orderUpdate(UpdateView):
     model = Work_order

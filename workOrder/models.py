@@ -100,6 +100,7 @@ class Work_order_completion(models.Model):
         """String for representing the Model object."""
         return f'Work order cmpletion'
 
+from django.urls import reverse
 class Work_order(models.Model):
     """Model representing a work order"""
     wo_number = models.CharField(max_length=20, null=True)
@@ -150,7 +151,7 @@ class Work_order(models.Model):
 
     def get_absolute_url(self):
         """Returns the url to access a detail record for this work order."""
-        return reverse('Work_order-detail', args=[str(self.id)])
+        return reverse('work_order-detail', args=[str(self.id)])
 
     def __str__(self):
         """String for representing the Model object."""
