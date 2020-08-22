@@ -102,9 +102,9 @@ class Work_order_completion(models.Model):
 
 class Work_order(models.Model):
     """Model representing a work order"""
-    wo_number = models.CharField(max_length=20, null=True, help_text='Enter tagnumber(Prodxxxx)')
+    wo_number = models.CharField(max_length=20, null=True)
     tagnumber = models.CharField(max_length=50, null=True, help_text='Enter tagnumber(eg. FT-1405)')
-    problem = models.TextField(max_length=1000, null=True, help_text='Enter problem')
+    problem = models.TextField(max_length=1000, null=True)
 
     # Foreign Key used because work order can only have one originator, but originator can have multiple work order
     # User class has already been defined so we can specify the object above.
@@ -115,8 +115,7 @@ class Work_order(models.Model):
     # User class has already been defined so we can specify the object above.
     dest_section = models.ForeignKey(Section,
         on_delete=models.SET_NULL,
-        null=True,
-        help_text = 'Select destination section')
+        null=True)
 
     PRIORITY_STATUS = (
         ('n', 'Normal'),
@@ -128,12 +127,22 @@ class Work_order(models.Model):
     priority = models.CharField(max_length=1,
         choices=PRIORITY_STATUS,
         blank=True,
-        default='n',
-        help_text = 'Select priority')
+        default='n')
 
     date_open = models.DateField()
 
-    status = models.CharField(max_length=20,
+    ACTION_STATUS = (
+        ('f', 'Forward'),
+        ('r', 'Return'),
+        ('o', 'Other'),
+    )
+
+    action = models.CharField(max_length=1,
+        choices=ACTION_STATUS,
+        blank=True,
+        default='f')
+
+    status = models.CharField(max_length=2,
         blank=True)
     
     class Meta:
@@ -145,4 +154,4 @@ class Work_order(models.Model):
 
     def __str__(self):
         """String for representing the Model object."""
-        return f'Work order cmpletion'
+        return f'Work order completion'
