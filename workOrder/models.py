@@ -102,7 +102,7 @@ class Work_order_completion(models.Model):
 
 class Work_order(models.Model):
     """Model representing a work order"""
-    wo_number = models.CharField(max_length=20, null=True, help_text='Enter tagnumber(Prodxxxx)')
+    wo_number = models.CharField(max_length=20, null=True, help_text='Enter WO number(Prodxxxx)')
     tagnumber = models.CharField(max_length=50, null=True, help_text='Enter tagnumber(eg. FT-1405)')
     problem = models.TextField(max_length=1000, null=True, help_text='Enter problem')
 
@@ -133,7 +133,19 @@ class Work_order(models.Model):
 
     date_open = models.DateField()
 
-    status = models.CharField(max_length=20,
+    ACTION_STATUS = (
+        ('f', 'Forward'),
+        ('r', 'Return'),
+        ('o', 'Other'),
+    )
+
+    action = models.CharField(max_length=1,
+        choices=ACTION_STATUS,
+        blank=True,
+        default='f',
+        help_text = 'Select action')
+
+    status = models.CharField(max_length=2,
         blank=True)
     
     class Meta:
@@ -145,4 +157,4 @@ class Work_order(models.Model):
 
     def __str__(self):
         """String for representing the Model object."""
-        return f'Work order cmpletion'
+        return f'Work order completion'
