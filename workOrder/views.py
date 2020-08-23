@@ -7,7 +7,8 @@ def index(request):
     """View function for home page of site."""
 
     # Generate counts of some of the main objects
-    num_work_orders = Work_order.objects.all().count()
+    #num_work_orders = Work_order.objects.all().count()
+    num_work_orders = Work_order.objects.all().filter(originator=request.user.id).count()
     
     context = {
         'num_work_orders': num_work_orders,
@@ -36,29 +37,31 @@ class Work_orderCreate(CreateView):
                 'priority',
                 'dest_section',
                 'date_open',
+                'originator',
                 'action']
 
     initial ={'date_open' : datetime.date.today(),
-                'wo_number' : 'Prod001',
             }
 
     def get_initial(self):
+        self.wm = WM(self.request.user)
+
+        #set work_order originator
+        self.initial['originator'] = self.request.user.id 
+
+        #set work_order wo_number
+        self.initial['wo_number'] = self.wm.getWoNumber() 
 
         return self.initial
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        wm = WM(self.request.user)
-
-        #self.object.MyField_2 = 4
-        #set work_order wo_number
-        print(f"form_valid => self.request.POST.get('wo_number') : {self.request.POST.get('wo_number')}")
 
         #set work_order status
-        status = wm.getWoStatus(self.object.action)
-        self.object.status = status
-        #print(f"form_valid => self.object.action : {self.object.action}")
-        #print(f"form_valid => status : {status}")
+        self.object.status = self.wm.getWoStatus(self.object.action)
+
+        #just inspect value
+        print(f'self.object.originator:{self.object.originator}')
 
         self.object.save()
         return super(Work_orderCreate,self).form_valid(form)    

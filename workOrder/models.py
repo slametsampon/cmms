@@ -39,7 +39,7 @@ class Section(models.Model):
 
     def __str__(self):
         """String for representing the Model object."""
-        return self.initial
+        return self.name
 
 class Department(models.Model):
     """Model representing a department of organization"""
@@ -65,7 +65,7 @@ class Department(models.Model):
 
     def __str__(self):
         """String for representing the Model object."""
-        return self.initial
+        return self.name
 
 #models for Work order 
 
@@ -109,7 +109,9 @@ class Work_order(models.Model):
 
     # Foreign Key used because work order can only have one originator, but originator can have multiple work order
     # User class has already been defined so we can specify the object above.
-    originator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    originator = models.ForeignKey(User,
+        on_delete=models.SET_NULL,
+        null=True)
 
     
     # Foreign Key used because work order can only have one dest_section, but dest_section can have multiple work order
