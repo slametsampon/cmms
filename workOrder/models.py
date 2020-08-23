@@ -161,6 +161,12 @@ class Work_order_completion(models.Model):
     date = models.DateField(null=True)
     duration = models.IntegerField(help_text='Enter duration (hours)', null=True)
     
+    # Foreign Key used because Work_order_completion can only have one acted_user, but acted_user can have multiple Work_order_completion
+    # User class has already been defined so we can specify the object above.
+    acted_user = models.ForeignKey(User,
+        on_delete=models.SET_NULL,
+        null=True)
+
     # Foreign Key used because Work_order_completion can only have one wO_completed, but wO_completed can have multiple Work_order_completion
     # User class has already been defined so we can specify the object above.
     wO_completed = models.ForeignKey(Work_order,
