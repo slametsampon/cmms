@@ -1,7 +1,7 @@
 import datetime
 from django.shortcuts import render
 
-from workOrder.models import Work_order
+from workOrder.models import Work_order, Work_order_journal
 
 def index(request):
     """View function for home page of site."""
@@ -18,12 +18,25 @@ def index(request):
     return render(request, 'index.html', context=context)
 
 from django.views import generic
-
 class Work_orderListView(generic.ListView):
-    model = Work_order
+    model = Work_order #prinsipnya dengan ini saja sdh cukup, namun kita perlu tambahan info di bawah ini
+    context_object_name = 'user_work_order_list'   # your own name for the list as a template variable
+    template_name = 'workOrder/user_work_order_list.html'  # Specify your own template name/location
+
+    def get_queryset(self):
+        return Work_order.objects.filter(originator=self.request.user.id)
 
 class Work_orderDetailView(generic.DetailView):
-    model = Work_order
+    model = Work_order #prinsipnya dengan ini saja sdh cukup, namun kita perlu tambahan info di bawah ini
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+
+        # Add in a QuerySet of journal
+        context['journal_list'] = Work_order_journal.objects.filter(wO_on_process=context['object'].id)
+        return context
+
 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -64,6 +77,10 @@ class Work_orderCreate(CreateView):
         print(f'self.object.originator:{self.object.originator}')
 
         self.object.save()
+
+        #forward Work order after saving
+        self.wm.woForwarder()
+
         return super(Work_orderCreate,self).form_valid(form)    
 
 class Work_orderUpdate(UpdateView):

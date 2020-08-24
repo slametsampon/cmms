@@ -1,5 +1,6 @@
+import datetime
 from workOrder.models import User, Profile, Section, Department
-from workOrder.models import Work_order
+from workOrder.models import Work_order, Work_order_journal, Work_order_completion
 
 class WoMisc():
     MAX_WO_NBR = 4
@@ -11,7 +12,6 @@ class WoMisc():
 
     def getWoStatus(self, action):
         for g in self.user.groups.all():
-            #print(f'user groups : {g.name}')
             if 'ORG_SPV' == g.name:
                 if action == 'f': #forward action
                     return 'op' # Open
@@ -28,9 +28,10 @@ class WoMisc():
         userSection = Section.objects.get(id=userProfile.section.id)
         userDept = Department.objects.get(id=userSection.department.id)
 
-        # Generate counts of some of the main objects
-        num_work_orders = Work_order.objects.all().count()
-        strWoNbr = str(num_work_orders)
+        # Generate num_work_orders of some of the main objects
+        self.num_work_orders = Work_order.objects.order_by('id').last().id+1
+
+        strWoNbr = str(self.num_work_orders)
         remain = self.MAX_WO_NBR - len(strWoNbr)
 
         #put '0' before number
@@ -46,3 +47,18 @@ class WoMisc():
         userProfile = Profile.objects.get(id=self.user.id)
 
         return self.user.id
+
+    def woForwarder(self):
+        # get user - approver
+        userProfile = Profile.objects.get(id=self.user.id)
+        userApproverId = Profile.objects.get(initial=userProfile.initial).id
+        userApprover = User.objects.get(id=userApproverId)
+
+        # get user - woOnProcess
+        woOnProcess = Work_order.objects.get(id=self.num_work_orders)
+
+        #To create and save an object in a single step, use the create() method.
+        woJournal = Work_order_journal.objects.create(comment='Opening work order',
+            concern_user=userApprover,
+            wO_on_process=woOnProcess,
+            date=datetime.date.today())

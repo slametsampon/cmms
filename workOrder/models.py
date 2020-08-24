@@ -68,8 +68,6 @@ class Department(models.Model):
         return self.name
 
 #models for Work order 
-
-
 from django.urls import reverse
 class Work_order(models.Model):
     """Model representing a work order"""
@@ -126,7 +124,7 @@ class Work_order(models.Model):
 
     def __str__(self):
         """String for representing the Model object."""
-        return f'Work order completion'
+        return f'{self.wo_number}'
 
 class Work_order_journal(models.Model):
     """Model representing a work order journal"""
@@ -150,7 +148,7 @@ class Work_order_journal(models.Model):
 
     def __str__(self):
         """String for representing the Model object."""
-        return f'{self.prev_user} => {self.next_user}'
+        return f'{self.concern_user}'
 
 class Work_order_completion(models.Model):
     """Model representing a work order completion"""

@@ -2,9 +2,9 @@
 
 {% block content %}
   <h1>Work Order List</h1>
-  {% if work_order_list %}
+  {% if user_work_order_list %}
   <ul>
-    {% for work_order in work_order_list %}
+    {% for work_order in user_work_order_list %}
       <li>
         <a href="{{ work_order.get_absolute_url }}">{{ work_order.wo_number }}</a> ({{work_order.tagnumber}})
       </li>
