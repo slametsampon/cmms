@@ -10,8 +10,10 @@ urlpatterns = [
 urlpatterns += [  
     path('work_order/create/', views.Work_orderCreate.as_view(), name='work_order_create'),
     path('work_order/<int:pk>/update/', views.Work_orderUpdate.as_view(), name='work_order_update'),
+    path('work_order/<int:pk>/forward/', views.Work_orderForward.as_view(), name='work_order_forward'),
 ]
 
 urlpatterns += [  
     path('user_profile_update/', views.ProfileUpdateView.as_view(), name='user_profile_update'),
 ]
+

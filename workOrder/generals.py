@@ -40,18 +40,12 @@ class WoMisc():
             woNbr += '0'
         woNbr += strWoNbr
 
-        return (f'{userDept.initial}:{woNbr}')
-
-    def getWoOriginator(self):
-        # get user - initial
-        userProfile = Profile.objects.get(id=self.user.id)
-
-        return self.user.id
+        return (f'{userDept.initial}/{woNbr}')
 
     def woForwarder(self):
         # get user - approver
         userProfile = Profile.objects.get(id=self.user.id)
-        userApproverId = Profile.objects.get(initial=userProfile.initial).id
+        userApproverId = Profile.objects.get(initial=userProfile.approver).id
         userApprover = User.objects.get(id=userApproverId)
 
         # get user - woOnProcess
@@ -59,6 +53,15 @@ class WoMisc():
 
         #To create and save an object in a single step, use the create() method.
         woJournal = Work_order_journal.objects.create(comment='Opening work order',
+            action='f',#forward
             concern_user=userApprover,
             wO_on_process=woOnProcess,
             date=datetime.date.today())
+
+    def woOnConcern(self):
+        # get list of WO on concern in journal myModel.field_object
+        woListId=[]
+        woList = Work_order_journal.objects.filter(concern_user=self.user.id)
+        for wo in woList:
+            woListId.append(wo.wO_on_process.id)
+        return woListId

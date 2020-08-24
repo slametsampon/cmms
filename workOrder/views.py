@@ -2,6 +2,7 @@ import datetime
 from django.shortcuts import render
 
 from workOrder.models import Work_order, Work_order_journal
+from workOrder.generals import WoMisc as WM
 
 def index(request):
     """View function for home page of site."""
@@ -24,7 +25,10 @@ class Work_orderListView(generic.ListView):
     template_name = 'workOrder/user_work_order_list.html'  # Specify your own template name/location
 
     def get_queryset(self):
-        return Work_order.objects.filter(originator=self.request.user.id)
+        self.wm = WM(self.request.user)
+        
+        #get wo concern
+        return Work_order.objects.filter(pk__in=self.wm.woOnConcern())
 
 class Work_orderDetailView(generic.DetailView):
     model = Work_order #prinsipnya dengan ini saja sdh cukup, namun kita perlu tambahan info di bawah ini
@@ -37,30 +41,26 @@ class Work_orderDetailView(generic.DetailView):
         context['journal_list'] = Work_order_journal.objects.filter(wO_on_process=context['object'].id)
         return context
 
-
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from workOrder.generals import WoMisc as WM
 
 class Work_orderCreate(CreateView):
     model = Work_order
+    template_name = 'workOrder/work_order_form.html'  # Specify your own template name/location
     fields = ['wo_number',
+                'date_open',
                 'tagnumber',
                 'problem',
                 'priority',
-                'dest_section',
-                'date_open',
-                'originator',
-                'action']
+                'dest_section']
 
     initial ={'date_open' : datetime.date.today(),
             }
 
+    #put initialization data/field
     def get_initial(self):
         self.wm = WM(self.request.user)
-
-        #set work_order originator
-        self.initial['originator'] = self.request.user.id 
+        self.wm.woOnConcern()
 
         #set work_order wo_number
         self.initial['wo_number'] = self.wm.getWoNumber() 
@@ -70,11 +70,11 @@ class Work_orderCreate(CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
 
-        #set work_order status
-        self.object.status = self.wm.getWoStatus(self.object.action)
+        #set work_order originator
+        self.object.originator = self.request.user
 
-        #just inspect value
-        print(f'self.object.originator:{self.object.originator}')
+        #set work_order status
+        self.object.status = self.wm.getWoStatus('f') #forward
 
         self.object.save()
 
@@ -86,6 +86,21 @@ class Work_orderCreate(CreateView):
 class Work_orderUpdate(UpdateView):
     model = Work_order
     fields = '__all__'
+    template_name = 'workOrder/work_order_form.html'  # Specify your own template name/location
+
+class Work_orderForward(CreateView):
+    model = Work_order_journal
+    fields = ['wO_on_process',
+                'date',
+                'comment',
+                'concern_user',
+                'action']
+
+    initial ={'date' : datetime.date.today(),
+            }
+    template_name = 'workOrder/WoJournal_form.html'  # Specify your own template name/location
+
+
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView

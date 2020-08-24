@@ -101,17 +101,6 @@ class Work_order(models.Model):
 
     date_open = models.DateField()
 
-    ACTION_STATUS = (
-        ('f', 'Forward'),
-        ('r', 'Return'),
-        ('o', 'Other'),
-    )
-
-    action = models.CharField(max_length=1,
-        choices=ACTION_STATUS,
-        blank=True,
-        default='f')
-
     status = models.CharField(max_length=2,
         blank=True)
     
@@ -128,7 +117,7 @@ class Work_order(models.Model):
 
 class Work_order_journal(models.Model):
     """Model representing a work order journal"""
-    comment = models.CharField(max_length=200, null=True, help_text='Enter comment')
+    comment = models.TextField(max_length=200, null=True, help_text='Enter comment')
     date = models.DateField()
     
     # Foreign Key used because Work_order_journal can only have one concern_user, but Work_order_journal can have multiple concern_user
@@ -142,6 +131,17 @@ class Work_order_journal(models.Model):
     wO_on_process = models.ForeignKey(Work_order,
         on_delete=models.SET_NULL,
         null=True)
+
+    ACTION_STATUS = (
+        ('f', 'Forward'),
+        ('r', 'Return'),
+        ('o', 'Other'),
+    )
+
+    action = models.CharField(max_length=1,
+        choices=ACTION_STATUS,
+        blank=True,
+        default='f')
 
     class Meta:
         ordering = ['date']
