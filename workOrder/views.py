@@ -27,8 +27,8 @@ class Work_orderListView(generic.ListView):
     def get_queryset(self):
         self.wm = WM(self.request.user)
         
-        #get wo concern
-        return Work_order.objects.filter(pk__in=self.wm.woOnConcern())
+        #get wo concern base on pk list
+        return Work_order.objects.filter(pk__in=self.wm.woOnCurrentUser())
 
 class Work_orderDetailView(generic.DetailView):
     model = Work_order #prinsipnya dengan ini saja sdh cukup, namun kita perlu tambahan info di bawah ini
@@ -38,6 +38,7 @@ class Work_orderDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
 
         # Add in a QuerySet of journal
+        context['woPK'] = context['object'].id
         context['journal_list'] = Work_order_journal.objects.filter(wO_on_process=context['object'].id)
         return context
 
@@ -68,12 +69,15 @@ class Work_orderCreate(CreateView):
 
         #set work_order status
         context['status'] = self.wm.getWoStatus('f') #forward
+        #print(f'get_context_data=>context : {context}')
 
         return context
 
     def form_valid(self, form,**kwargs):
         self.wm = WM(self.request.user)
         self.object = form.save(commit=False)
+        #context = super(Work_orderCreate,self).get_context_data(**kwargs)
+        #print(f'form_valid=>context : {context}')
 
         #set work_order date_open
         self.object.date_open = datetime.date.today()
@@ -101,17 +105,38 @@ class Work_orderUpdate(UpdateView):
 
 class Work_orderForward(CreateView):
     model = Work_order_journal
-    fields = ['wO_on_process',
-                'date',
-                'comment',
+    fields = ['comment',
                 'concern_user',
                 'action']
 
-    initial ={'date' : datetime.date.today(),
-            }
     template_name = 'workOrder/WoJournal_form.html'  # Specify your own template name/location
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(Work_orderForward,self).get_context_data(**kwargs)
+        woNumber = Work_order.objects.get(id=self.kwargs.get("pk")).wo_number
 
+        # Add object in context wo_number
+        context['wO_on_process'] = woNumber
+
+        # Add object in context date_open
+        context['date'] = datetime.date.today()
+
+        return context
+
+    def form_valid(self, form,**kwargs):
+        self.wm = WM(self.request.user)
+        self.object = form.save(commit=False)
+
+        #set work_order date_open
+        self.object.date = datetime.date.today()
+
+        #set work_order wo_number
+        self.object.wO_on_process = Work_order.objects.get(id=self.kwargs.get("pk"))
+
+        self.object.save()
+
+        return super(Work_orderForward,self).form_valid(form)    
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView

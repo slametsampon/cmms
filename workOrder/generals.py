@@ -8,8 +8,6 @@ class WoMisc():
     def __init__(self, user):
         self.user = user
 
-        print(f'user : {self.user}')
-
     def getWoStatus(self, action):
         for g in self.user.groups.all():
             if 'ORG_SPV' == g.name:
@@ -48,8 +46,11 @@ class WoMisc():
         userApproverId = Profile.objects.get(initial=userProfile.approver).id
         userApprover = User.objects.get(id=userApproverId)
 
-        # get user - woOnProcess
-        woOnProcess = Work_order.objects.get(id=self.num_work_orders)
+        # get user - woOnProcess and update 
+        self.woOnProcess = Work_order.objects.get(id=self.num_work_orders)
+        woOnProcess = self.woOnProcess
+        woOnProcess.current_user_id = userApproverId
+        woOnProcess.save()
 
         #To create and save an object in a single step, use the create() method.
         woJournal = Work_order_journal.objects.create(comment='Opening work order',
@@ -58,10 +59,10 @@ class WoMisc():
             wO_on_process=woOnProcess,
             date=datetime.date.today())
 
-    def woOnConcern(self):
+    def woOnCurrentUser(self):
         # get list of WO on concern in journal myModel.field_object
         woListId=[]
-        woList = Work_order_journal.objects.filter(concern_user=self.user.id)
+        woList = Work_order.objects.filter(current_user_id=self.user.id)
         for wo in woList:
-            woListId.append(wo.wO_on_process.id)
+            woListId.append(wo.id)
         return woListId

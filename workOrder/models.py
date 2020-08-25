@@ -104,12 +104,16 @@ class Work_order(models.Model):
     status = models.CharField(max_length=2,
         blank=True)
     
+    current_user_id = models.IntegerField(null=True)
+
     class Meta:
         ordering = ['originator','status','wo_number']
 
     def get_absolute_url(self):
-        """Returns the url to access a detail record for this work order."""
-        return reverse('work_order-detail', args=[str(self.id)])
+        """Returns the url to access a list of work_orders."""
+        #"""Returns the url to access a detail record for this work order."""
+        #return reverse('work_order-detail', args=[str(self.id)])
+        return reverse('work_orders')
 
     def __str__(self):
         """String for representing the Model object."""
@@ -145,6 +149,10 @@ class Work_order_journal(models.Model):
 
     class Meta:
         ordering = ['date']
+
+    def get_absolute_url(self):
+        """Returns the url to access a list of work_orders."""
+        return reverse('work_orders')
 
     def __str__(self):
         """String for representing the Model object."""

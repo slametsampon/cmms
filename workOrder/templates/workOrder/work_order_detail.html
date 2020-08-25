@@ -7,6 +7,9 @@
     <p><strong>Problem:</strong> {{ work_order.problem }}</p>
     <p><strong>Status:</strong> {{ work_order.status }}</p> 
 
+    <p>
+      <a href="{% url 'work_order_forward' pk=woPK %}">FORWARD</a>
+    </p>
     <h6>History</h6>
     {% if journal_list %}
       <table>

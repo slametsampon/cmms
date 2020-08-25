@@ -6,9 +6,8 @@
 {% block content %}
   <h3>Work Order System</h3>
 
-  <p><strong>WO Number:</strong> {{ wo_number }}</p>
+  <p><strong>WO Number:</strong> {{ wo_number }}, <strong>Date:</strong> {{ date_open }}</p>
   <p><strong>Originator:</strong> {{ originator }}</p>
-  <p><strong>Date:</strong> {{ date_open }}</p> 
 
   <form action="" method="post">
     {% csrf_token %}
