@@ -47,31 +47,38 @@ from django.urls import reverse_lazy
 class Work_orderCreate(CreateView):
     model = Work_order
     template_name = 'workOrder/work_order_form.html'  # Specify your own template name/location
-    fields = ['wo_number',
-                'date_open',
-                'tagnumber',
+    fields = ['tagnumber',
                 'problem',
                 'priority',
                 'dest_section']
 
-    initial ={'date_open' : datetime.date.today(),
-            }
-
-    #put initialization data/field
-    def get_initial(self):
+    def get_context_data(self, **kwargs):
         self.wm = WM(self.request.user)
-        self.wm.woOnConcern()
+        # Call the base implementation first to get a context
+        self.context = super().get_context_data(**kwargs)
 
-        #set work_order wo_number
-        self.initial['wo_number'] = self.wm.getWoNumber() 
+        # Add object in context wo_number
+        self.context['wo_number'] = self.wm.getWoNumber()
 
-        return self.initial
+        # Add object in context date_open
+        self.context['date_open'] = datetime.date.today()
 
-    def form_valid(self, form):
+        # Add object in context originator
+        self.context['originator'] = self.request.user
+
+        return self.context
+
+    def form_valid(self, form,**kwargs):
         self.object = form.save(commit=False)
 
+        #set work_order date_open
+        self.object.date_open = self.context['date_open']
+
+        #set work_order wo_number
+        self.object.wo_number = self.context['wo_number']
+
         #set work_order originator
-        self.object.originator = self.request.user
+        self.object.originator = self.context['originator']
 
         #set work_order status
         self.object.status = self.wm.getWoStatus('f') #forward
