@@ -55,30 +55,34 @@ class Work_orderCreate(CreateView):
     def get_context_data(self, **kwargs):
         self.wm = WM(self.request.user)
         # Call the base implementation first to get a context
-        self.context = super().get_context_data(**kwargs)
+        context = super(Work_orderCreate,self).get_context_data(**kwargs)
 
         # Add object in context wo_number
-        self.context['wo_number'] = self.wm.getWoNumber()
+        context['wo_number'] = self.wm.getWoNumber()
 
         # Add object in context date_open
-        self.context['date_open'] = datetime.date.today()
+        context['date_open'] = datetime.date.today()
 
         # Add object in context originator
-        self.context['originator'] = self.request.user
+        context['originator'] = self.request.user
 
-        return self.context
+        #set work_order status
+        context['status'] = self.wm.getWoStatus('f') #forward
+
+        return context
 
     def form_valid(self, form,**kwargs):
+        self.wm = WM(self.request.user)
         self.object = form.save(commit=False)
 
         #set work_order date_open
-        self.object.date_open = self.context['date_open']
+        self.object.date_open = datetime.date.today()
 
         #set work_order wo_number
-        self.object.wo_number = self.context['wo_number']
+        self.object.wo_number = self.wm.getWoNumber()
 
         #set work_order originator
-        self.object.originator = self.context['originator']
+        self.object.originator = self.request.user
 
         #set work_order status
         self.object.status = self.wm.getWoStatus('f') #forward
