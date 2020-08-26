@@ -10,15 +10,58 @@ class WoMisc():
 
     def getWoStatus(self, action):
         for g in self.user.groups.all():
+            status = 'ot' #other
+
+            #originator supervisor
             if 'ORG_SPV' == g.name:
                 if action == 'f': #forward action
-                    return 'op' # Open
+                    status = 'op' # Open
                 elif action == 'r': #return
-                    return 'cl' #Close
-                else :
-                    return action
-            else:
-                return 'ot' #other
+                    status = 'cl' #Close
+
+            #originator superintendent
+            if 'ORG_SPTD' == g.name:
+                if action == 'f': #forward action
+                    status = 'ck' # Check
+                elif action == 'r': #return
+                    status = 'rv' #Revise
+
+            #originator manager
+            if 'ORG_MGR' == g.name:
+                if action == 'f': #forward action
+                    status = 'ap' # Approve
+                elif action == 'r': #return
+                    status = 'rc' #Re-check
+
+            #executor manager
+            if 'EXC_MGR' == g.name:
+                if action == 'f': #forward action
+                    status = 'rw' # Review
+                elif action == 'r': #return
+                    status = 'rj' #Reject
+
+            #executor superintendent
+            if 'EXC_SPTD' == g.name:
+                if action == 'f': #forward action
+                    status = 'sc' # Schedule
+                elif action == 'r': #return
+                    status = 'rt' #Return
+
+            #executor supervisor
+            if 'EXC_SPV' == g.name:
+                if action == 'f': #forward action
+                    status = 'ec' # Execute
+                elif action == 'r': #return
+                    status = 'rt' #Reject
+
+            #executor foreman
+            if 'EXC_FRM' == g.name:
+                if action == 'f': #forward action
+                    status = 'fn' # Finish
+                elif action == 'r': #return
+                    status = 'cn' #Cancel
+
+            return status
 
     def getWoNumber(self):
         # get user department - initial
@@ -27,7 +70,9 @@ class WoMisc():
         userDept = Department.objects.get(id=userSection.department.id)
 
         # Generate num_work_orders of some of the main objects
-        self.num_work_orders = Work_order.objects.order_by('id').last().id+1
+        self.num_work_orders = 1
+        if Work_order.objects.all().count():
+            self.num_work_orders = Work_order.objects.order_by('id').last().id+1
 
         strWoNbr = str(self.num_work_orders)
         remain = self.MAX_WO_NBR - len(strWoNbr)
@@ -40,17 +85,22 @@ class WoMisc():
 
         return (f'{userDept.initial}/{woNbr}')
 
-    def woForwarder(self):
+    def getApprover(self):
+        # get user - approver
+        userProfile = Profile.objects.get(id=self.user.id)
+        userApproverId = Profile.objects.get(initial=userProfile.approver).id
+        userApprover = User.objects.get(id=userApproverId)
+
+        return userApprover
+
+    def woInitJournal(self):
         # get user - approver
         userProfile = Profile.objects.get(id=self.user.id)
         userApproverId = Profile.objects.get(initial=userProfile.approver).id
         userApprover = User.objects.get(id=userApproverId)
 
         # get user - woOnProcess and update 
-        self.woOnProcess = Work_order.objects.get(id=self.num_work_orders)
-        woOnProcess = self.woOnProcess
-        woOnProcess.current_user_id = userApproverId
-        woOnProcess.save()
+        woOnProcess = Work_order.objects.get(id=self.num_work_orders)
 
         #To create and save an object in a single step, use the create() method.
         woJournal = Work_order_journal.objects.create(comment='Opening work order',

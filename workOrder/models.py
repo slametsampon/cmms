@@ -112,8 +112,30 @@ class Work_order(models.Model):
     def get_absolute_url(self):
         """Returns the url to access a list of work_orders."""
         #"""Returns the url to access a detail record for this work order."""
-        #return reverse('work_order-detail', args=[str(self.id)])
-        return reverse('work_orders')
+        return reverse('work_order-detail', args=[str(self.id)])
+        #return reverse('work_orders')
+
+    def save(self, *args, **kwargs):
+        # Do custom logic here (e.g. validation, logging, call third party service)
+        # Run default save() method
+        super(Work_order,self).save(*args, **kwargs)
+
+    def updateFields(self,**kwargs):
+        '''update fields model'''
+        print(f'updateFileds=>len(kwargs):{len(kwargs)}')
+        print(f'updateFileds=>kwargs.keys():{kwargs.keys()}')
+        print(f'updateFileds=>kwargs.values():{kwargs.values()}')
+        #self.save(update_fields=['name'])
+
+    def updateStatus(self,fieldVal):
+        '''update status field'''
+        self.status = fieldVal
+        self.save(update_fields=['status'])
+
+    def updateCurrentUserId(self,fieldVal):
+        '''update current_user_id field'''
+        self.current_user_id = fieldVal
+        self.save(update_fields=['current_user_id'])
 
     def __str__(self):
         """String for representing the Model object."""

@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>WO Number: {{ work_order.wo_number }}</h1>
+    <h4>WO Number: {{ work_order.wo_number }}</h4>
 
     <p><strong>Tagnumber:</strong> {{ work_order.tagnumber }}</p>
     <p><strong>Problem:</strong> {{ work_order.problem }}</p>
@@ -16,8 +16,8 @@
         <ul>
           {% for journal in journal_list %}
             <li>
-              {{journal.date}} 
-              {{ journal.concern_user }} 
+              {{journal.date}} =>
+              {{journal.concern_user}},  
               {{journal.comment}}
             </li>
           {% endfor %}

@@ -91,10 +91,16 @@ class Work_orderCreate(CreateView):
         #set work_order status
         self.object.status = self.wm.getWoStatus('f') #forward
 
+        #getApprover
+        approver = self.wm.getApprover()
+
+        #set current_user_id 
+        self.object.current_user_id = approver.id
+
         self.object.save()
 
-        #forward Work order after saving
-        self.wm.woForwarder()
+        #set init journal for every first opening work order
+        self.wm.woInitJournal()
 
         return super(Work_orderCreate,self).form_valid(form)    
 
@@ -131,10 +137,21 @@ class Work_orderForward(CreateView):
         #set work_order date_open
         self.object.date = datetime.date.today()
 
+        #get wO_on_process
+        wO_on_process = Work_order.objects.get(id=self.kwargs.get("pk"))
+
         #set work_order wo_number
-        self.object.wO_on_process = Work_order.objects.get(id=self.kwargs.get("pk"))
+        self.object.wO_on_process = wO_on_process
 
         self.object.save()
+
+        #update status work order and current_user_id
+        action = form.cleaned_data.get('action')
+        current_user_id = form.cleaned_data.get('concern_user').id
+
+        status = self.wm.getWoStatus(action) #forward
+        wO_on_process.updateStatus(status)
+        wO_on_process.updateCurrentUserId(current_user_id)
 
         return super(Work_orderForward,self).form_valid(form)    
 
