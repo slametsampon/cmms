@@ -11,7 +11,8 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nik = models.IntegerField(null=True)
     initial = models.CharField(max_length=3, null=True)
-    approver = models.CharField(max_length=3, null=True)
+    forward_path = models.CharField(max_length=3, null=True)
+    reverse_path = models.CharField(max_length=3, null=True)
     # Foreign Key used because user can only have one section, but section can have multiple users
     # Section as a string rather than object because it hasn't been declared yet in the file
     section = models.ForeignKey('Section', on_delete=models.SET_NULL, null=True)
@@ -145,6 +146,7 @@ class Work_order_journal(models.Model):
     """Model representing a work order journal"""
     comment = models.TextField(max_length=200, null=True, help_text='Enter comment')
     date = models.DateField()
+    time = models.TimeField()
     
     # Foreign Key used because Work_order_journal can only have one concern_user, but Work_order_journal can have multiple concern_user
     # User class has already been defined so we can specify the object above.
@@ -170,7 +172,7 @@ class Work_order_journal(models.Model):
         default='f')
 
     class Meta:
-        ordering = ['date']
+        ordering = ['-date', '-time']
 
     def get_absolute_url(self):
         """Returns the url to access a list of work_orders."""

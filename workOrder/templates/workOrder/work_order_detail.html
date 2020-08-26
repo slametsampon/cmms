@@ -8,7 +8,7 @@
     <p><strong>Status:</strong> {{ work_order.status }}</p> 
 
     <p>
-      <a href="{% url 'work_order_forward' pk=woPK %}">FORWARD</a>
+      <a href="{% url 'work_order_forward' pk=woPK %}">FORWARD/RETURN</a>
     </p>
     <h6>History</h6>
     {% if journal_list %}
@@ -16,7 +16,8 @@
         <ul>
           {% for journal in journal_list %}
             <li>
-              {{journal.date}} =>
+              {{journal.date}} at
+              {{journal.time}} =>
               {{journal.concern_user}},  
               {{journal.comment}}
             </li>

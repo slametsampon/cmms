@@ -18,6 +18,18 @@ def index(request):
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
 
+from django.contrib.auth import authenticate, login
+def cmms_login_view(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        # Redirect to a success page.
+    else:
+        pass
+        # Return an 'invalid login' error message.
+
 from django.views import generic
 class Work_orderListView(generic.ListView):
     model = Work_order #prinsipnya dengan ini saja sdh cukup, namun kita perlu tambahan info di bawah ini
@@ -92,7 +104,7 @@ class Work_orderCreate(CreateView):
         self.object.status = self.wm.getWoStatus('f') #forward
 
         #getApprover
-        approver = self.wm.getApprover()
+        approver = self.wm.getCurrentUser('f') #forward
 
         #set current_user_id 
         self.object.current_user_id = approver.id
@@ -109,13 +121,28 @@ class Work_orderUpdate(UpdateView):
     fields = '__all__'
     template_name = 'workOrder/work_order_form.html'  # Specify your own template name/location
 
+from django import forms
 class Work_orderForward(CreateView):
     model = Work_order_journal
     fields = ['comment',
-                'concern_user',
                 'action']
 
     template_name = 'workOrder/WoJournal_form.html'  # Specify your own template name/location
+
+    ACTION_STATUS = (
+        ('f', 'Forward'),
+        ('r', 'Return'),
+        ('o', 'Other'),
+    )
+
+    def get_initial(self):
+        initial = super(Work_orderForward, self).get_initial()
+
+        #put some choices dynamicaly
+        #self.fields['action'] = forms.ChoiceField(choices=self.ACTION_STATUS)
+
+        return initial
+        # now the form will be shown with the link_pk bound to a value
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -134,8 +161,14 @@ class Work_orderForward(CreateView):
         self.wm = WM(self.request.user)
         self.object = form.save(commit=False)
 
-        #set work_order date_open
+        #set work_order_journal date
         self.object.date = datetime.date.today()
+
+        #set work_order_journal date
+        self.object.time = datetime.date.today().time()
+
+        #set concern_user date_open
+        self.object.concern_user = self.request.user
 
         #get wO_on_process
         wO_on_process = Work_order.objects.get(id=self.kwargs.get("pk"))
@@ -147,9 +180,9 @@ class Work_orderForward(CreateView):
 
         #update status work order and current_user_id
         action = form.cleaned_data.get('action')
-        current_user_id = form.cleaned_data.get('concern_user').id
 
-        status = self.wm.getWoStatus(action) #forward
+        current_user_id = self.wm.getCurrentUser(action).id
+        status = self.wm.getWoStatus(action)
         wO_on_process.updateStatus(status)
         wO_on_process.updateCurrentUserId(current_user_id)
 

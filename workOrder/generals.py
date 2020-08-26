@@ -85,29 +85,29 @@ class WoMisc():
 
         return (f'{userDept.initial}/{woNbr}')
 
-    def getApprover(self):
+    def getCurrentUser(self, action):
         # get user - approver
         userProfile = Profile.objects.get(id=self.user.id)
-        userApproverId = Profile.objects.get(initial=userProfile.approver).id
-        userApprover = User.objects.get(id=userApproverId)
 
-        return userApprover
+        if action == 'f': #forward action
+            currentUserId = Profile.objects.get(initial=userProfile.forward_path).id
+        elif action == 'r': #return
+            currentUserId = Profile.objects.get(initial=userProfile.reverse_path).id
+        currentUser = User.objects.get(id=currentUserId)
+
+        return currentUser
 
     def woInitJournal(self):
-        # get user - approver
-        userProfile = Profile.objects.get(id=self.user.id)
-        userApproverId = Profile.objects.get(initial=userProfile.approver).id
-        userApprover = User.objects.get(id=userApproverId)
-
         # get user - woOnProcess and update 
         woOnProcess = Work_order.objects.get(id=self.num_work_orders)
 
         #To create and save an object in a single step, use the create() method.
         woJournal = Work_order_journal.objects.create(comment='Opening work order',
             action='f',#forward
-            concern_user=userApprover,
+            concern_user=self.user,
             wO_on_process=woOnProcess,
-            date=datetime.date.today())
+            date=datetime.date.today(),
+            time=datetime.date.today().time())
 
     def woOnCurrentUser(self):
         # get list of WO on concern in journal myModel.field_object
