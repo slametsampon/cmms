@@ -9,10 +9,10 @@ def index(request):
 
     # Generate counts of some of the main objects
     #num_work_orders = Work_order.objects.all().count()
-    num_work_orders = Work_order.objects.all().filter(originator=request.user.id).count()
+    woOnConcern = Work_order.objects.all().filter(current_user_id=request.user.id).count()
     
     context = {
-        'num_work_orders': num_work_orders,
+        'woOnConcern': woOnConcern,
     }
 
     # Render the HTML template index.html with the data in the context variable
@@ -122,24 +122,20 @@ class Work_orderUpdate(UpdateView):
     template_name = 'workOrder/work_order_form.html'  # Specify your own template name/location
 
 from django import forms
+from workOrder.forms import WoJournalForm
 class Work_orderForward(CreateView):
+    form_class = WoJournalForm
     model = Work_order_journal
-    fields = ['comment',
-                'action']
-
     template_name = 'workOrder/WoJournal_form.html'  # Specify your own template name/location
 
-    ACTION_STATUS = (
-        ('f', 'Forward'),
-        ('r', 'Return'),
-        ('o', 'Other'),
-    )
+    # Sending user object to the form, to verify which fields to display/remove (depending on group)
+    def get_form_kwargs(self):
+        kwargs = super(Work_orderForward, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
 
-    def get_initial(self):
+    def get_initial(self):        
         initial = super(Work_orderForward, self).get_initial()
-
-        #put some choices dynamicaly
-        #self.fields['action'] = forms.ChoiceField(choices=self.ACTION_STATUS)
 
         return initial
         # now the form will be shown with the link_pk bound to a value
@@ -165,7 +161,7 @@ class Work_orderForward(CreateView):
         self.object.date = datetime.date.today()
 
         #set work_order_journal date
-        self.object.time = datetime.date.today().time()
+        self.object.time = datetime.datetime.now().time()
 
         #set concern_user date_open
         self.object.concern_user = self.request.user

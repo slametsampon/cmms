@@ -167,7 +167,7 @@ class Work_order_journal(models.Model):
     )
 
     action = models.CharField(max_length=1,
-        choices=ACTION_STATUS,
+        #choices=ACTION_STATUS,
         blank=True,
         default='f')
 

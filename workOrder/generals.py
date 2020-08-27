@@ -107,7 +107,7 @@ class WoMisc():
             concern_user=self.user,
             wO_on_process=woOnProcess,
             date=datetime.date.today(),
-            time=datetime.date.today().time())
+            time=datetime.datetime.now().time())
 
     def woOnCurrentUser(self):
         # get list of WO on concern in journal myModel.field_object
