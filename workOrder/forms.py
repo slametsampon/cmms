@@ -23,7 +23,6 @@ class WoJournalForm(ModelForm):
         super(WoJournalForm, self).__init__(*args, **kwargs)
 
         #selesct form ACTIONS as user
-        print(f'self.user.username:{self.user.username}')
         if self.user.username == 'sptdExe':
             ACTIONS = (
                 ('f', 'Forward'),
@@ -48,24 +47,3 @@ class WoJournalForm(ModelForm):
         labels = {'action': _('action')}
         #help_texts = {'action': _('Select action')} 
         #widgets = {'action': Select(choices=ACTIONS)}
-
-class WoJournalGeneralUserForm(ModelForm):
-    class Meta:
-        ACTIONS = (
-            ('f', 'Forward'),
-            ('r', 'Return'),
-        )
-        template_name = 'workOrder/WoJournal_form.html'  # Specify your own template name/location
-
-        model = Work_order_journal
-        fields = ['comment',
-                    'action']
-
-        labels = {'comment': _('comment')}
-        #help_texts = {'comment': _('Enter comment')} 
-
-        labels = {'action': _('action')}
-        #help_texts = {'action': _('Select action')} 
-        widgets = {'action': Select(choices=ACTIONS)}
-
-        

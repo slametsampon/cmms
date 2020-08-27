@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from cmms import views
 
 urlpatterns = [
+    path('home-cmms/', views.home, name='home-cmms'),
     path('admin/', admin.site.urls),
 ]
 
@@ -30,7 +32,7 @@ urlpatterns += [
 #Add URL maps to redirect the base URL to our application
 from django.views.generic import RedirectView
 urlpatterns += [
-    path('', RedirectView.as_view(url='workOrder/', permanent=True)),
+    path('', RedirectView.as_view(url='home-cmms/', permanent=True)),
 ]
 
 # Use static() to add url mapping to serve static files during development (only)

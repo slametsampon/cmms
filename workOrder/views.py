@@ -1,9 +1,22 @@
-import datetime
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.urls import reverse
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView
+from django.views import generic
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+import datetime
 
+from django import forms
+from workOrder.forms import WoJournalForm, UserForm, ProfileForm
 from workOrder.models import Work_order, Work_order_journal
 from workOrder.generals import WoMisc as WM
 
+@login_required
 def index(request):
     """View function for home page of site."""
 
@@ -18,20 +31,7 @@ def index(request):
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
 
-from django.contrib.auth import authenticate, login
-def cmms_login_view(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        login(request, user)
-        # Redirect to a success page.
-    else:
-        pass
-        # Return an 'invalid login' error message.
-
-from django.views import generic
-class Work_orderListView(generic.ListView):
+class Work_orderListView(LoginRequiredMixin, generic.ListView):
     model = Work_order #prinsipnya dengan ini saja sdh cukup, namun kita perlu tambahan info di bawah ini
     context_object_name = 'user_work_order_list'   # your own name for the list as a template variable
     template_name = 'workOrder/user_work_order_list.html'  # Specify your own template name/location
@@ -42,7 +42,7 @@ class Work_orderListView(generic.ListView):
         #get wo concern base on pk list
         return Work_order.objects.filter(pk__in=self.wm.woOnCurrentUser())
 
-class Work_orderDetailView(generic.DetailView):
+class Work_orderDetailView(LoginRequiredMixin, generic.DetailView):
     model = Work_order #prinsipnya dengan ini saja sdh cukup, namun kita perlu tambahan info di bawah ini
 
     def get_context_data(self, **kwargs):
@@ -54,10 +54,7 @@ class Work_orderDetailView(generic.DetailView):
         context['journal_list'] = Work_order_journal.objects.filter(wO_on_process=context['object'].id)
         return context
 
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
-
-class Work_orderCreate(CreateView):
+class Work_orderCreate(LoginRequiredMixin, CreateView):
     model = Work_order
     template_name = 'workOrder/work_order_form.html'  # Specify your own template name/location
     fields = ['tagnumber',
@@ -116,14 +113,12 @@ class Work_orderCreate(CreateView):
 
         return super(Work_orderCreate,self).form_valid(form)    
 
-class Work_orderUpdate(UpdateView):
+class Work_orderUpdate(LoginRequiredMixin, UpdateView):
     model = Work_order
     fields = '__all__'
     template_name = 'workOrder/work_order_form.html'  # Specify your own template name/location
 
-from django import forms
-from workOrder.forms import WoJournalForm
-class Work_orderForward(CreateView):
+class Work_orderForward(LoginRequiredMixin, CreateView):
     form_class = WoJournalForm
     model = Work_order_journal
     template_name = 'workOrder/WoJournal_form.html'  # Specify your own template name/location
@@ -183,13 +178,6 @@ class Work_orderForward(CreateView):
         wO_on_process.updateCurrentUserId(current_user_id)
 
         return super(Work_orderForward,self).form_valid(form)    
-
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView
-from workOrder.forms import UserForm, ProfileForm
-from django.contrib import messages
-from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
 
 class ProfileUpdateView(LoginRequiredMixin, TemplateView):
     user_form = UserForm
