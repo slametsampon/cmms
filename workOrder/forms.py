@@ -1,3 +1,4 @@
+from django import forms
 from django.forms import ModelForm, Select
 from django.contrib.auth.models import User
 from workOrder.models import Profile, Work_order_journal
@@ -74,6 +75,7 @@ class WoJournalForm(ModelForm):
                     'action']
 
         labels = {'comment': _('comment')}
+        widgets = { 'comment': forms.Textarea(attrs={'rows':3})}
         #help_texts = {'comment': _('Enter comment')} 
 
         labels = {'action': _('action')}

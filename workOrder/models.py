@@ -144,7 +144,7 @@ class Work_order(models.Model):
 
 class Work_order_journal(models.Model):
     """Model representing a work order journal"""
-    comment = models.TextField(max_length=200, null=True, help_text='Enter comment')
+    comment = models.CharField(max_length=200, null=True)
     date = models.DateField()
     time = models.TimeField()
     
@@ -187,7 +187,7 @@ class Work_order_completion(models.Model):
     action = models.TextField(max_length=1000, null=True, help_text='Enter action')
     manPower = models.CharField(max_length=100, null=True, help_text='Man power name')
     material = models.TextField(max_length=1000, null=True, help_text='Enter material')
-    tool = models.TextField(max_length=1000, null=True, help_text='Enter action')
+    tool = models.TextField(max_length=200, null=True, help_text='Enter action')
     date = models.DateField(null=True)
     duration = models.IntegerField(help_text='Enter duration (hours)', null=True)
     
