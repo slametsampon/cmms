@@ -25,7 +25,8 @@ def index(request):
     woOnConcern = Work_order.objects.all().filter(current_user_id=request.user.id).count()
     
     context = {
-        'woOnConcern': woOnConcern,
+        'woNumber': woOnConcern.wo_number,
+        'woProblem': woOnConcern.problem,
     }
 
     # Render the HTML template index.html with the data in the context variable
@@ -78,7 +79,6 @@ class Work_orderCreate(LoginRequiredMixin, CreateView):
 
         #set work_order status
         context['status'] = self.wm.getWoStatus('f') #forward
-        #print(f'get_context_data=>context : {context}')
 
         return context
 
@@ -138,10 +138,10 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(Work_orderForward,self).get_context_data(**kwargs)
-        woNumber = Work_order.objects.get(id=self.kwargs.get("pk")).wo_number
+        woOnProcess = Work_order.objects.get(id=self.kwargs.get("pk"))
 
         # Add object in context wo_number
-        context['wO_on_process'] = woNumber
+        context['work_order'] = woOnProcess
 
         # Add object in context date_open
         context['date'] = datetime.date.today()

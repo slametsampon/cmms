@@ -6,7 +6,7 @@
 {% block content %}
   <h3>Work Order Forwarder</h3>
 
-  <p><strong>WO Number:</strong> {{ wO_on_process }}, <strong>Date:</strong> {{ date }}</p>
+  {% include 'woHeader.html' %}
 
   <form action="" method="post">
     {% csrf_token %}

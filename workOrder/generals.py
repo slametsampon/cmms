@@ -16,7 +16,7 @@ class WoMisc():
             if 'ORG_SPV' == g.name:
                 if action == 'f': #forward action
                     status = 'op' # Open
-                elif action == 'r': #return
+                elif action == 'c': #close
                     status = 'cl' #Close
 
             #originator superintendent
@@ -46,6 +46,14 @@ class WoMisc():
                     status = 'sc' # Schedule
                 elif action == 'r': #return
                     status = 'rt' #Return
+                elif action == 's': #Shutdown
+                    status = 'ns' #Need Shutdown
+                elif action == 'l': #Need Material
+                    status = 'nl' #Need Materials
+                elif action == 'm': #Need MOC
+                    status = 'nm' #Need MOC
+                elif action == 'o': #Other
+                    status = 'ot' #Need Regulation, etc
 
             #executor supervisor
             if 'EXC_SPV' == g.name:
@@ -86,15 +94,27 @@ class WoMisc():
         return (f'{userDept.initial}/{woNbr}')
 
     def getCurrentUser(self, action):
+        pendingList = ["s", "l", "m", "o"] #Shutdown, Need Material, MOC, Other
         # get user - approver
         userProfile = Profile.objects.get(id=self.user.id)
 
-        if action == 'f': #forward action
-            currentUserId = Profile.objects.get(initial=userProfile.forward_path).id
-        elif action == 'r': #return
-            currentUserId = Profile.objects.get(initial=userProfile.reverse_path).id
-        currentUser = User.objects.get(id=currentUserId)
+        currentUserId = self.user.id
+        if self.__isOfficeWorkingHour():
+            if action in pendingList:
+                currentUserId = self.user.id
+            elif action == 'f': #forward action
+                currentUserId = Profile.objects.get(initial=userProfile.forward_path).id
+            elif action == 'r': #return
+                currentUserId = Profile.objects.get(initial=userProfile.reverse_path).id
 
+        else: #during off hour
+            for g in self.user.groups.all():
+                #originator supervisor
+                if 'ORG_SPV' == g.name:
+                    if action == 'f': #forward action
+                        currentUserId = self.__getForemanExecutorId()
+
+        currentUser = User.objects.get(id=currentUserId)
         return currentUser
 
     def woInitJournal(self):
@@ -102,12 +122,17 @@ class WoMisc():
         woOnProcess = Work_order.objects.get(id=self.num_work_orders)
 
         #To create and save an object in a single step, use the create() method.
-        woJournal = Work_order_journal.objects.create(comment='Opening work order',
+        comment = 'Opening with bypass mode'
+        if self.__isOfficeWorkingHour():
+            comment = 'Opening with normal mode'
+        woJournal = Work_order_journal.objects.create(
+            comment=comment,
             action='f',#forward
             concern_user=self.user,
             wO_on_process=woOnProcess,
             date=datetime.date.today(),
-            time=datetime.datetime.now().time())
+            time=datetime.datetime.now().time()
+            )
 
     def woOnCurrentUser(self):
         # get list of WO on concern in journal myModel.field_object
@@ -116,3 +141,24 @@ class WoMisc():
         for wo in woList:
             woListId.append(wo.id)
         return woListId
+
+    def __isOfficeWorkingHour(self):
+        x = datetime.datetime.now()
+        startWorkingHr = datetime.time(8,0,0)
+        endWorkingHr = datetime.time(12,0,0)
+        currentTime = x.time()
+        currentDay = x.strftime('%A')
+
+        if currentDay in ['Saturday','Sunday']:
+            return False
+        elif currentTime < startWorkingHr or currentTime > endWorkingHr:
+            return False
+        else: 
+            return True
+
+    def __getForemanExecutorId(self):
+        for usr in User.objects.all():
+            for g in usr.groups.all():
+                if 'EXC_FRM' == g.name:
+                    return usr.id 
+    

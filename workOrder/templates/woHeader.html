@@ -1,0 +1,59 @@
+{% block content %}
+    <p><strong>WO Number:</strong> {{ work_order.wo_number }}</p>
+    <p><strong>Tagnumber:</strong> {{ work_order.tagnumber }}</p>
+    <p><strong>Problem:</strong> {{ work_order.problem }}</p>
+
+    {% if work_order.status == 'op' %}
+        <p><strong>Status:</strong> Open</p> 
+
+    {% elif work_order.status == 'cl' %}
+        <p><strong>Status:</strong> Close</p> 
+
+    {% elif work_order.status == 'ck' %}
+        <p><strong>Status:</strong> Check</p> 
+
+    {% elif work_order.status == 'rv' %}
+        <p><strong>Status:</strong> Revise</p> 
+
+    {% elif work_order.status == 'ap' %}
+        <p><strong>Status:</strong> Approve</p> 
+
+    {% elif work_order.status == 'rc' %}
+        <p><strong>Status:</strong> Re-check</p> 
+
+    {% elif work_order.status == 'rw' %}
+        <p><strong>Status:</strong> Review</p> 
+
+    {% elif work_order.status == 'rj' %}
+        <p><strong>Status:</strong> Reject</p> 
+
+    {% elif work_order.status == 'sc' %}
+        <p><strong>Status:</strong> Schedule</p> 
+
+    {% elif work_order.status == 'rt' %}
+        <p><strong>Status:</strong> Return</p> 
+
+    {% elif work_order.status == 'ns' %}
+        <p><strong>Status:</strong> Need Shutdown</p> 
+
+    {% elif work_order.status == 'nl' %}
+        <p><strong>Status:</strong> Need Material</p> 
+
+    {% elif work_order.status == 'nm' %}
+        <p><strong>Status:</strong> Need MOC</p> 
+
+    {% elif work_order.status == 'ec' %}
+        <p><strong>Status:</strong> Execute</p> 
+
+    {% elif work_order.status == 'cn' %}
+        <p><strong>Status:</strong> Cancel</p> 
+
+    {% elif work_order.status == 'fn' %}
+        <p><strong>Status:</strong> Finish</p> 
+
+    {% else %}
+        <p><strong>Status:</strong> Other</p> 
+
+    {% endif %} 
+
+{% endblock %}

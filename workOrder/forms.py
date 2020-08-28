@@ -13,7 +13,29 @@ class ProfileForm(ModelForm):
         fields = '__all__'
 
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 class WoJournalForm(ModelForm):
+
+    def clean_comment(self):
+       data = self.cleaned_data['comment']
+       
+       # other check logic if needed
+       #if data < datetime.date.today():
+       #    raise ValidationError(_('Invalid date - renewal in past'))
+
+       # Remember to always return the cleaned data.
+       return data
+    
+    def clean_action(self):
+       data = self.cleaned_data['action']
+       
+       # other check logic if needed
+       #if data < datetime.date.today():
+       #    raise ValidationError(_('Invalid date - renewal in past'))
+
+       # Remember to always return the cleaned data.
+       return data
+
     def __init__(self, *args, **kwargs):
         ACTIONS = (
             ('f', 'Forward'),
@@ -23,14 +45,24 @@ class WoJournalForm(ModelForm):
         super(WoJournalForm, self).__init__(*args, **kwargs)
 
         #selesct form ACTIONS as user
-        if self.user.username == 'sptdExe':
-            ACTIONS = (
-                ('f', 'Forward'),
-                ('r', 'Return'),
-                ('s', 'Shutdown'),
-                ('l', 'Need Materials'),
-                ('m', 'Need MOC'),
-            )
+        for g in self.user.groups.all():
+            status = 'ot' #other
+
+            #originator supervisor
+            if 'ORG_SPV' == g.name:
+                ACTIONS = (
+                    ('f', 'Forward'),
+                    ('c', 'Close'),
+                )
+            elif 'EXC_SPTD' == g.name:
+                ACTIONS = (
+                    ('f', 'Forward'),
+                    ('r', 'Return'),
+                    ('s', 'Shutdown'),
+                    ('l', 'Need Materials'),
+                    ('m', 'Need MOC'),
+                    ('o', 'Other'),
+                )
         
         self.fields['action'].widget = Select(choices=ACTIONS)
 
