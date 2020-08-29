@@ -60,7 +60,9 @@ class WoMisc():
                 if action == 'f': #forward action
                     status = 'ec' # Execute
                 elif action == 'r': #return
-                    status = 'rt' #Reject
+                    status = 'rt' #Return
+                elif action == 'c': #complete
+                    status = 'cm' #Complete
 
             #executor foreman
             if 'EXC_FRM' == g.name:
@@ -145,7 +147,7 @@ class WoMisc():
     def __isOfficeWorkingHour(self):
         x = datetime.datetime.now()
         startWorkingHr = datetime.time(8,0,0)
-        endWorkingHr = datetime.time(12,0,0)
+        endWorkingHr = datetime.time(17,0,0)
         currentTime = x.time()
         currentDay = x.strftime('%A')
 

@@ -13,7 +13,8 @@ import datetime
 
 from django import forms
 from workOrder.forms import WoJournalForm, UserForm, ProfileForm
-from workOrder.models import Work_order, Work_order_journal
+from workOrder.forms import WoCompletion_form
+from workOrder.models import Work_order, Work_order_journal, Work_order_completion
 from workOrder.generals import WoMisc as WM
 
 @login_required
@@ -25,8 +26,7 @@ def index(request):
     woOnConcern = Work_order.objects.all().filter(current_user_id=request.user.id).count()
     
     context = {
-        'woNumber': woOnConcern.wo_number,
-        'woProblem': woOnConcern.problem,
+        'woNwoOnConcernumber': woOnConcern,
     }
 
     # Render the HTML template index.html with the data in the context variable
@@ -178,6 +178,37 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
         wO_on_process.updateCurrentUserId(current_user_id)
 
         return super(Work_orderForward,self).form_valid(form)    
+
+class WoCompletionView(LoginRequiredMixin, CreateView):
+
+    form_class = WoCompletion_form
+    model = Work_order_completion
+    template_name = 'workOrder/WoCompletion_form.html'  # Specify your own template name/location
+
+    # Sending user object to the form, to verify which fields to display/remove (depending on group)
+    def get_form_kwargs(self):
+        kwargs = super(WoCompletionView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+    def get_initial(self):        
+        initial = super(WoCompletionView, self).get_initial()
+
+        return initial
+        # now the form will be shown with the link_pk bound to a value
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(WoCompletionView,self).get_context_data(**kwargs)
+        woOnProcess = Work_order.objects.get(id=self.kwargs.get("pk"))
+
+        # Add object in context wo_number
+        context['work_order'] = woOnProcess
+
+        # Add object in context date_open
+        context['date'] = datetime.date.today()
+
+        return context
 
 class ProfileUpdateView(LoginRequiredMixin, TemplateView):
     user_form = UserForm

@@ -1,18 +1,23 @@
 {% extends "base_generic.html" %}
 
 {% block title %}
-    <title>Wo Forwader</title>
+    <title>Wo Completion</title>
 {% endblock %}
+
 {% block content %}
-  <h3>Work Order Forwarder</h3>
+
+  <h5>Work Order Completion</h5>
 
   {% include 'woHeader.html' %}
 
   <form action="" method="post">
+
     {% csrf_token %}
-    <table>
-      {{ form.as_table }}
-    </table>
+
+    {{ form.as_p }}
+
     <input type="submit" value="Submit">
+
   </form>
+
 {% endblock %}

@@ -1,31 +1,71 @@
 {% extends "base_generic.html" %}
 
-{% block content %}
+{% block title %}
+    <title>Wo Detail</title>
+{% endblock %}
 
-  <h3>Work Order Detail</h3>
+{% block content %}
+  <style>
+    table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    }
+    
+    td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 4px;
+    }
+    
+    tr:nth-child(even) {
+    background-color: #dddddd;
+    }
+  </style>
+
+  <h5>Work Order Detail</h5>
 
   {% include 'woHeader.html' %}
 
   <p>
     {% if perms.workOrder.add_work_order %}       
-      <a href="{% url 'work_order_forward' pk=woPK %}">FORWARD/CLOSE</a>
+      <a href="{% url 'work_order-forward' pk=woPK %}">FORWARD/CLOSE</a>
+    {% elif perms.workOrder.add_work_order_completion %}
+      <p><strong> For finish : </strong> 
+        <a href="{% url 'work_order-complete' pk=woPK %}">FINISH</a>
+      </p>       
+      <p><strong> For cancelling : </strong> 
+        <a href="{% url 'work_order-forward' pk=woPK %}">CANCEL</a> 
+      </p>
     {% else %}
-      <a href="{% url 'work_order_forward' pk=woPK %}">FORWARD/RETURN</a>
+      <a href="{% url 'work_order-forward' pk=woPK %}">FORWARD/RETURN</a>
     {% endif %}
   </p>
   <h6>History</h6>
   {% if journal_list %}
     <table>
-      <ul>
-        {% for journal in journal_list %}
-          <li>
-            {{journal.date}} at
-            {{journal.time}} =>
-            {{journal.concern_user}},  
+      <tr>
+        <th>Date</th>
+        <th>Time</th>
+        <th>PIC</th>
+        <th>Comment</th>
+      </tr>    
+      {% for journal in journal_list %}
+        <tr>
+          <td style="width: 10%;">
+            {{journal.date}}
+          </td>
+          <td style="width: 10%;">
+            {{journal.time}}
+          </td>
+          <td>
+            {{journal.concern_user}} 
+          </td>
+          <td>
             {{journal.comment}}
-          </li>
-        {% endfor %}
-      </ul>
+          </td>
+        </tr>
+      {% endfor %}
     </table>  
   {% else %}
     <p>There are no histories</p>

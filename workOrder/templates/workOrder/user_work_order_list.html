@@ -14,6 +14,6 @@
     <p>There are no work order</p>
   {% endif %}
   {% if perms.workOrder.add_work_order %}       
-    <a href="{% url 'work_order_create' %}">Create Work Order</a>
+    <a href="{% url 'work_order-create' %}">Create Work Order</a>
   {% endif %}
 {% endblock %}

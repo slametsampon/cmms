@@ -1,59 +1,153 @@
 {% block content %}
-    <p><strong>WO Number:</strong> {{ work_order.wo_number }}</p>
-    <p><strong>Tagnumber:</strong> {{ work_order.tagnumber }}</p>
-    <p><strong>Problem:</strong> {{ work_order.problem }}</p>
+    <style>
+        table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        }
+        
+        td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 4px;
+        }
+        
+        tr:nth-child(even) {
+        background-color: #dddddd;
+        }
+    </style>
+    <table>
+        <tr>
+            <th style="width: 10%;">Item</th>
+            <th>Description</th>
+        </tr>    
+        <tr>
+            <td>WO Number</td>
+            <td>{{ work_order.wo_number }}</td>
+        </tr>
+        <tr>
+            <td>Tagnumber</td>
+            <td>{{ work_order.tagnumber }}</td>
+            </tr>
+        <tr>
+            <td>Problem</td>
+            <td>{{ work_order.problem }}</td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <!-- get data from script logic-->
+            <td id = "status"></td> 
+        </tr>
+    </table> 
 
-    {% if work_order.status == 'op' %}
-        <p><strong>Status:</strong> Open</p> 
-
-    {% elif work_order.status == 'cl' %}
-        <p><strong>Status:</strong> Close</p> 
-
-    {% elif work_order.status == 'ck' %}
-        <p><strong>Status:</strong> Check</p> 
-
-    {% elif work_order.status == 'rv' %}
-        <p><strong>Status:</strong> Revise</p> 
-
-    {% elif work_order.status == 'ap' %}
-        <p><strong>Status:</strong> Approve</p> 
-
-    {% elif work_order.status == 'rc' %}
-        <p><strong>Status:</strong> Re-check</p> 
-
-    {% elif work_order.status == 'rw' %}
-        <p><strong>Status:</strong> Review</p> 
-
-    {% elif work_order.status == 'rj' %}
-        <p><strong>Status:</strong> Reject</p> 
-
-    {% elif work_order.status == 'sc' %}
-        <p><strong>Status:</strong> Schedule</p> 
-
-    {% elif work_order.status == 'rt' %}
-        <p><strong>Status:</strong> Return</p> 
-
-    {% elif work_order.status == 'ns' %}
-        <p><strong>Status:</strong> Need Shutdown</p> 
-
-    {% elif work_order.status == 'nl' %}
-        <p><strong>Status:</strong> Need Material</p> 
-
-    {% elif work_order.status == 'nm' %}
-        <p><strong>Status:</strong> Need MOC</p> 
-
-    {% elif work_order.status == 'ec' %}
-        <p><strong>Status:</strong> Execute</p> 
-
-    {% elif work_order.status == 'cn' %}
-        <p><strong>Status:</strong> Cancel</p> 
-
-    {% elif work_order.status == 'fn' %}
-        <p><strong>Status:</strong> Finish</p> 
-
-    {% else %}
-        <p><strong>Status:</strong> Other</p> 
-
-    {% endif %} 
-
+    <script type="text/javascript"> 
+        var stsCd = "{{work_order.status}}" /*get data from django*/
+        var status = ""
+        switch (stsCd) {
+            case "op":
+                status = "Open";
+                break;
+            case "cl":
+                status = "Close";
+                break;
+            case "ck":
+                status = "Check";
+                break;
+            case "rv":
+                status = "Revise";
+                break;
+            case "ap":
+                status = "Approve";
+                break;
+            case "rw":
+                status = "Review";
+                break;
+            case "rj":
+                status = "Reject";
+                break;
+            case "sc":
+                status = "Scedule";
+                break;
+            case "rt":
+                status = "Return";
+                break;
+            case "ns":
+                status = "Need Shutdown";
+                break;
+            case "nl":
+                status = "Need Materials";
+                break;
+            case "nm":
+                status = "Need MOC";
+                break;
+            case "ec":
+                status = "Execute";
+                break;
+            case "cm":
+                status = "Complete";
+                break;
+            case "fn":
+                status = "Finish";
+                break;
+            case "cn":
+                status = "Cancel";
+                break;
+            default:
+                status = "Other";
+            }
+        document.getElementById("status").innerHTML = status
+    </script>
 {% endblock %}
+
+<!-- script logic for status-->
+{% if work_order.status == 'op' %}
+    <input type="hidden" name="status_id" value="Open">
+{% elif work_order.status == 'cl' %}
+    <input type="hidden" name="status_id" value="Close">
+
+{% elif work_order.status == 'ck' %}
+    <input type="hidden" name="status_id" value="Check">
+
+{% elif work_order.status == 'rv' %}
+    <input type="hidden" name="status_id" value="Revise">   
+
+{% elif work_order.status == 'ap' %}
+    <input type="hidden" name="status_id" value="Approve">
+
+{% elif work_order.status == 'rc' %}
+    <input type="hidden" name="status_id" value="Re-check">
+
+{% elif work_order.status == 'rw' %}
+    <input type="hidden" name="status_id" value="Review">
+
+{% elif work_order.status == 'rj' %}
+    <input type="hidden" name="status_id" value="Reject">
+
+{% elif work_order.status == 'sc' %}
+    <input type="hidden" name="status_id" value="Schedule">
+
+{% elif work_order.status == 'rt' %}
+    <input type="hidden" name="status_id" value="Return">
+
+{% elif work_order.status == 'ns' %}
+    <input type="hidden" name="status_id" value="Need Shutdown">
+
+{% elif work_order.status == 'nl' %}
+    <input type="hidden" name="status_id" value="Need Materials">
+
+{% elif work_order.status == 'nm' %}
+    <input type="hidden" name="status_id" value="Need MOC">
+
+{% elif work_order.status == 'ec' %}
+    <input type="hidden" name="status_id" value="Execute">
+
+{% elif work_order.status == 'cn' %}
+    <input type="hidden" name="status_id" value="Cancle">
+
+{% elif work_order.status == 'fn' %}
+    <input type="hidden" name="status_id" value="Finis">
+
+{% else %}
+    <input type="hidden" name="status_id" value="Other ">
+
+{% endif %} 

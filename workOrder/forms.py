@@ -1,7 +1,9 @@
 from django import forms
 from django.forms import ModelForm, Select
 from django.contrib.auth.models import User
-from workOrder.models import Profile, Work_order_journal
+from workOrder.models import Profile, Work_order_journal, Work_order_completion
+from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 
 class UserForm(ModelForm):
     class Meta:
@@ -13,8 +15,6 @@ class ProfileForm(ModelForm):
         model = Profile
         fields = '__all__'
 
-from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError
 class WoJournalForm(ModelForm):
 
     def clean_comment(self):
@@ -55,6 +55,12 @@ class WoJournalForm(ModelForm):
                     ('f', 'Forward'),
                     ('c', 'Close'),
                 )
+            elif 'EXC_SPV' == g.name:
+                ACTIONS = (
+                    ('f', 'Forward'),
+                    ('r', 'Return'),
+                    ('c', 'Complete'),
+                )
             elif 'EXC_SPTD' == g.name:
                 ACTIONS = (
                     ('f', 'Forward'),
@@ -81,3 +87,24 @@ class WoJournalForm(ModelForm):
         labels = {'action': _('action')}
         #help_texts = {'action': _('Select action')} 
         #widgets = {'action': Select(choices=ACTIONS)}
+
+class WoCompletion_form(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user') #take current user
+        super(WoCompletion_form, self).__init__(*args, **kwargs)
+
+    class Meta:
+        template_name = 'workOrder/WoCompletion_form.html'  # Specify your own template name/location
+
+        model = Work_order_completion
+        fields = [
+            'date',
+            'action',
+            'manPower',
+            'duration',
+            'material',
+            'tool',
+            ]
+        widgets = { 'action': forms.Textarea(attrs={'rows':3})}
+        widgets = { 'manPower': forms.Textarea(attrs={'width':3})}
