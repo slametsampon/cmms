@@ -28,114 +28,70 @@
         </tbody>
     </table> 
 
+    {% load static %}
+    <!--script type="text/javascript" src="{% static 'js/woMisc.js' %}"--> 
     <script type="text/javascript"> 
         var stsCd = "{{work_order.status}}" /*get data from django*/
-        var status = ""
-        switch (stsCd) {
-            case "op":
-                status = "Open";
-                break;
-            case "cl":
-                status = "Close";
-                break;
-            case "ck":
-                status = "Check";
-                break;
-            case "rv":
-                status = "Revise";
-                break;
-            case "ap":
-                status = "Approve";
-                break;
-            case "rw":
-                status = "Review";
-                break;
-            case "rj":
-                status = "Reject";
-                break;
-            case "sc":
-                status = "Scedule";
-                break;
-            case "rt":
-                status = "Return";
-                break;
-            case "ns":
-                status = "Need Shutdown";
-                break;
-            case "nl":
-                status = "Need Materials";
-                break;
-            case "nm":
-                status = "Need MOC";
-                break;
-            case "ec":
-                status = "Execute";
-                break;
-            case "cm":
-                status = "Complete";
-                break;
-            case "fn":
-                status = "Finish";
-                break;
-            case "cn":
-                status = "Cancel";
-                break;
-            default:
-                status = "Other";
-            }
-        document.getElementById("status").innerHTML = status
+        var status = getStatus(stsCd);
+        document.getElementById("status").innerHTML = status;
+
+        /*Function for get status work order base on code*/
+        function getStatus(stsCode){
+            var status = ""
+            switch (stsCode) {
+                case "op":
+                    status = "Open";
+                    break;
+                case "cl":
+                    status = "Close";
+                    break;
+                case "ck":
+                    status = "Check";
+                    break;
+                case "rv":
+                    status = "Revise";
+                    break;
+                case "ap":
+                    status = "Approve";
+                    break;
+                case "rw":
+                    status = "Review";
+                    break;
+                case "rj":
+                    status = "Reject";
+                    break;
+                case "sc":
+                    status = "Scedule";
+                    break;
+                case "rt":
+                    status = "Return";
+                    break;
+                case "ns":
+                    status = "Need Shutdown";
+                    break;
+                case "nl":
+                    status = "Need Materials";
+                    break;
+                case "nm":
+                    status = "Need MOC";
+                    break;
+                case "ec":
+                    status = "Execute";
+                    break;
+                case "cm":
+                    status = "Complete";
+                    break;
+                case "fn":
+                    status = "Finish";
+                    break;
+                case "cn":
+                    status = "Cancel";
+                    break;
+                default:
+                    status = "Other";
+                }
+            return status;
+        }
+    
     </script>
 {% endblock %}
-
-<!-- script logic for status-->
-{% if work_order.status == 'op' %}
-    <input type="hidden" name="status_id" value="Open">
-{% elif work_order.status == 'cl' %}
-    <input type="hidden" name="status_id" value="Close">
-
-{% elif work_order.status == 'ck' %}
-    <input type="hidden" name="status_id" value="Check">
-
-{% elif work_order.status == 'rv' %}
-    <input type="hidden" name="status_id" value="Revise">   
-
-{% elif work_order.status == 'ap' %}
-    <input type="hidden" name="status_id" value="Approve">
-
-{% elif work_order.status == 'rc' %}
-    <input type="hidden" name="status_id" value="Re-check">
-
-{% elif work_order.status == 'rw' %}
-    <input type="hidden" name="status_id" value="Review">
-
-{% elif work_order.status == 'rj' %}
-    <input type="hidden" name="status_id" value="Reject">
-
-{% elif work_order.status == 'sc' %}
-    <input type="hidden" name="status_id" value="Schedule">
-
-{% elif work_order.status == 'rt' %}
-    <input type="hidden" name="status_id" value="Return">
-
-{% elif work_order.status == 'ns' %}
-    <input type="hidden" name="status_id" value="Need Shutdown">
-
-{% elif work_order.status == 'nl' %}
-    <input type="hidden" name="status_id" value="Need Materials">
-
-{% elif work_order.status == 'nm' %}
-    <input type="hidden" name="status_id" value="Need MOC">
-
-{% elif work_order.status == 'ec' %}
-    <input type="hidden" name="status_id" value="Execute">
-
-{% elif work_order.status == 'cn' %}
-    <input type="hidden" name="status_id" value="Cancle">
-
-{% elif work_order.status == 'fn' %}
-    <input type="hidden" name="status_id" value="Finis">
-
-{% else %}
-    <input type="hidden" name="status_id" value="Other ">
-
-{% endif %} 

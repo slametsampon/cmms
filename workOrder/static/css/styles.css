@@ -85,3 +85,23 @@ table.WoHistory thead th:nth-child(3) {
 }
       
 /*Date col comment - remaining width*/
+
+/*Grid*/
+
+/*Work order completion Date, ManPower, Duration*/
+.container1 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+/*Work order completion Actio*/
+.container2 {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+/*Work order completion Material, Tool*/
+.container3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
