@@ -4,14 +4,20 @@
     <title>Work Order Create</title>
 {% endblock %}
 {% block content %}
-  <h3>Work Order System</h3>
+  <h3>Work Order Create</h3>
 
   <p><strong>WO Number:</strong> {{ wo_number }}, <strong>Date:</strong> {{ date_open }}</p>
   <p><strong>Originator:</strong> {{ originator }}</p>
 
   <form action="" method="post">
     {% csrf_token %}
-    <table>
+    <table class="WoForm">
+      <thead>
+        <tr>
+          <th scope="col">Item</th>
+          <th scope="col">Data</th>
+        </tr>
+      </thead>
       {{ form.as_table }}
     </table>
     <input type="submit" value="Submit">

@@ -6,15 +6,24 @@
 
 {% block content %}
 
-  <h5>Work Order Completion</h5>
-
   {% include 'woHeader.html' %}
 
   <form action="" method="post">
-
     {% csrf_token %}
+    {% for field in form %}
+        <p>
+            {{field.label}} : {{ field }}
+        </p>
+    {% endfor %}
+    <table class="WoForm">
+      <caption>Work Order Compltion</caption>
+      <thead>
 
-    {{ form.as_p }}
+      </thead>
+      <tbody>
+        {{ form.as_table }}
+      </tbody>
+    </table>
 
     <input type="submit" value="Submit">
 

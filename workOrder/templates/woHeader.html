@@ -1,43 +1,31 @@
 {% block content %}
-    <style>
-        table {
-        font-family: arial, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-        }
-        
-        td, th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 4px;
-        }
-        
-        tr:nth-child(even) {
-        background-color: #dddddd;
-        }
-    </style>
-    <table>
-        <tr>
-            <th style="width: 10%;">Item</th>
-            <th>Description</th>
-        </tr>    
-        <tr>
-            <td>WO Number</td>
-            <td>{{ work_order.wo_number }}</td>
-        </tr>
-        <tr>
-            <td>Tagnumber</td>
-            <td>{{ work_order.tagnumber }}</td>
+    <table class="WoHeader">
+        <caption>Detail</caption>
+        <thead>
+            <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Description</th>
+            </tr>    
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">WO Number</th>
+                <td>{{ work_order.wo_number }}</td>
             </tr>
-        <tr>
-            <td>Problem</td>
-            <td>{{ work_order.problem }}</td>
-        </tr>
-        <tr>
-            <td>Status</td>
-            <!-- get data from script logic-->
-            <td id = "status"></td> 
-        </tr>
+            <tr>
+                <th scope="row">Tagnumber</th>
+                <td>{{ work_order.tagnumber }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Problem</th>
+                <td>{{ work_order.problem }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Status</th>
+                <!-- get data from script logic-->
+                <td id = "status"></td> 
+            </tr>
+        </tbody>
     </table> 
 
     <script type="text/javascript"> 

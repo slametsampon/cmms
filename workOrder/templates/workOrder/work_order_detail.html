@@ -5,25 +5,6 @@
 {% endblock %}
 
 {% block content %}
-  <style>
-    table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    }
-    
-    td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 4px;
-    }
-    
-    tr:nth-child(even) {
-    background-color: #dddddd;
-    }
-  </style>
-
-  <h5>Work Order Detail</h5>
 
   {% include 'woHeader.html' %}
 
@@ -41,31 +22,35 @@
       <a href="{% url 'work_order-forward' pk=woPK %}">FORWARD/RETURN</a>
     {% endif %}
   </p>
-  <h6>History</h6>
   {% if journal_list %}
-    <table>
-      <tr>
-        <th>Date</th>
-        <th>Time</th>
-        <th>PIC</th>
-        <th>Comment</th>
-      </tr>    
-      {% for journal in journal_list %}
+    <table class="WoHistory">
+      <caption>History</caption>
+      <thead>
         <tr>
-          <td style="width: 10%;">
-            {{journal.date}}
-          </td>
-          <td style="width: 10%;">
-            {{journal.time}}
-          </td>
-          <td>
-            {{journal.concern_user}} 
-          </td>
-          <td>
-            {{journal.comment}}
-          </td>
-        </tr>
-      {% endfor %}
+          <th scope="col">Date</th>
+          <th scope="col">Time</th>
+          <th scope="col">PIC</th>
+          <th scope="col">Comment</th>
+        </tr>    
+      </thead>
+      <tbody>
+        {% for journal in journal_list %}
+          <tr>
+            <td>
+              {{journal.date}}
+            </td>
+            <td>
+              {{journal.time}}
+            </td>
+            <td>
+              {{journal.concern_user}} 
+            </td>
+            <td>
+              {{journal.comment}}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>  
   {% else %}
     <p>There are no histories</p>
