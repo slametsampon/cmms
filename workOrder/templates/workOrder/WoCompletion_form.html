@@ -10,24 +10,98 @@
 
   <form action="" method="post">
     {% csrf_token %}
-    {% for field in form %}
-        <div class="container1">
-            <div>Date</div>
-            <div>manPower</div>
-            <div>duration</div>
-        </div>        
-    {% endfor %}
-    <table class="WoForm">
-      <caption>Work Order Compltion</caption>
+    <table class="WoCompletion">
+      <caption>Work Order Completion</caption>
       <thead>
 
       </thead>
       <tbody>
-        {{ form.as_table }}
+        <!--Row 1, Col1 for date-->
+        <tr>
+          <td>
+            <div>
+              <div>Date : </div>
+              {{ date }}
+            </div>
+          </td>
+          {% for field in form %}
+            {% if field.label == 'ManPower' %}
+              <td>
+                <div class="fieldWrapper form-group" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+                  <div>{{ field.label_tag }}</div>
+                  {% if field.field.required %}<span class="required"></span>{% endif %}
+                  {{ field }}
+                </div>
+              </td>
+            {% endif %}
+
+            {% if field.label == 'Duration' %}
+              <td>
+                <div class="fieldWrapper form-group" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+                  <div>{{ field.label_tag }} (hrs) </div>
+                  {% if field.field.required %}<span class="required"></span>{% endif %}
+                  {{ field }}
+                </div>
+              </td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+
+        <!--Row 2, Col1 for date-->
+        <tr>
+          {% for field in form %}
+            {% if field.label == 'Action' %}
+              <td>
+                <div class="fieldWrapper form-group" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+                  <div>{{ field.label_tag }}</div>
+                  {% if field.field.required %}<span class="required"></span>{% endif %}
+                  {{ field }}
+                </div>
+              </td>
+            {% endif %}
+
+            {% if field.label == 'Material' %}
+              <td>
+                <div class="fieldWrapper form-group" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+                  <div>{{ field.label_tag }}</div>
+                  {% if field.field.required %}<span class="required"></span>{% endif %}
+                  {{ field }}
+                </div>
+              </td>
+            {% endif %}
+
+            {% if field.label == 'Tool' %}
+              <td>
+                <div class="fieldWrapper form-group" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+                  <div>{{ field.label_tag }}</div>
+                  {% if field.field.required %}<span class="required"></span>{% endif %}
+                  {{ field }}
+                </div>
+              </td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+
       </tbody>
     </table>
 
     <input type="submit" value="Submit">
+    {% if form.errors %}
+      {% for field in form %}
+          {% for error in field.errors %}
+              <div class="alert alert-danger">
+                  <strong>{{ error|escape }}</strong>
+                  <p>field.errors: {{field.label}}</p>
+              </div>
+          {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+          <div class="alert alert-danger">
+              <strong>{{ error|escape }}</strong>
+              <p>form.non_field_errors: {{field.label}}</p>
+            </div>
+      {% endfor %}
+    {% endif %}
 
   </form>
 

@@ -86,6 +86,27 @@ table.WoHistory thead th:nth-child(3) {
       
 /*Date col comment - remaining width*/
 
+
+/* Style for Work Order Completion*/    
+table.WoCompletion {
+    font-family: arial, sans-serif;
+}
+
+/*col 1*/
+table.WoCompletion tbody th:nth-child(1) {
+        width: 50%;
+}
+      
+/*col 2*/
+table.WoCompletion tbody th:nth-child(2) {
+    width: 20%;
+}
+            
+table.WoCompletion tbody td {
+    height: 100px;
+}
+/*Date col comment - remaining width*/
+
 /*Grid*/
 
 /*Work order completion Date, ManPower, Duration*/

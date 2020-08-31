@@ -101,6 +101,7 @@ class Work_order(models.Model):
         default='n')
 
     date_open = models.DateField()
+    date_close = models.DateField(null=True)
 
     status = models.CharField(max_length=2,
         blank=True)
@@ -185,9 +186,9 @@ class Work_order_journal(models.Model):
 class Work_order_completion(models.Model):
     """Model representing a work order completion"""
     action = models.TextField(max_length=1000, null=True, help_text='Enter action')
-    manPower = models.CharField(max_length=100, null=True, help_text='Man power name')
-    material = models.TextField(max_length=1000, null=True, help_text='Enter material')
-    tool = models.TextField(max_length=200, null=True, help_text='Enter action')
+    manPower = models.TextField(max_length=100, null=True, help_text='Man power name')
+    material = models.TextField(max_length=500, null=True, help_text='Enter material')
+    tool = models.TextField(max_length=500, null=True, help_text='Enter action')
     date = models.DateField(null=True)
     duration = models.IntegerField(help_text='Enter duration (hours)', null=True)
     
@@ -205,6 +206,10 @@ class Work_order_completion(models.Model):
 
     class Meta:
         ordering = ['date']
+
+    def get_absolute_url(self):
+        """Returns the url to access a list of work_orders."""
+        return reverse('work_orders')
 
     def __str__(self):
         """String for representing the Model object."""

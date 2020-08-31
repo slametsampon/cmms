@@ -11,7 +11,7 @@ urlpatterns += [
     path('work_order/create/', views.Work_orderCreate.as_view(), name='work_order-create'),
     path('work_order/<int:pk>/update/', views.Work_orderUpdate.as_view(), name='work_order_update'),
     path('work_order/<int:pk>/forward/', views.Work_orderForward.as_view(), name='work_order-forward'),
-    path('work_order/<int:pk>/complete/', views.WoCompletionView.as_view(), name='work_order-complete'),
+    path('work_order/<int:pk>/complete/', views.WoCompletion.as_view(), name='work_order-complete'),
 ]
 
 urlpatterns += [  

@@ -179,7 +179,7 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
 
         return super(Work_orderForward,self).form_valid(form)    
 
-class WoCompletionView(LoginRequiredMixin, CreateView):
+class WoCompletion(LoginRequiredMixin, CreateView):
 
     form_class = WoCompletion_form
     model = Work_order_completion
@@ -187,28 +187,61 @@ class WoCompletionView(LoginRequiredMixin, CreateView):
 
     # Sending user object to the form, to verify which fields to display/remove (depending on group)
     def get_form_kwargs(self):
-        kwargs = super(WoCompletionView, self).get_form_kwargs()
+        print('get_form_kwargs')
+        kwargs = super(WoCompletion, self).get_form_kwargs()
         kwargs.update({'user': self.request.user})
         return kwargs
 
     def get_initial(self):        
-        initial = super(WoCompletionView, self).get_initial()
+        print('get_initial')
+        initial = super(WoCompletion, self).get_initial()
 
         return initial
         # now the form will be shown with the link_pk bound to a value
 
     def get_context_data(self, **kwargs):
+        print('get_context_data')
         # Call the base implementation first to get a context
-        context = super(WoCompletionView,self).get_context_data(**kwargs)
-        woOnProcess = Work_order.objects.get(id=self.kwargs.get("pk"))
+        context = super(WoCompletion,self).get_context_data(**kwargs)
+        wO_completed = Work_order.objects.get(id=self.kwargs.get("pk"))
 
         # Add object in context wo_number
-        context['work_order'] = woOnProcess
+        context['work_order'] = wO_completed
 
         # Add object in context date_open
         context['date'] = datetime.date.today()
 
         return context
+
+    def form_valid(self, form,**kwargs):
+        print('form_valid')
+        self.wm = WM(self.request.user)
+        self.object = form.save(commit=False)
+
+        #set work_order_journal date
+        self.object.date = datetime.date.today()
+
+        #set concern_user date_open
+        self.object.acted_user = self.request.user
+
+        #get wO_on_process
+        wO_completed = Work_order.objects.get(id=self.kwargs.get("pk"))
+
+        #set work_order wo_number
+        self.object.wO_completed = Work_order.objects.get(id=self.kwargs.get("pk"))
+
+        print('prior self.object.save()')
+
+        self.object.save()
+
+        print('After self.object.save()')
+        #update status work order and current_user_id
+        #current_user_id = self.wm.getCurrentUser(action).id
+        #status = self.wm.getWoStatus(action)
+        #wO_on_process.updateStatus(status)
+        #wO_on_process.updateCurrentUserId(current_user_id)
+
+        return super(WoCompletion,self).form_valid(form)    
 
 class ProfileUpdateView(LoginRequiredMixin, TemplateView):
     user_form = UserForm

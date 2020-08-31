@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from workOrder.models import Profile, Work_order_journal, Work_order_completion
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
+import datetime
 
 class UserForm(ModelForm):
     class Meta:
@@ -90,6 +91,45 @@ class WoJournalForm(ModelForm):
 
 class WoCompletion_form(ModelForm):
 
+    def clean_action(self):
+       data = self.cleaned_data['action']
+       
+       # Remember to always return the cleaned data.
+       print('WoCompletion_form:clean_action')
+       return data
+
+    def clean_manPower(self):
+       data = self.cleaned_data['manPower']
+       
+       # Remember to always return the cleaned data.
+       print('WoCompletion_form:clean_manPower')
+       return data
+
+    def clean_duration(self):
+       data = self.cleaned_data['duration']
+       
+       # other check logic if needed
+       if data <= 0:
+           raise ValidationError(_('Invalid duration - can not zero/minus'))
+
+       # Remember to always return the cleaned data.
+       print('WoCompletion_form:clean_duration')
+       return data
+
+    def clean_material(self):
+       data = self.cleaned_data['material']
+       
+       # Remember to always return the cleaned data.
+       print('WoCompletion_form:clean_material')
+       return data
+
+    def clean_tool(self):
+       data = self.cleaned_data['tool']
+       
+       # Remember to always return the cleaned data.
+       print('WoCompletion_form:clean_tool')
+       return data
+
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user') #take current user
         super(WoCompletion_form, self).__init__(*args, **kwargs)
@@ -99,12 +139,15 @@ class WoCompletion_form(ModelForm):
 
         model = Work_order_completion
         fields = [
-            'date',
             'action',
             'manPower',
             'duration',
             'material',
             'tool',
             ]
-        widgets = { 'action': forms.Textarea(attrs={'rows':3})}
-        widgets = { 'manPower': forms.Textarea(attrs={'width':3})}
+        widgets = { 
+            'manPower': forms.Textarea(attrs={'rows':2}),
+            'action': forms.Textarea(attrs={'rows':5}),
+            'tool': forms.Textarea(attrs={'rows':5}),
+            'material': forms.Textarea(attrs={'rows':5}),
+            }
