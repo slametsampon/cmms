@@ -12,7 +12,7 @@
     {% if perms.workOrder.add_work_order %}       
       <a href="{% url 'work_order-forward' pk=woPK %}">FORWARD/CLOSE</a>
     {% elif perms.workOrder.add_work_order_completion %}
-      <p><strong> For finish : </strong> 
+      <p><strong> For finishing : </strong> 
         <a href="{% url 'work_order-complete' pk=woPK %}">FINISH</a>
       </p>       
       <p><strong> For cancelling : </strong> 

@@ -95,14 +95,12 @@ class WoCompletion_form(ModelForm):
        data = self.cleaned_data['action']
        
        # Remember to always return the cleaned data.
-       print('WoCompletion_form:clean_action')
        return data
 
     def clean_manPower(self):
        data = self.cleaned_data['manPower']
        
        # Remember to always return the cleaned data.
-       print('WoCompletion_form:clean_manPower')
        return data
 
     def clean_duration(self):
@@ -113,21 +111,18 @@ class WoCompletion_form(ModelForm):
            raise ValidationError(_('Invalid duration - can not zero/minus'))
 
        # Remember to always return the cleaned data.
-       print('WoCompletion_form:clean_duration')
        return data
 
     def clean_material(self):
        data = self.cleaned_data['material']
        
        # Remember to always return the cleaned data.
-       print('WoCompletion_form:clean_material')
        return data
 
     def clean_tool(self):
        data = self.cleaned_data['tool']
        
        # Remember to always return the cleaned data.
-       print('WoCompletion_form:clean_tool')
        return data
 
     def __init__(self, *args, **kwargs):

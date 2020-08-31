@@ -107,6 +107,7 @@ class Work_order(models.Model):
         blank=True)
     
     current_user_id = models.IntegerField(null=True)
+    finish_user_id = models.IntegerField(null=True)
 
     class Meta:
         ordering = ['originator','status','wo_number']
@@ -203,6 +204,16 @@ class Work_order_completion(models.Model):
     wO_completed = models.ForeignKey(Work_order,
         on_delete=models.SET_NULL,
         null=True)
+
+    STATUS_CHOICES = (
+        ('i', 'In progress'),
+        ('f', 'Finish'),
+    )
+
+    status = models.CharField(max_length=1,
+        choices=STATUS_CHOICES,
+        blank=True,
+        default='f')
 
     class Meta:
         ordering = ['date']

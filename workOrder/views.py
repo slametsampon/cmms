@@ -50,7 +50,7 @@ class Work_orderDetailView(LoginRequiredMixin, generic.DetailView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
 
-        # Add in a QuerySet of journal
+        # Add in a QuerySet of journal for history listing
         context['woPK'] = context['object'].id
         context['journal_list'] = Work_order_journal.objects.filter(wO_on_process=context['object'].id)
         return context
@@ -140,11 +140,8 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
         context = super(Work_orderForward,self).get_context_data(**kwargs)
         woOnProcess = Work_order.objects.get(id=self.kwargs.get("pk"))
 
-        # Add object in context wo_number
+        # Add object in context wo_number use for woHeader.html
         context['work_order'] = woOnProcess
-
-        # Add object in context date_open
-        context['date'] = datetime.date.today()
 
         return context
 
@@ -205,10 +202,10 @@ class WoCompletion(LoginRequiredMixin, CreateView):
         context = super(WoCompletion,self).get_context_data(**kwargs)
         wO_completed = Work_order.objects.get(id=self.kwargs.get("pk"))
 
-        # Add object in context wo_number
+        # Add object in context wo_number use for woHeader.html
         context['work_order'] = wO_completed
 
-        # Add object in context date_open
+        # Add object in context date_open use in form
         context['date'] = datetime.date.today()
 
         return context
@@ -230,12 +227,10 @@ class WoCompletion(LoginRequiredMixin, CreateView):
         #set work_order wo_number
         self.object.wO_completed = Work_order.objects.get(id=self.kwargs.get("pk"))
 
-        print('prior self.object.save()')
-
         self.object.save()
 
-        print('After self.object.save()')
         #update status work order and current_user_id
+
         #current_user_id = self.wm.getCurrentUser(action).id
         #status = self.wm.getWoStatus(action)
         #wO_on_process.updateStatus(status)
