@@ -61,13 +61,15 @@ class WoMisc():
                     status = 'ec' # Execute
                 elif action == 'r': #return
                     status = 'rt' #Return
-                elif action == 'c': #complete
+                elif action == 't': #complete
                     status = 'cm' #Complete
 
             #executor foreman
             if 'EXC_FRM' == g.name:
-                if action == 'f': #forward action
+                if action == 'h': #finish action
                     status = 'fn' # Finish
+                elif action == 'i': #in progress
+                    status = 'ip' #in progress
                 elif action == 'r': #return
                     status = 'cn' #Cancel
 
@@ -101,15 +103,28 @@ class WoMisc():
         userProfile = Profile.objects.get(id=self.user.id)
 
         currentUserId = self.user.id
-        if self.__isOfficeWorkingHour():
-            if action in pendingList:
-                currentUserId = self.user.id
-            elif action == 'f': #forward action
-                currentUserId = Profile.objects.get(initial=userProfile.forward_path).id
-            elif action == 'r': #return
-                currentUserId = Profile.objects.get(initial=userProfile.reverse_path).id
 
-        else: #during off hour
+        #role for general user
+        if action in pendingList:
+            currentUserId = self.user.id
+        elif action == 'f': #forward action
+            currentUserId = Profile.objects.get(initial=userProfile.forward_path).id
+        elif action == 'r': #return
+            currentUserId = Profile.objects.get(initial=userProfile.reverse_path).id
+
+        #role for foreman executor
+        for g in self.user.groups.all():
+
+            #Executor Foreman
+            if 'EXC_FRM' == g.name:
+                if action == 'h': #finish action
+                    currentUserId = Profile.objects.get(initial=userProfile.reverse_path).id
+
+                elif action == 'i': #in progress action
+                    currentUserId = self.user.id
+
+        #role during off hour, by pass mode
+        if not(self.__isOfficeWorkingHour()): 
             for g in self.user.groups.all():
                 #originator supervisor
                 if 'ORG_SPV' == g.name:

@@ -101,13 +101,13 @@ class Work_order(models.Model):
         default='n')
 
     date_open = models.DateField()
-    date_close = models.DateField(null=True)
+    date_finish = models.DateField(null=True)
 
     status = models.CharField(max_length=2,
         blank=True)
     
     current_user_id = models.IntegerField(null=True)
-    finish_user_id = models.IntegerField(null=True)
+    executor_user_id = models.IntegerField(null=True)
 
     class Meta:
         ordering = ['originator','status','wo_number']
@@ -128,7 +128,7 @@ class Work_order(models.Model):
         print(f'updateFileds=>len(kwargs):{len(kwargs)}')
         print(f'updateFileds=>kwargs.keys():{kwargs.keys()}')
         print(f'updateFileds=>kwargs.values():{kwargs.values()}')
-        #self.save(update_fields=['name'])
+        #self.save(update_fields=['name'])updateExecutorUserId
 
     def updateStatus(self,fieldVal):
         '''update status field'''
@@ -139,6 +139,16 @@ class Work_order(models.Model):
         '''update current_user_id field'''
         self.current_user_id = fieldVal
         self.save(update_fields=['current_user_id'])
+
+    def updateExecutorUserId(self,fieldVal):
+        '''update executor_user_id field'''
+        self.executor_user_id = fieldVal
+        self.save(update_fields=['executor_user_id'])
+
+    def updateDateFinish(self,fieldVal):
+        '''update executor_user_id field'''
+        self.date_finish = fieldVal
+        self.save(update_fields=['date_finish'])
 
     def __str__(self):
         """String for representing the Model object."""
@@ -207,13 +217,13 @@ class Work_order_completion(models.Model):
 
     STATUS_CHOICES = (
         ('i', 'In progress'),
-        ('f', 'Finish'),
+        ('h', 'Finish'),
     )
 
     status = models.CharField(max_length=1,
         choices=STATUS_CHOICES,
         blank=True,
-        default='f')
+        default='h')
 
     class Meta:
         ordering = ['date']

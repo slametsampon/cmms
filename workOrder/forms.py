@@ -60,7 +60,7 @@ class WoJournalForm(ModelForm):
                 ACTIONS = (
                     ('f', 'Forward'),
                     ('r', 'Return'),
-                    ('c', 'Complete'),
+                    ('t', 'Complete'),
                 )
             elif 'EXC_SPTD' == g.name:
                 ACTIONS = (
@@ -90,6 +90,12 @@ class WoJournalForm(ModelForm):
         #widgets = {'action': Select(choices=ACTIONS)}
 
 class WoCompletion_form(ModelForm):
+
+    def clean_status(self):
+       data = self.cleaned_data['status']
+       
+       # Remember to always return the cleaned data.
+       return data
 
     def clean_action(self):
        data = self.cleaned_data['action']
@@ -134,6 +140,7 @@ class WoCompletion_form(ModelForm):
 
         model = Work_order_completion
         fields = [
+            'status',
             'action',
             'manPower',
             'duration',
