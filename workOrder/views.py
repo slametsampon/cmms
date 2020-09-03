@@ -32,6 +32,20 @@ def index(request):
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
 
+def woReporting(request):
+    """View function for Work order reporting page of site."""
+
+    # Generate counts of some of the main objects
+    #num_work_orders = Work_order.objects.all().count()
+    woOnConcern = Work_order.objects.all().filter(current_user_id=request.user.id).count()
+    
+    context = {
+        'woNwoOnConcernumber': woOnConcern,
+    }
+
+    # Render the HTML template index.html with the data in the context variable
+    return render(request, 'index.html', context=context)
+
 class Work_orderListView(LoginRequiredMixin, generic.ListView):
     model = Work_order #prinsipnya dengan ini saja sdh cukup, namun kita perlu tambahan info di bawah ini
     context_object_name = 'user_work_order_list'   # your own name for the list as a template variable
