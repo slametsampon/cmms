@@ -9,7 +9,7 @@
   {% include 'woHeader.html' %}
 
   <p>
-    {% if allowChange %}
+    {% if allowAction %}
       {% if perms.workOrder.add_work_order %}       
         <a href="{% url 'work_order-forward' pk=woPK %}">FORWARD/CLOSE</a>
       {% elif perms.workOrder.add_work_order_completion %}

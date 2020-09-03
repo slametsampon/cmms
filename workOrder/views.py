@@ -44,6 +44,20 @@ class Work_orderListView(LoginRequiredMixin, generic.ListView):
         #get wo concern base on pk list
         return Work_order.objects.filter(pk__in=self.wm.woOnCurrentUser())
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        
+        SUMMARY_LIST =['EXC_MGR','EXC_SPTD','EXC_SPV']
+        allowSummary = False
+        for g in self.request.user.groups.all():
+            #set for allowSummary
+            if g.name in SUMMARY_LIST:
+                allowSummary = True
+        context['allowSummary'] = allowSummary
+
+        return context
+
 class Work_orderDetailView(LoginRequiredMixin, generic.DetailView):
     model = Work_order #prinsipnya dengan ini saja sdh cukup, namun kita perlu tambahan info di bawah ini
 
@@ -55,10 +69,10 @@ class Work_orderDetailView(LoginRequiredMixin, generic.DetailView):
         wo_current_user_id = context['object'].current_user_id
         userId = self.request.user.id
         
-        allowChange = False
+        allowAction = False
         if wo_current_user_id == userId:
-            allowChange = True
-        context['allowChange'] = allowChange
+            allowAction = True
+        context['allowAction'] = allowAction
 
         # Add in a QuerySet of journal for history listing
         context['woPK'] = context['object'].id

@@ -13,7 +13,12 @@
   {% else %}
     <p>There are no work order</p>
   {% endif %}
-  {% if perms.workOrder.add_work_order %}       
-    <a href="{% url 'work_order-create' %}">Create Work Order</a>
-  {% endif %}
+  
+  <!--Severals link-->
+      {% if perms.workOrder.add_work_order %}       
+        <a href="{% url 'work_order-create' %}">Create Work Order</a>
+      {% endif %}
+      {% if allowSummary %}       
+          <a href="{% url 'work_order-summary' %}">Summary Work Order</a>
+      {% endif %}
 {% endblock %}
