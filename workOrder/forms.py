@@ -153,3 +153,36 @@ class WoCompletion_form(ModelForm):
             'tool': forms.Textarea(attrs={'rows':5}),
             'material': forms.Textarea(attrs={'rows':5}),
             }
+
+from functools import partial
+DateInput = partial(forms.DateInput, {'class': 'datepicker'})
+class WoSummaryReportForm(forms.Form):
+    start_date = forms.DateField(widget=DateInput(format = '%d-%m-%Y'))
+    end_date = forms.DateField(widget=DateInput(format = '%d-%m-%Y'))
+
+    def clean_start_date(self):
+       data = self.cleaned_data['start_date']
+       
+       # other check logic if needed
+       #if data < datetime.date.today():
+       #    raise ValidationError(_('Invalid date - renewal in past'))
+
+       # Remember to always return the cleaned data.
+       return data
+
+    def clean_end_date(self):
+       data = self.cleaned_data['end_date']
+       
+       # other check logic if needed
+       #if data < datetime.date.today():
+       #    raise ValidationError(_('Invalid date - renewal in past'))
+
+       # Remember to always return the cleaned data. datetime.timedelta(days=30)
+       return data
+    def __init__(self, *args, **kwargs):
+
+        super(WoSummaryReportForm, self).__init__(*args, **kwargs)
+        
+        self.fields['start_date'].initial = datetime.date.today() - datetime.timedelta(days=30)
+
+        self.fields['end_date'].initial = datetime.date.today()

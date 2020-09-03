@@ -48,11 +48,22 @@ table.WoHeader {
 }
     
 table.WoHeader thead th:nth-child(1) {
-    width: 15%;
+    width: 25%;
 }
       
 /*table.WoHeader thead th:nth-child(2) - remaining width*/
       
+/* Style for Work Order Summary*/    
+table.WoSummary {
+    font-family: arial, sans-serif;
+}
+    
+table.WoSummary thead th:nth-child(1) {
+    width: 25%;
+}
+      
+/*table.WoSummary thead th:nth-child(2) - remaining width*/
+
 /* Style for Work Order Form*/    
 table.WoForm {
     font-family: arial, sans-serif;

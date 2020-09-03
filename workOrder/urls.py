@@ -18,3 +18,7 @@ urlpatterns += [
     path('user_profile_update/', views.ProfileUpdateView.as_view(), name='user_profile_update'),
 ]
 
+urlpatterns += [  
+    path('work_order/summary/', views.WoSummaryReportView.as_view(), name='work_order-summary'),
+]
+

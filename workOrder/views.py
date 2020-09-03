@@ -12,28 +12,15 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 import datetime
 
 from django import forms
+from django.views.generic.edit import FormView
 from workOrder.forms import WoJournalForm, UserForm, ProfileForm
-from workOrder.forms import WoCompletion_form
+from workOrder.forms import WoCompletion_form, WoSummaryReportForm
 from workOrder.models import Work_order, Work_order_journal, Work_order_completion
 from workOrder.generals import WoMisc as WM
 
 @login_required
 def index(request):
     """View function for home page of site."""
-
-    # Generate counts of some of the main objects
-    #num_work_orders = Work_order.objects.all().count()
-    woOnConcern = Work_order.objects.all().filter(current_user_id=request.user.id).count()
-    
-    context = {
-        'woNwoOnConcernumber': woOnConcern,
-    }
-
-    # Render the HTML template index.html with the data in the context variable
-    return render(request, 'index.html', context=context)
-
-def woReporting(request):
-    """View function for Work order reporting page of site."""
 
     # Generate counts of some of the main objects
     #num_work_orders = Work_order.objects.all().count()
@@ -63,6 +50,15 @@ class Work_orderDetailView(LoginRequiredMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
+
+        #get Work order concern id
+        wo_current_user_id = context['object'].current_user_id
+        userId = self.request.user.id
+        
+        allowChange = False
+        if wo_current_user_id == userId:
+            allowChange = True
+        context['allowChange'] = allowChange
 
         # Add in a QuerySet of journal for history listing
         context['woPK'] = context['object'].id
@@ -266,6 +262,7 @@ class WoCompletion(LoginRequiredMixin, CreateView):
         return super(WoCompletion,self).form_valid(form)    
 
 class ProfileUpdateView(LoginRequiredMixin, TemplateView):
+
     user_form = UserForm
     profile_form = ProfileForm
     template_name = 'workOrder\profile.html'
@@ -292,3 +289,54 @@ class ProfileUpdateView(LoginRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
+
+class WoSummaryReportView(FormView):
+    template_name = 'workOrder/WoSummaryReport_form.html'
+    form_class = WoSummaryReportForm
+    success_url = '/workOrder/work_order/summary/'
+
+    def get_context_data(self, **kwargs):
+        pendingList = ["ns", "nl", "nm", "ot"] #Shutdown, Need Material, MOC, Other
+        finishList = ["fn", "cm"] #finish, complete
+        scheduleList = ["ec", "ip", "sc"] #Execute, in progress, schedule
+
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+
+        # Add in a QuerySet of journal for woOpen .filter(some_datetime_field__range=[start, new_end])
+        end_date = datetime.date.today()
+        start_date = end_date - datetime.timedelta(days=30)
+        woList = Work_order.objects.all().filter(date_open__range=[start_date, end_date])
+        context['wo_list'] = woList.order_by('-pk')
+
+        woOpen = woList.count()
+        context['woOpen'] = woOpen
+
+        # Add in a number of journal for woClose
+        woClose = woList.filter(status='cl').count()
+        context['woClose'] = woClose
+
+        # Add in a number of journal for woPending
+        woPending = woList.filter(status__in=pendingList).count()
+        context['woPending'] = woPending
+
+        # Add in a number of journal for woFinishComplete
+        woFinishComplete = woList.filter(status__in=finishList).count()
+        context['woFinishComplete'] = woFinishComplete
+
+        # Add in a number of journal for woInprogress
+        woInprogress = woList.filter(status__in=scheduleList).count()
+        context['woInprogress'] = woInprogress
+
+        return context
+
+    def form_valid(self, form,**kwargs):
+
+        #get data from form 
+        start_date = form.cleaned_data.get('start_date')
+        end_date = form.cleaned_data.get('end_date')
+
+        print(f'start_date : {start_date}')
+        print(f'end_date : {end_date}')
+
+        return super(WoSummaryReportView,self).form_valid(form)    
