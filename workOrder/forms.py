@@ -157,8 +157,8 @@ class WoCompletion_form(ModelForm):
 from functools import partial
 DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 class WoSummaryReportForm(forms.Form):
-    start_date = forms.DateField(widget=DateInput(format = '%d-%m-%Y'))
-    end_date = forms.DateField(widget=DateInput(format = '%d-%m-%Y'))
+    start_date = forms.DateField(widget=DateInput())
+    end_date = forms.DateField(widget=DateInput())
 
     def clean_start_date(self):
        data = self.cleaned_data['start_date']

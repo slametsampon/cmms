@@ -19,6 +19,7 @@
                 {{ form.as_table }}
             </tbody>
         </table>
+
         <input type="submit" value="Submit">
     </form>
 
@@ -35,7 +36,7 @@
                 <th scope="row">In Coming</th>
                 {% if woOpen > 0 %}
                     <td>
-                        <a href="{% url 'work_order-summary'%}">{{ woOpen }}</a>  
+                        <a id="woOpenSelect" href="{% url 'work_order-summary'%}">{{ woOpen }}</a>  
                     </td>
                 {% else %}
                     <td>{{ woOpen }}</td>
@@ -59,7 +60,8 @@
             </tr>
         </tbody>
     </table> 
-    <h5>Incoming Work Order List</h5>
+    
+    <h5 id="woListTitle">Test label</h5>
     <ul>
         {% for work_order in wo_list %}
           <li>
@@ -75,7 +77,14 @@
             $('.datepicker').datepicker({
                 dateFormat: 'dd-mm-yy'
             });
+
+            $("#woOpenSelect").click(function(){
+                $("#woListTitle").text("Incoming Work Order List");
+                alert("Text: " + $("#woListTitle").text());
+              });
+            
         });
+
     </script>
     
 {% endblock %}
