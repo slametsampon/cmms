@@ -5,8 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <form action="" method="post">
-        {% csrf_token %}
+    <form action="" method="get">
         <table class="WoForm">
             <caption>Work Order Summary Input</caption>
             <thead>
@@ -34,13 +33,7 @@
         <tbody>
             <tr>
                 <th scope="row">In Coming</th>
-                {% if woOpen > 0 %}
-                    <td>
-                        <a id="woOpenSelect" href="{% url 'work_order-summary'%}">{{ woOpen }}</a>  
-                    </td>
-                {% else %}
-                    <td>{{ woOpen }}</td>
-                {% endif %}
+                <td>{{ woOpen }}</td>
             </tr>
             <tr>
                 <th scope="row">Schedule - In progress</th>
@@ -75,7 +68,7 @@
         /* for date picker */
         $(document).ready(function() {
             $('.datepicker').datepicker({
-                dateFormat: 'dd-mm-yy'
+                dateFormat: 'yy-mm-dd'
             });
 
             $("#woOpenSelect").click(function(){

@@ -157,8 +157,16 @@ class WoCompletion_form(ModelForm):
 from functools import partial
 DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 class WoSummaryReportForm(forms.Form):
+    WO_STATUS = (
+        ('i', 'In coming'),
+        ('p', 'Pending'),
+        ('s', 'Schedule'),
+        ('t', 'Complete'),
+        ('c', 'Close'),
+    )
     start_date = forms.DateField(widget=DateInput())
     end_date = forms.DateField(widget=DateInput())
+    wo_status = forms.CharField(widget=Select(choices=WO_STATUS))
 
     def clean_start_date(self):
        data = self.cleaned_data['start_date']
@@ -179,10 +187,14 @@ class WoSummaryReportForm(forms.Form):
 
        # Remember to always return the cleaned data. datetime.timedelta(days=30)
        return data
-    def __init__(self, *args, **kwargs):
 
-        super(WoSummaryReportForm, self).__init__(*args, **kwargs)
-        
-        self.fields['start_date'].initial = datetime.date.today() - datetime.timedelta(days=30)
+    def clean_wo_status(self):
+       data = self.cleaned_data['wo_status']
+       
+       # other check logic if needed
+       #if data < datetime.date.today():
+       #    raise ValidationError(_('Invalid date - renewal in past'))
 
-        self.fields['end_date'].initial = datetime.date.today()
+       # Remember to always return the cleaned data. datetime.timedelta(days=30)
+       return data
+

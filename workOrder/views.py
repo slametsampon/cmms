@@ -309,18 +309,56 @@ class WoSummaryReportView(FormView):
     form_class = WoSummaryReportForm
     success_url = '/workOrder/work_order/summary/'
 
+    def get_initial(self):
+        print('get_initial')        
+        initial = super(WoSummaryReportView, self).get_initial()
+        end_date = datetime.date.today()
+        start_date = end_date - datetime.timedelta(days=30)
+        wo_status ='i'
+
+        print(f'self.request.GET => {self.request.GET}')
+        for arg in self.request.GET:
+            print(f'arg => {arg}')
+            print(f'self.request.GET.get({arg}) => {self.request.GET.get(arg)}')
+
+        print(f'self.request.GET.get("start_date") => {self.request.GET.get("start_date")}')
+
+        initial['start_date'] = self.request.GET.get("start_date")
+        initial['end_date'] = self.request.GET.get("end_date")
+        initial['wo_status'] = self.request.GET.get("wo_status")
+
+        return initial
+        # now the form will be shown with the link_pk bound to a value
+
     def get_context_data(self, **kwargs):
         pendingList = ["ns", "nl", "nm", "ot"] #Shutdown, Need Material, MOC, Other
         finishList = ["fn", "cm"] #finish, complete
         scheduleList = ["ec", "ip", "sc"] #Execute, in progress, schedule
 
-        # Call the base implementation first to get a context
+        # Call the base implementation first to get a context self.kwargs.get("pk")
         context = super().get_context_data(**kwargs)
+        print('get_context_data:')        
+        print(f'self.kwargs.get("start_date") => {self.kwargs.get("start_date")}')
 
+        frm = context["form"]
         # Add in a QuerySet of journal for woOpen .filter(some_datetime_field__range=[start, new_end])
-        end_date = datetime.date.today()
-        start_date = end_date - datetime.timedelta(days=30)
+        end_date = frm['end_date'].value()
+        start_date = frm['start_date'].value()
+        wo_status = frm['wo_status'].value()
+
+        print(f'start_date => {start_date}')
+        print(f'end_date => {end_date}')
+        print(f'wo_status => {wo_status}')
+
         woList = Work_order.objects.all().filter(date_open__range=[start_date, end_date])
+        if wo_status == 's':#schedule
+            woList = woList.filter(status__in=scheduleList)
+        elif wo_status == 't':#finishList
+            woList = woList.filter(status__in=finishList)
+        elif wo_status == 'p':#pendingList
+            woList = woList.filter(status__in=pendingList)
+        else:
+            woList = woList
         context['wo_list'] = woList.order_by('-pk')
 
         woOpen = woList.count()
@@ -349,8 +387,11 @@ class WoSummaryReportView(FormView):
         #get data from form 
         start_date = form.cleaned_data.get('start_date')
         end_date = form.cleaned_data.get('end_date')
+        wo_status = form.cleaned_data.get('wo_status')
 
-        print(f'start_date : {start_date}')
-        print(f'end_date : {end_date}')
+        print('form_valid')
+        print(f'start_date => {start_date}')
+        print(f'end_date => {end_date}')
+        print(f'wo_status => {wo_status}')
 
         return super(WoSummaryReportView,self).form_valid(form)    
