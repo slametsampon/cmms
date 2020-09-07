@@ -54,7 +54,7 @@
         </tbody>
     </table> 
     
-    <h5 id="woListTitle">Test label</h5>
+    <h5 id="woListTitle">{{caption}}</h5>
     <ul>
         {% for work_order in wo_list %}
           <li>
@@ -71,11 +71,6 @@
                 dateFormat: 'yy-mm-dd'
             });
 
-            $("#woOpenSelect").click(function(){
-                $("#woListTitle").text("Incoming Work Order List");
-                alert("Text: " + $("#woListTitle").text());
-              });
-            
         });
 
     </script>

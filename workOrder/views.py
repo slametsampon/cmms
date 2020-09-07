@@ -316,16 +316,10 @@ class WoSummaryReportView(FormView):
         start_date = end_date - datetime.timedelta(days=30)
         wo_status ='i'
 
-        print(f'self.request.GET => {self.request.GET}')
-        for arg in self.request.GET:
-            print(f'arg => {arg}')
-            print(f'self.request.GET.get({arg}) => {self.request.GET.get(arg)}')
-
-        print(f'self.request.GET.get("start_date") => {self.request.GET.get("start_date")}')
-
-        initial['start_date'] = self.request.GET.get("start_date")
-        initial['end_date'] = self.request.GET.get("end_date")
-        initial['wo_status'] = self.request.GET.get("wo_status")
+        #get parameter from request.GET parameters, and put default value if none
+        initial['start_date'] = self.request.GET.get("start_date",start_date)
+        initial['end_date'] = self.request.GET.get("end_date",end_date)
+        initial['wo_status'] = self.request.GET.get("wo_status",wo_status)
 
         return initial
         # now the form will be shown with the link_pk bound to a value
@@ -334,6 +328,7 @@ class WoSummaryReportView(FormView):
         pendingList = ["ns", "nl", "nm", "ot"] #Shutdown, Need Material, MOC, Other
         finishList = ["fn", "cm"] #finish, complete
         scheduleList = ["ec", "ip", "sc"] #Execute, in progress, schedule
+        closeList = ["cl"] #close
 
         # Call the base implementation first to get a context self.kwargs.get("pk")
         context = super().get_context_data(**kwargs)
@@ -353,19 +348,27 @@ class WoSummaryReportView(FormView):
         woList = Work_order.objects.all().filter(date_open__range=[start_date, end_date])
         if wo_status == 's':#schedule
             woList = woList.filter(status__in=scheduleList)
+            caption = 'Schedule - Work Order List'
         elif wo_status == 't':#finishList
             woList = woList.filter(status__in=finishList)
+            caption = 'Finish - Work Order List'
         elif wo_status == 'p':#pendingList
             woList = woList.filter(status__in=pendingList)
+            caption = 'Pending - Work Order List'
+        elif wo_status == 'c':#close
+            woList = woList.filter(status__in=closeList)
+            caption = 'Close - Work Order List'
         else:
             woList = woList
+            caption = 'Incoming - Work Order List'
         context['wo_list'] = woList.order_by('-pk')
 
         woOpen = woList.count()
+        context['caption'] = caption
         context['woOpen'] = woOpen
 
         # Add in a number of journal for woClose
-        woClose = woList.filter(status='cl').count()
+        woClose = woList.filter(status__in=closeList).count()
         context['woClose'] = woClose
 
         # Add in a number of journal for woPending
