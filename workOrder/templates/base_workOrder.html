@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% block title %}<!-- insert title for every page -->{% endblock %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+        <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+        <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+        
+        <!-- Add additional CSS in static file -->
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        <script type="text/javascript" src="{% static 'js/woMisc.js' %}"></script>
+        <style>
+            .topnav {
+                overflow: hidden;
+                background-color: rgb(16, 3, 133);
+              }
+              
+              .topnav ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                background-color: rgb(16, 3, 133);
+              }
+              
+              .topnav ul li {
+                float: left;
+                color: #f2f2f2;
+                text-align: center;
+                padding: 5px;
+                text-decoration: none;
+                font-size: 17px;
+              }
+                            
+              .topnav ul li a {
+                float: left;
+                color: #f2f2f2;
+                text-align: center;
+                padding: 5px;
+                text-decoration: none;
+                font-size: 17px;
+              }
+              
+              .topnav ul li a:hover {
+                background-color: #ddd;
+                color: black;
+              }
+              
+              .topnav ul li a.active {
+                background-color: #4CAF50;
+                color: white;
+              }
+              .footer {
+                position: fixed;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                background-color: rgb(5, 85, 3);
+                color: white;
+                text-align: right;
+             }
+            
+        </style>
+    </head>
+    <body>
+        <div class="topnav">
+            <ul>
+                <li><a href="{% url 'home-cmms' %}">Home</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'work_orders'%}">Work Order List</a></li>   
+                    <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>   
+                {% else %}
+                    <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>   
+                {% endif %} 
+
+            </ul>
+        </div>
+        <div>{% block content %}{% endblock %}</div>
+
+        <div class="footer">
+            {% if user.is_authenticated %}
+                User : {{ user.get_username }}
+            {% endif %} 
+        </div>          
+    </body>
+</html>

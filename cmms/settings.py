@@ -38,6 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'workOrder',
+    'help',
+    'utility',
+    'pm_ppdm',
+    'equipment',
+    'reporting',
 ]
 
 MIDDLEWARE = [

@@ -1,3 +1,53 @@
+.topnav {
+    overflow: hidden;
+    background-color: rgb(16, 3, 133);
+  }
+  
+  .topnav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: rgb(16, 3, 133);
+  }
+  
+  .topnav ul li {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 5px;
+    text-decoration: none;
+    font-size: 17px;
+  }
+                
+  .topnav ul li a {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 5px;
+    text-decoration: none;
+    font-size: 17px;
+  }
+  
+  .topnav ul li a:hover {
+    background-color: #ddd;
+    color: black;
+  }
+  
+  .topnav ul li a.active {
+    background-color: #4CAF50;
+    color: white;
+  }
+  .footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgb(5, 85, 3);
+    color: white;
+    text-align: right;
+ }
+
 .sidebar-nav {
     margin-top: 20px;
     padding: 0;
@@ -118,22 +168,3 @@ table.WoCompletion tbody td {
 }
 /*Date col comment - remaining width*/
 
-/*Grid*/
-
-/*Work order completion Date, ManPower, Duration*/
-.container1 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-}
-
-/*Work order completion Actio*/
-.container2 {
-    display: grid;
-    grid-template-columns: 1fr;
-}
-
-/*Work order completion Material, Tool*/
-.container3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-}

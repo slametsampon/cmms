@@ -27,6 +27,7 @@ from django.urls import include
 
 urlpatterns += [
     path('workOrder/', include('workOrder.urls')),
+    path('help/', include('help.urls')),
 ]
 
 #Add URL maps to redirect the base URL to our application
