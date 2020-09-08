@@ -1,4 +1,4 @@
-{% extends "base_generic.html" %}
+{% extends "base_workOrder.html" %}
 
 {% block title %}
     <title>Wo Detail</title>
@@ -11,16 +11,16 @@
   <p>
     {% if allowAction %}
       {% if perms.workOrder.add_work_order %}       
-        <a href="{% url 'work_order-forward' pk=woPK %}">FORWARD/CLOSE</a>
+        <a href="{% url 'workOrder:work_order-forward' pk=woPK %}">FORWARD/CLOSE</a>
       {% elif perms.workOrder.add_work_order_completion %}
         <p><strong> For finishing : </strong> 
-          <a href="{% url 'work_order-complete' pk=woPK %}">FINISH</a>
+          <a href="{% url 'workOrder:work_order-complete' pk=woPK %}">FINISH</a>
         </p>       
         <p><strong> For cancelling : </strong> 
-          <a href="{% url 'work_order-forward' pk=woPK %}">CANCEL</a> 
+          <a href="{% url 'workOrder:work_order-forward' pk=woPK %}">CANCEL</a> 
         </p>
       {% else %}
-        <a href="{% url 'work_order-forward' pk=woPK %}">FORWARD/RETURN</a>
+        <a href="{% url 'workOrder:work_order-forward' pk=woPK %}">FORWARD/RETURN</a>
       {% endif %}
     {% endif %}
   </p>

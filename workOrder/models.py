@@ -115,7 +115,7 @@ class Work_order(models.Model):
     def get_absolute_url(self):
         """Returns the url to access a list of work_orders."""
         #"""Returns the url to access a detail record for this work order."""
-        return reverse('work_order-detail', args=[str(self.id)])
+        return reverse('workOrder:work_order-detail', args=[str(self.id)])
         #return reverse('work_orders')
 
     def save(self, *args, **kwargs):

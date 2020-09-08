@@ -63,6 +63,10 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
             os.path.join(BASE_DIR, 'templates/cmms'),
+            os.path.join(BASE_DIR, 'help/templates/help'),
+            os.path.join(BASE_DIR, 'pm_ppdm/templates/pm_ppdm'),
+            os.path.join(BASE_DIR, 'reporting/templates/reporting'),
+            os.path.join(BASE_DIR, 'equipment/templates/equipment'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {

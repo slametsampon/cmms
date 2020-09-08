@@ -27,7 +27,17 @@ from django.urls import include
 
 urlpatterns += [
     path('workOrder/', include('workOrder.urls')),
+    path('equipment/', include('equipment.urls')),
     path('help/', include('help.urls')),
+    path('pm_ppdm/', include('pm_ppdm.urls')),
+    path('reporting/', include('reporting.urls')),
+    path('utility/', include('utility.urls')),
+]
+
+#Add Django site authentication urls (for login, logout, password management)
+
+urlpatterns += [
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
 
 #Add URL maps to redirect the base URL to our application
@@ -41,10 +51,4 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-#Add Django site authentication urls (for login, logout, password management)
-
-urlpatterns += [
-    path('accounts/', include('django.contrib.auth.urls')),
-]
 

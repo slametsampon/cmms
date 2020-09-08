@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 @login_required
-def indexHelp(request):
+def index(request):
     """View function for home page of site."""
 
     # Render the HTML template index.html with the data in the context variable
-    return render(request, 'help\indexHelp.html')
+    return render(request, 'index.html')
