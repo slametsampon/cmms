@@ -69,13 +69,13 @@
                 <li><a href="{% url 'home-cmms' %}">Home</a></li>
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'workOrder:work_orders'%}">Work Order</a></li>   
-                    <li><a href="{% url 'pm_ppdm:index'%}">PM PPdM</a></li>   
+                    <li><a href="{% url 'pm_pdm:index'%}">PM PPdM</a></li>   
                     <li><a href="{% url 'equipment:index'%}">Equipment</a></li>   
                     <li><a href="{% url 'utility:index'%}">Utility</a></li>   
                     <li><a href="{% url 'reporting:index'%}">Reporting</a></li>   
-                    <li><a href="{% url 'help:index'%}">Help</a></li>   
                     <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>   
                 {% else %}
+                    <li><a href="{% url 'help:index'%}">Help</a></li>   
                     <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>   
                 {% endif %} 
 
