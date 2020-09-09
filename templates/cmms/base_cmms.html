@@ -10,58 +10,6 @@
         {% load static %}
         <link rel="stylesheet" href="{% static 'css/styles.css' %}">
         <script type="text/javascript" src="{% static 'js/woMisc.js' %}"></script>
-        <style>
-            .topnav {
-                overflow: hidden;
-                background-color: rgb(16, 3, 133);
-              }
-              
-              .topnav ul {
-                list-style-type: none;
-                margin: 0;
-                padding: 0;
-                overflow: hidden;
-                background-color: rgb(16, 3, 133);
-              }
-              
-              .topnav ul li {
-                float: left;
-                color: #f2f2f2;
-                text-align: center;
-                padding: 5px;
-                text-decoration: none;
-                font-size: 17px;
-              }
-                            
-              .topnav ul li a {
-                float: left;
-                color: #f2f2f2;
-                text-align: center;
-                padding: 5px;
-                text-decoration: none;
-                font-size: 17px;
-              }
-              
-              .topnav ul li a:hover {
-                background-color: #ddd;
-                color: black;
-              }
-              
-              .topnav ul li a.active {
-                background-color: #4CAF50;
-                color: white;
-              }
-              .footer {
-                position: fixed;
-                left: 0;
-                bottom: 0;
-                width: 100%;
-                background-color: rgb(5, 85, 3);
-                color: white;
-                text-align: right;
-             }
-            
-        </style>
     </head>
     <body>
         <div class="topnav">
@@ -73,9 +21,10 @@
                     <li><a href="{% url 'equipment:index'%}">Equipment</a></li>   
                     <li><a href="{% url 'utility:index'%}">Utility</a></li>   
                     <li><a href="{% url 'reporting:index'%}">Reporting</a></li>   
+                    <li><a href="{% url 'help:cmms'%}">Help</a></li>   
                     <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>   
                 {% else %}
-                    <li><a href="{% url 'help:index'%}">Help</a></li>   
+                    <li><a href="{% url 'help:cmms'%}">Help</a></li>   
                     <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>   
                 {% endif %} 
 

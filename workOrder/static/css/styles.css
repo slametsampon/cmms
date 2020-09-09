@@ -46,7 +46,7 @@
     left: 0;
     bottom: 0;
     width: 100%;
-    background-color: rgb(5, 85, 3);
+    background-color: rgb(16, 3, 133);
     color: white;
     text-align: right;
  }
@@ -56,6 +56,43 @@
     padding: 0;
     list-style: none;
 }
+
+/* style for user guide - help*/
+
+* {
+    box-sizing: border-box;
+}
+
+/* Create three unequal columns that floats next to each other */
+.column {
+    float: left;
+    padding: 10px;
+}
+
+/* Left and right column */
+.column.side {
+    width: 15%;
+}
+
+/* Middle column */
+.column.middle {
+    width: 70%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+    .column.side, .column.middle {
+        width: 100%;
+    }
+}
+
 
 /*Style for general tables*/
 table {
