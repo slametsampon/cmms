@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY','2c^-%cx@0w!*z0%()t4r$9js1-jzl5(
 
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = ['https://cmms-pon.herokuapp.com','127.0.0.1']
+ALLOWED_HOSTS = ['cmms-pon.herokuapp.com','127.0.0.1']
 
 
 # Application definition
