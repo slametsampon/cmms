@@ -6,10 +6,16 @@
     <title>cmms User Profile</title>
 {% endblock %}
 {% block content %}
-  <h1>User Update Profile</h1>
   <form method="post">
     {% csrf_token %}
-    <table>
+    <table class="WoForm">
+      <caption>User Profile Setup</caption>
+      <thead>
+        <tr>
+          <th scope="col">Item</th>
+          <th scope="col">Data</th>
+        </tr>
+      </thead>
         {{ user_form.as_table }}
         {{ profile_form.as_table }}
     </table>  

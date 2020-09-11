@@ -4,6 +4,13 @@
     <title>CMMS - Utility</title>
 {% endblock %}
 {% block content %}
+
+<style>
+    ul {
+        padding: 0px 0px 0px 50px;
+    }
+</style>
+
 <div class="row">
     <div class="column side">
         <h2>Utility</h2>
@@ -14,23 +21,46 @@
         <!--Utility Start-->
         <h2>Utility</h2>
         <p>
-            Under construction
+            Agar system CMMMS ini bisa berjalan dengan baik, diperlukan beberapa konfigurasi meliputi flow chart
+            Work Order serta keterkaitan pada masing-masing stack holder. Termasuk didalamnya perlu dilakukan
+            pengaturan kewenangan masing-masing pengguna (user) dalam kaitanya jalur approval, serta setup
+            lain yang diperlukan. Disamping itu penentuan status Work Order serta tindakan terhadapnya juga
+            perlu didefinisikan. Dalam module ini berfungsi sebagai berikut :
         </p>
         <ul>
             <li>
-                List item
+                Setup organisasi (Departement, Section)
+                <ul>
+                    <li>
+                        Nama
+                    </li>
+                    <li>
+                        Description
+                    </li>
+                    <li>
+                        Initial
+                    </li>
+                    <li>
+                        Role (Originator, Executor)
+                    </li>
+                </ul>
             </li>
             <li>
-                List item
-            </li>
-            <li>
-                List item
-            </li>
-            <li>
-                List item
-            </li>
-            <li>
-                List item
+                Setup user (flow chart approval)
+                <ul>
+                    <li>
+                        Username
+                    </li>
+                    <li>
+                        Initial
+                    </li>
+                    <li>
+                        Forward/Reverse to
+                    </li>
+                    <li>
+                        Setup organisasi
+                    </li>
+                </ul>
             </li>
         </ul>
         <!--Utility End-->
@@ -39,20 +69,17 @@
     <div class="column side">
         <h2>Utility Modules</h2>
         <p>
-            Under construction
+            Penanganan setup organisasi, user serta keterkaitanya dengan system CMMS
         </p>
         <ul>
             <li>
-                List side item
+                Registrasi organisasi
             </li>
             <li>
-                List side item
+                Registrasi user serta setupnya
             </li>
             <li>
-                List side item
-            </li>
-            <li>
-                List side item
+                Flowchart approval
             </li>
         </ul>
     </div>

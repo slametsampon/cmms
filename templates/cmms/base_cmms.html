@@ -17,7 +17,7 @@
                 <li><a href="{% url 'home-cmms' %}">Home</a></li>
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'workOrder:work_orders'%}">Work Order</a></li>   
-                    <li><a href="{% url 'pm_pdm:index'%}">PM PPdM</a></li>   
+                    <li><a href="{% url 'pm_pdm:index'%}">PM PdM</a></li>   
                     <li><a href="{% url 'equipment:index'%}">Equipment</a></li>   
                     <li><a href="{% url 'utility:index'%}">Utility</a></li>   
                     <li><a href="{% url 'reporting:index'%}">Reporting</a></li>   

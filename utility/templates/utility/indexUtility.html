@@ -4,6 +4,77 @@
     <title>cmms utility</title>
 {% endblock %}
 {% block content %}
-  <h3>cmms utility System</h3>
-  <p>Under Construction</p>
+<style>
+  ul {
+      padding: 0px 0px 0px 50px;
+  }
+</style>
+
+<div class="row">
+  <div class="column side">
+      <h2>Utility</h2>
+      <p>Module yang menangani Utility</p>
+  </div>
+  
+  <div class="column middle">
+      <!--Utility Start-->
+      <h2>Utility</h2>
+      <p>
+          Agar system CMMMS ini bisa berjalan dengan baik, diperlukan beberapa konfigurasi meliputi flow chart
+          Work Order serta keterkaitan pada masing-masing stack holder. Termasuk didalamnya perlu dilakukan
+          pengaturan kewenangan masing-masing pengguna (user) dalam kaitanya jalur approval, serta setup
+          lain yang diperlukan. Disamping itu penentuan status Work Order serta tindakan terhadapnya juga
+          perlu didefinisikan. Dalam module ini berfungsi sebagai berikut :
+      </p>
+      <ul>
+          <li>
+              Setup organisasi (Departement, Section)
+              <ul>
+                  <li>
+                      Nama
+                  </li>
+                  <li>
+                      Description
+                  </li>
+                  <li>
+                      Initial
+                  </li>
+                  <li>
+                      Role (Originator, Executor)
+                  </li>
+              </ul>
+          </li>
+          <li>
+              Setup user (flow chart approval)
+              <ul>
+                  <li>
+                      Username
+                  </li>
+                  <li>
+                      Initial
+                  </li>
+                  <li>
+                      Forward/Reverse to
+                  </li>
+                  <li>
+                      Setup organisasi
+                  </li>
+              </ul>
+          </li>
+      </ul>
+      <!--Utility End-->
+  </div>
+
+  <div class="column side">
+      <h2>Utility Modules</h2>
+      <p>
+          Penanganan setup organisasi, user serta keterkaitanya dengan system CMMS
+      </p>
+      <ul>
+          <li><a href="{% url 'utility:department-create'%}">Registrasi Department</a></li>   
+          <li><a href="{% url 'utility:section-create'%}">Registrasi Section</a></li>   
+          <li><a href="{% url 'utility:user_profile_update'%}">Registrasi user serta setupnya</a></li>   
+      </ul>
+  </div>
+</div>    
 {% endblock %}

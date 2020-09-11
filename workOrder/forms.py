@@ -6,16 +6,6 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 import datetime
 
-class UserForm(ModelForm):
-    class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'email','password')
-
-class ProfileForm(ModelForm):
-    class Meta:
-        model = Profile
-        fields = '__all__'
-
 class WoJournalForm(ModelForm):
 
     def clean_comment(self):

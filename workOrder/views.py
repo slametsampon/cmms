@@ -13,7 +13,7 @@ import datetime
 
 from django import forms
 from django.views.generic.edit import FormView
-from workOrder.forms import WoJournalForm, UserForm, ProfileForm
+from workOrder.forms import WoJournalForm
 from workOrder.forms import WoCompletion_form, WoSummaryReportForm
 from workOrder.models import Work_order, Work_order_journal, Work_order_completion
 from workOrder.generals import WoMisc as WM
@@ -274,35 +274,6 @@ class WoCompletion(LoginRequiredMixin, CreateView):
         wO_completed.updateStatus(status)
 
         return super(WoCompletion,self).form_valid(form)    
-
-class ProfileUpdateView(LoginRequiredMixin, TemplateView):
-
-    user_form = UserForm
-    profile_form = ProfileForm
-    template_name = 'workOrder\profile.html'
-
-    def post(self, request):
-
-        post_data = request.POST or None
-
-        user_form = UserForm(post_data, instance=request.user)
-        profile_form = ProfileForm(post_data, instance=request.user.profile)
-
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            messages.success(request, 'Your profile was successfully updated!')
-            return HttpResponseRedirect(reverse_lazy('user_profile_update'))
-
-        context = self.get_context_data(
-                                        user_form=user_form,
-                                        profile_form=profile_form
-                                    )
-
-        return self.render_to_response(context)     
-
-    def get(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)
 
 class WoSummaryReportView(FormView):
     template_name = 'workOrder/WoSummaryReport_form.html'

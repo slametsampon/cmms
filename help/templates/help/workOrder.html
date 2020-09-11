@@ -4,6 +4,13 @@
     <title>CMMS - Work Order</title>
 {% endblock %}
 {% block content %}
+
+<style>
+    ul {
+        padding: 0px 0px 0px 50px;
+    }
+</style>
+
 <div class="row">
     <div class="column side">
         <h2>Work Order</h2>
@@ -16,17 +23,17 @@
         <p>
             Tindakan perbaikan/korektif terhadap aset yang menunjang bisnis dapat
             dilakukan dengan melakukan permintaan pekerjaan terkait dengan kondisi 
-            aset. Tindakan perbaikan ini guna menjaga unjuk kerja dari aset tetap terjaga
+            aset. Tindakan perbaikan ini guna menjaga unjuk kerja dari aset agar tetap terjaga
             ssesuai name plate-nya. Tindakan perbaikan ini dapat bersumber dari pengguna aset
             (produksi), ataupun internal dari hasil inspeksi. Selain itu, permintaan pekerjaan 
-            juga dapat secara otomatis diterbitkan oleh program terkait dengan jadual pemeliharaan
-            terencana (Preventive dan Predictive Maintenane) termasuk didalamnya adalah jadual kalibrasi.
+            juga dapat secara otomatis diterbitkan oleh program terkait dengan jadwal pemeliharaan
+            terencana (Preventive dan Predictive Maintenane) termasuk didalamnya adalah jadwal kalibrasi.
             Penanganan permintaan pekerjaan ini meliputi jam kerja normal dan waktu libur.
             Dalam module ini ada bebera fungsi sbb:
         </p>
         <ul>
             <li>
-                Membuat/mebuka permintaan pekerjaan
+                Membuat/membuka permintaan pekerjaan
             </li>
             <li>
                 Mekanisme approval
@@ -46,7 +53,8 @@
         <h4>Work Order Flow Chart</h4>
         <br>
         {% load static %}
-        <img src="{% static 'images/WoFlowChart.png' %}" alt="WoFlowChart" >    </div>
+        <img src="{% static 'images/WoFlowChart.png' %}" alt="WoFlowChart" >    
+    </div>
 
     <div class="column side">
         <h2>Work Order Modules</h2>
