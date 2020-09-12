@@ -10,7 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
-from pathlib import Path
+import django_heroku
+#from pathlib import Path
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -23,13 +24,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #SECRET_KEY = '2c^-%cx@0w!*z0%()t4r$9js1-jzl5(bbsrv%s_hcstsi#omr4'
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY','2c^-%cx@0w!*z0%()t4r$9js1-jzl5(bbsrv%s_hcstsi#omr4')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = False
 
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = ['cmms-pon.herokuapp.com','127.0.0.1']
+# SECURITY WARNING: don't run with debug turned on in production!
+#DEBUG = False
 
+ALLOWED_HOSTS = ['cmms-pon.herokuapp.com','127.0.0.1']
 
 # Application definition
 
@@ -171,3 +172,4 @@ DATABASES['default'].update(db_from_env)
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+django_heroku.settings(locals())
