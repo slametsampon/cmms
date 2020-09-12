@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import models
+from workOrder.models import Status
 
 class ProfileUtility(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -12,6 +13,11 @@ class ProfileUtility(models.Model):
     initial = models.CharField(max_length=3, null=True)
     forward_path = models.CharField(max_length=3, null=True)
     reverse_path = models.CharField(max_length=3, null=True)
+
+    # ManyToManyField used because Status can contain many ProfileUtilities. ProfileUtilities can cover many Statuses.
+    # Status class has already been defined so we can specify the object above.
+    action = models.ManyToManyField(Status, help_text='Select actions')
+
     # Foreign Key used because user can only have one section, but section can have multiple users
     # Section as a string rather than object because it hasn't been declared yet in the file
     section = models.ForeignKey('Section', on_delete=models.SET_NULL, null=True)

@@ -62,19 +62,20 @@
               </ul>
           </li>
       </ul>
-      <!--Utility End-->
+      <!--Utility End--> admin:polls_choice_change
   </div>
 
   <div class="column side">
-      <h2>Utility Modules</h2>
-      <p>
-          Penanganan setup organisasi, user serta keterkaitanya dengan system CMMS
-      </p>
-      <ul>
-          <li><a href="{% url 'utility:department-create'%}">Registrasi Department</a></li>   
-          <li><a href="{% url 'utility:section-create'%}">Registrasi Section</a></li>   
-          <li><a href="{% url 'utility:user_profile_update'%}">Registrasi user serta setupnya</a></li>   
-      </ul>
+        <h2>Utility Modules</h2>
+        <p>
+            Penanganan setup organisasi, user serta keterkaitanya dengan system CMMS
+        </p>
+        <ul>
+            <li><a href="{% url 'admin:index'%}">Admin Idex</a></li>   
+            <li><a href="{% url 'admin:utility_department_add'%}">Registrasi Department</a></li>   
+            <li><a href="{% url 'admin:workOrder_status_add'%}">Registrasi Work Order Status</a></li>   
+            <li><a href="{% url 'admin:utility_department_add'%}">Registrasi Department</a></li>   
+        </ul>
   </div>
 </div>    
 {% endblock %}

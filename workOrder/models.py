@@ -70,6 +70,18 @@ class Department(models.Model):
 
 #models for Work order 
 from django.urls import reverse
+
+class Status(models.Model):
+    """Model representing a Status of organization"""
+    name = models.CharField(max_length=20, null=True, help_text='Enter name of Status(eg. Open, Close, Reject...)')
+    description = models.CharField(max_length=100, null=True, help_text='Enter description of Status')
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return self.name
+
 class Work_order(models.Model):
     """Model representing a work order"""
     wo_number = models.CharField(max_length=20, null=True)
@@ -102,6 +114,12 @@ class Work_order(models.Model):
 
     date_open = models.DateField()
     date_finish = models.DateField(null=True)
+
+    # Foreign Key used because work order can only have one Status, but Status can have multiple work order
+    # Status class has already been defined so we can specify the object above.
+    status_wo = models.ForeignKey(Status,
+        on_delete=models.SET_NULL,
+        null=True)
 
     status = models.CharField(max_length=2,
         blank=True)
