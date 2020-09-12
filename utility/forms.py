@@ -19,13 +19,20 @@ class UserForm(ModelForm):
 
 class ProfileForm(ModelForm):
     class Meta:
+        userDict = {}
+        for usr in User.objects.all():
+            userDict[usr.pk] = usr.username
+
+        # Converting into list of tuple 
+        userlist = list(userDict.items()) 
+        
         model = ProfileUtility
         fields = '__all__'
         widgets = { 
             'nik': forms.TextInput(attrs={'size':10}),
             'initial': forms.TextInput(attrs={'size':3}),
-            'forward_path': forms.TextInput(attrs={'size':3}),
-            'reverse_path': forms.TextInput(attrs={'size':3}),
+            'forward_path': forms.Select(choices=userlist),
+            'reverse_path': forms.Select(choices=userlist),
             }
 
 class DepartmentForm(ModelForm):

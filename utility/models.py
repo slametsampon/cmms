@@ -11,8 +11,8 @@ class ProfileUtility(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nik = models.IntegerField(null=True)
     initial = models.CharField(max_length=3, null=True)
-    forward_path = models.CharField(max_length=3, null=True)
-    reverse_path = models.CharField(max_length=3, null=True)
+    forward_path = models.IntegerField(null=True)
+    reverse_path = models.IntegerField(null=True)
 
     # ManyToManyField used because Status can contain many ProfileUtilities. ProfileUtilities can cover many Statuses.
     # Status class has already been defined so we can specify the object above.
