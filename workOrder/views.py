@@ -14,7 +14,7 @@ import datetime
 from django import forms
 from django.views.generic.edit import FormView
 from workOrder.forms import WoJournalForm
-from workOrder.forms import WoCompletion_form, WoSummaryReportForm
+from workOrder.forms import WoCompletion_form, WoSummaryReportForm, StatusImportFileForm
 from workOrder.models import Work_order, Work_order_journal, Work_order_completion
 from workOrder.generals import WoMisc as WM
 
@@ -281,7 +281,6 @@ class WoSummaryReportView(FormView):
     success_url = '/workOrder/work_order/summary/'
 
     def get_initial(self):
-        print('get_initial')        
         initial = super(WoSummaryReportView, self).get_initial()
         end_date = datetime.date.today()
         start_date = end_date - datetime.timedelta(days=30)
@@ -303,18 +302,12 @@ class WoSummaryReportView(FormView):
 
         # Call the base implementation first to get a context self.kwargs.get("pk")
         context = super().get_context_data(**kwargs)
-        print('get_context_data:')        
-        print(f'self.kwargs.get("start_date") => {self.kwargs.get("start_date")}')
 
         frm = context["form"]
         # Add in a QuerySet of journal for woOpen .filter(some_datetime_field__range=[start, new_end])
         end_date = frm['end_date'].value()
         start_date = frm['start_date'].value()
         wo_status = frm['wo_status'].value()
-
-        print(f'start_date => {start_date}')
-        print(f'end_date => {end_date}')
-        print(f'wo_status => {wo_status}')
 
         woList = Work_order.objects.all().filter(date_open__range=[start_date, end_date])
         if wo_status == 's':#schedule
@@ -369,3 +362,50 @@ class WoSummaryReportView(FormView):
         print(f'wo_status => {wo_status}')
 
         return super(WoSummaryReportView,self).form_valid(form)    
+
+import pandas as pd
+class StatusImportFileFormView(FormView):
+    template_name = 'workOrder/StatusImportFileForm.html'
+    form_class = StatusImportFileForm
+    success_url = '/workOrder/status/import/'
+    plus_context = {}
+
+    def get_initial(self):
+        initial = super(StatusImportFileFormView, self).get_initial()
+        file_name = 'cmmsConfig.xls'
+
+        #get parameter from request.POST parameters, and put default value if none 'key': 
+        initial['file_name'] = self.plus_context.get('file_name', file_name)
+        #print(f"initial['file_name'] : {initial['file_name']}")
+
+        return initial
+        # now the form will be shown with the link_pk bound to a value
+
+    def get_context_data(self, **kwargs):
+
+        # Call the base implementation first to get a context self.kwargs.get("pk")
+        context = super().get_context_data(**kwargs)
+
+        #restore previous value
+        context['file_name'] = self.plus_context.get('file_name', 'file_name')
+        file_name = context['file_name']
+
+        #print(f"context['file_name'] : {context['file_name']}")
+
+        return context
+
+    def form_valid(self, form,**kwargs):
+
+        print(f'form_valid')
+        #get data from form 
+        file_name = form.cleaned_data.get('file_name')
+
+        #persistance previous value
+        self.plus_context['file_name'] = file_name
+
+        data = pd.read_excel(file_name, sheet_name='status')
+
+        print(f'data :')
+        print(f'{data}')
+
+        return super(StatusImportFileFormView,self).form_valid(form)    

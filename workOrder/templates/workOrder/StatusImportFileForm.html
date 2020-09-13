@@ -1,0 +1,28 @@
+{% extends "base_workOrder.html" %}
+
+{% block title %}
+    <title>Work Order StatusImportFileForm</title>
+{% endblock %}
+{% block content %}
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table class="WoForm">
+            <caption>Work Order Status Configuration</caption>
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{ form.as_table }}
+            </tbody>
+        </table>
+
+        <input type="submit" value="Submit">
+    </form>
+    <p>
+        Selected file : {{file_name}}
+    </p>
+        
+{% endblock %}
