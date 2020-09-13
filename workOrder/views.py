@@ -368,7 +368,10 @@ class StatusImportFileFormView(FormView):
     template_name = 'workOrder/StatusImportFileForm.html'
     form_class = StatusImportFileForm
     success_url = '/workOrder/status/import/'
+
+    #buffer context
     plus_context = {}
+    isFileAvailable = False
 
     def get_initial(self):
         initial = super(StatusImportFileFormView, self).get_initial()
@@ -390,7 +393,10 @@ class StatusImportFileFormView(FormView):
         context['file_name'] = self.plus_context.get('file_name', 'file_name')
         file_name = context['file_name']
 
-        #print(f"context['file_name'] : {context['file_name']}")
+        if self.isFileAvailable:
+            data = pd.read_excel(file_name, sheet_name='status')
+            print(f'data :')
+            print(f'{data}')
 
         return context
 
@@ -401,11 +407,8 @@ class StatusImportFileFormView(FormView):
         file_name = form.cleaned_data.get('file_name')
 
         #persistance previous value
-        self.plus_context['file_name'] = file_name
-
-        data = pd.read_excel(file_name, sheet_name='status')
-
-        print(f'data :')
-        print(f'{data}')
+        if len(file_name):
+            self.isFileAvailable = True
+            self.plus_context['file_name'] = file_name
 
         return super(StatusImportFileFormView,self).form_valid(form)    
