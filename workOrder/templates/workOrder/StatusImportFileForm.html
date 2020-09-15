@@ -1,5 +1,7 @@
 {% extends "base_workOrder.html" %}
 
+{% load extra_tag %}
+
 {% block title %}
     <title>Work Order StatusImportFileForm</title>
 {% endblock %}
@@ -19,10 +21,47 @@
             </tbody>
         </table>
 
-        <input type="submit" value="Submit">
-    </form>
-    <p>
-        Selected file : {{file_name}}
-    </p>
-        
+        <!--Multiple submit buttons-->
+        <!--Read file button-->
+        <input type="submit" name="read_file" 
+          value="Read file" /><br>
+
+        <!--Save to database button-->
+        <input type="submit" name="save_database" 
+          value="Save to database" />
+    </form>        
+
+    <!--Put data from file-->
+    <!--be carefull for initial during no data on dataFrame, get ERROR-->
+    {%if dataFrame %}
+      <table class="WoForm">
+        <caption>
+          <div>
+            Data Imported : {{file_name}}, 
+            Rec : {{dataFrame.name|get_count}},
+            DB before : {{countBefore}},
+            DB after : {{countAfter}}
+          </div>
+        </caption>
+        <thead>
+          <tr>
+            {%for key in dataFrame%}
+              <th scope="col">{{key}}</th>  
+            {%endfor%}
+          </tr>    
+        </thead>
+        <tbody>
+          {%for rec in dataFrame|get_item:'name'%}
+            <tr>
+              <td>
+                {{dataFrame.name|get_item:rec}}
+              </td>
+              <td>
+                {{dataFrame.description|get_item:rec}}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>  
+    {%endif%}
 {% endblock %}

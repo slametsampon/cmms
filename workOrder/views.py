@@ -16,6 +16,7 @@ from django.views.generic.edit import FormView
 from workOrder.forms import WoJournalForm
 from workOrder.forms import WoCompletion_form, WoSummaryReportForm, StatusImportFileForm
 from workOrder.models import Work_order, Work_order_journal, Work_order_completion
+from workOrder.models import Status
 from workOrder.generals import WoMisc as WM
 
 @login_required
@@ -371,7 +372,6 @@ class StatusImportFileFormView(FormView):
 
     #buffer context
     plus_context = {}
-    isFileAvailable = False
 
     def get_initial(self):
         initial = super(StatusImportFileFormView, self).get_initial()
@@ -393,22 +393,52 @@ class StatusImportFileFormView(FormView):
         context['file_name'] = self.plus_context.get('file_name', 'file_name')
         file_name = context['file_name']
 
-        if self.isFileAvailable:
-            data = pd.read_excel(file_name, sheet_name='status')
-            print(f'data :')
-            print(f'{data}')
+        isFileAvailable = self.plus_context.get('isFileAvailable', False)
+        if isFileAvailable:
+            self.plus_context['isFileAvailable'] = False
+            context['dataFrame']=self.plus_context.get('dataFrame','No data').to_dict() 
+            context['countBefore'] = Status.objects.all().count()
+            context['countAfter']=self.plus_context.get('countAfter','No data')
 
         return context
 
     def form_valid(self, form,**kwargs):
 
-        print(f'form_valid')
         #get data from form 
         file_name = form.cleaned_data.get('file_name')
 
-        #persistance previous value
-        if len(file_name):
-            self.isFileAvailable = True
-            self.plus_context['file_name'] = file_name
+        if 'read_file' in self.request.POST:
+            if len(file_name):
+                dataFrame = self.readFile(file_name, 'status')
+
+                #persistance previous value
+                self.plus_context['isFileAvailable'] = True
+                self.plus_context['file_name'] = file_name
+                self.plus_context['dataFrame'] = dataFrame
+
+        elif 'save_database' in self.request.POST:
+            self.savaUpdateDatabase()
 
         return super(StatusImportFileFormView,self).form_valid(form)    
+
+    def readFile(self, file_name, sheet_name):
+        dataFrame = pd.read_excel(file_name, sheet_name)
+
+        return (dataFrame)
+
+    def savaUpdateDatabase(self):
+        dataFrame = self.plus_context.get('dataFrame','No data')
+        sts = Status.objects.all()
+
+        for row in range(dataFrame.shape[0]):
+            name = dataFrame.loc[row].at['name']
+            description = dataFrame.loc[row].at['description']
+
+            #check if name is exist
+            #sts.filter(name=name)
+            obj, created = Status.objects.update_or_create(
+                name=name,
+                defaults={'description': description},
+            )
+
+        self.plus_context['countAfter'] = Status.objects.all().count()
