@@ -57,6 +57,7 @@ class SectionForm(ModelForm):
 
 class ImportFileForm(forms.Form):
     file_name = forms.FileField(widget=forms.FileInput(attrs={'accept':'.xls,.xlsx'}))
+    sheet_name = forms.CharField(widget=forms.TextInput())
 
     def clean_file_name(self):
        data = self.cleaned_data['file_name']
@@ -67,6 +68,31 @@ class ImportFileForm(forms.Form):
 
        # Remember to always return the cleaned data.
        return data
+
+    def clean_sheet_name(self):
+       data = self.cleaned_data['sheet_name']
+       
+       # other check logic if needed
+       #if data < datetime.date.today():
+       #    raise ValidationError(_('Invalid date - renewal in past'))
+
+       # Remember to always return the cleaned data.
+       return data
+
+    def __init__(self, *args, **kwargs):
+        sheetNames = kwargs.pop('sheetNames') #take sheetNames from view
+        super(ImportFileForm, self).__init__(*args, **kwargs)
+        if sheetNames:
+            sheetDict ={}
+            i=0
+            for sheet in sheetNames:
+                sheetDict[i]=sheet
+                i+=1
+            # Converting into list of tuple 
+            sheetList = list(sheetDict.items()) 
+            widgets = { 
+                'sheet_name': forms.Select(choices=sheetList),
+                }
 
     class Meta:
         template_name = 'utility/ImportFileForm.html'  # Specify your own template name/location

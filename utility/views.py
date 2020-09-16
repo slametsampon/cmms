@@ -119,6 +119,7 @@ class SectionCreate(LoginRequiredMixin, CreateView):
 
         return super(SectionCreate,self).form_valid(form)    
 
+from xlrd import open_workbook
 class ImportFileFormView(FormView):
     template_name = 'utility/ImportFileForm.html'
     form_class = ImportFileForm
@@ -138,6 +139,12 @@ class ImportFileFormView(FormView):
         return initial
         # now the form will be shown with the link_pk bound to a value
 
+    # Sending user object to the form, to verify which fields to display/remove (depending on group)
+    def get_form_kwargs(self):
+        kwargs = super(ImportFileFormView, self).get_form_kwargs()
+        kwargs.update({'sheetNames': self.plus_context.get('sheetNames', '')})
+        return kwargs
+
     def get_context_data(self, **kwargs):
 
         # Call the base implementation first to get a context self.kwargs.get("pk")
@@ -145,14 +152,14 @@ class ImportFileFormView(FormView):
 
         #restore previous value
         context['file_name'] = self.plus_context.get('file_name', 'file_name')
-        file_name = context['file_name']
+        context['sheetNames'] = self.plus_context.get('sheetNames', '')
 
         isFileAvailable = self.plus_context.get('isFileAvailable', False)
         if isFileAvailable:
             self.plus_context['isFileAvailable'] = False
-            context['dataDict']=self.plus_context.get('dataDict','No data')
+            context['dataDict']=self.plus_context.get('dataDict','')
             context['countBefore'] = Status.objects.all().count()
-            context['countAfter']=self.plus_context.get('countAfter','No data')
+            context['countAfter']=self.plus_context.get('countAfter','')
 
         return context
 
@@ -176,10 +183,16 @@ class ImportFileFormView(FormView):
         return super(ImportFileFormView,self).form_valid(form)    
 
     def readFile(self, file_name, sheet_name):
-        dataFrame = pd.read_excel(file_name, sheet_name)
-        dataDict = dataFrame.to_dict()
-
-        #display - print dict
+        #dataFrame = pd.read_excel(file_name, sheet_name)
+        dataDict = ''
+        #dataDict = dataFrame.to_dict()
+        
+        # <- remeber: xlrd sheet_names is a function, not a property        #display - print dict
+        path = 'F:\\Projects\\djangoProjects\\cmms-assets\\Design data\\'
+        fileName = f'{path}{file_name}'
+        book = open_workbook(fileName)
+        self.plus_context['sheetNames'] = book.sheet_names()
+        
         # self.__showDict(dataDict)
 
         return (dataDict)
