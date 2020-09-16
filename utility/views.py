@@ -142,7 +142,7 @@ class ImportFileFormView(FormView):
     # Sending user object to the form, to verify which fields to display/remove (depending on group)
     def get_form_kwargs(self):
         kwargs = super(ImportFileFormView, self).get_form_kwargs()
-        kwargs.update({'sheetNames': self.plus_context.get('sheetNames', '')})
+        kwargs.update({'sheetNames': self.plus_context.get('sheetNames', None)})
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -151,15 +151,15 @@ class ImportFileFormView(FormView):
         context = super().get_context_data(**kwargs)
 
         #restore previous value
-        context['file_name'] = self.plus_context.get('file_name', 'file_name')
-        context['sheetNames'] = self.plus_context.get('sheetNames', '')
+        context['file_name'] = self.plus_context.get('file_name', None)
+        context['sheetNames'] = self.plus_context.get('sheetNames', None)
 
         isFileAvailable = self.plus_context.get('isFileAvailable', False)
         if isFileAvailable:
             self.plus_context['isFileAvailable'] = False
-            context['dataDict']=self.plus_context.get('dataDict','')
+            context['dataDict']=self.plus_context.get('dataDict',None)
             context['countBefore'] = Status.objects.all().count()
-            context['countAfter']=self.plus_context.get('countAfter','')
+            context['countAfter']=self.plus_context.get('countAfter',None)
 
         return context
 
@@ -168,7 +168,11 @@ class ImportFileFormView(FormView):
         #get data from form 
         file_name = form.cleaned_data.get('file_name')
 
-        if 'read_file' in self.request.POST:
+        if 'open_file' in self.request.POST:
+            if len(file_name):
+                self.plus_context['sheetNames'] = self.openFile(file_name)
+
+        elif 'read_file' in self.request.POST:
             if len(file_name):
                 dataDict = self.readFile(file_name, 'status')
 
@@ -182,19 +186,23 @@ class ImportFileFormView(FormView):
 
         return super(ImportFileFormView,self).form_valid(form)    
 
-    def readFile(self, file_name, sheet_name):
-        #dataFrame = pd.read_excel(file_name, sheet_name)
+    def openFile(self, file_name):
         dataDict = ''
-        #dataDict = dataFrame.to_dict()
         
-        # <- remeber: xlrd sheet_names is a function, not a property        #display - print dict
-        path = 'F:\\Projects\\djangoProjects\\cmms-assets\\Design data\\'
+        #path = 'F:\\Projects\\djangoProjects\\cmms-assets\\Design data\\'
+        path = 'D:\\Projects\\djangoProjects\\cmms-assets\\Design data\\'
         fileName = f'{path}{file_name}'
         book = open_workbook(fileName)
-        self.plus_context['sheetNames'] = book.sheet_names()
+
+        return book.sheet_names()
+        
+
+
+    def readFile(self, file_name, sheet_name):
+        dataFrame = pd.read_excel(file_name, sheet_name)
+        dataDict = dataFrame.to_dict()
         
         # self.__showDict(dataDict)
-
         return (dataDict)
 
     def __showDict(self, dictDta):        
@@ -248,7 +256,7 @@ class ImportFileFormView(FormView):
         return rowData
 
     def savaUpdateDatabase(self):
-        dataDict = self.plus_context.get('dataDict','No data')
+        dataDict = self.plus_context.get('dataDict',None)
         sts = Status.objects.all()
 
         for row in range(dataDict.shape[0]):

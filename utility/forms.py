@@ -81,6 +81,7 @@ class ImportFileForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         sheetNames = kwargs.pop('sheetNames') #take sheetNames from view
+        sheetList =[]
         super(ImportFileForm, self).__init__(*args, **kwargs)
         if sheetNames:
             sheetDict ={}
@@ -89,10 +90,10 @@ class ImportFileForm(forms.Form):
                 sheetDict[i]=sheet
                 i+=1
             # Converting into list of tuple 
-            sheetList = list(sheetDict.items()) 
-            widgets = { 
-                'sheet_name': forms.Select(choices=sheetList),
-                }
+            sheetList = list(sheetDict.items())
+
+        self.fields['sheet_name'].widget = Select(choices=sheetList)
+        self.fields['sheet_name'].required = False
 
     class Meta:
         template_name = 'utility/ImportFileForm.html'  # Specify your own template name/location
