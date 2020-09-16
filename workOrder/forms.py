@@ -187,20 +187,3 @@ class WoSummaryReportForm(forms.Form):
 
        # Remember to always return the cleaned data. datetime.timedelta(days=30)
        return data
-
-class StatusImportFileForm(forms.Form):
-    file_name = forms.FileField(widget=forms.FileInput(attrs={'accept':'.xls,.xlsx'}))
-
-    def clean_file_name(self):
-       data = self.cleaned_data['file_name']
-       
-       # other check logic if needed
-       #if data < datetime.date.today():
-       #    raise ValidationError(_('Invalid date - renewal in past'))
-
-       # Remember to always return the cleaned data.
-       return data
-
-    class Meta:
-        template_name = 'workOrder/StatusImportFileForm.html'  # Specify your own template name/location
-

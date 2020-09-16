@@ -32,33 +32,30 @@
     </form>        
 
     <!--Put data from file-->
-    <!--be carefull for initial during no data on dataFrame, get ERROR-->
-    {%if dataFrame %}
+    <!--be carefull for initial during no data on dataDict, get ERROR-->
+    {%if dataDict %}
       <table class="WoForm">
         <caption>
           <div>
             Data Imported : {{file_name}}, 
-            Rec : {{dataFrame.name|get_count}},
+            Rec : {{dataDict|get_rowNbr}},
             DB before : {{countBefore}},
             DB after : {{countAfter}}
           </div>
         </caption>
         <thead>
           <tr>
-            {%for key in dataFrame%}
+            {%for key in dataDict%}
               <th scope="col">{{key}}</th>  
             {%endfor%}
           </tr>    
         </thead>
         <tbody>
-          {%for rec in dataFrame|get_item:'name'%}
+          {%for row in dataDict|get_colData%}
             <tr>
-              <td>
-                {{dataFrame.name|get_item:rec}}
-              </td>
-              <td>
-                {{dataFrame.description|get_item:rec}}
-              </td>
+              {%for data in dataDict|get_rowData:row%}
+                <td>{{data}}</td>
+              {%endfor%}
             </tr>
           {% endfor %}
         </tbody>
