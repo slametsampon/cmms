@@ -8,24 +8,24 @@ from django.forms import Select
 # Register the Admin classes for Department using the decorator
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
-    list_display = ('name','initial', 'role')
-    list_filter = ('name','initial', 'role')
+    list_display = ('name','description', 'role')
+    list_filter = ('name','description', 'role')
 
 # Register the Admin classes for Section using the decorator
 @admin.register(Section)
 class SectionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'initial')
-    list_filter = ('name', 'initial')
+    list_display = ('name', 'description')
+    list_filter = ('name', 'description')
         
 # Register the Admin classes for Section using the decorator
 @admin.register(ProfileUtility)
 class ProfileUtilityAdmin(admin.ModelAdmin):
     form = ProfileForm
-    list_display = ('user', 'initial','section','forward_path', 'reverse_path')
+    list_display = ('user','section','forward_path', 'reverse_path')
     list_filter = ('section', 'user')
     fieldsets = (
         (None, {
-            'fields': ('user', 'initial', 'section')
+            'fields': ('user',  'section')
         }),
         ('Approval Path', {
             'fields': ('forward_path', 'reverse_path', 'action')

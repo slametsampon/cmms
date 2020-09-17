@@ -9,8 +9,8 @@ from workOrder.models import Status
 
 class ProfileUtility(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    nik = models.IntegerField(null=True)
-    initial = models.CharField(max_length=3, null=True)
+    #nik = models.IntegerField(null=True)
+    #initial = models.CharField(max_length=3, null=True)
     forward_path = models.IntegerField(null=True)
     reverse_path = models.IntegerField(null=True)
 
@@ -34,7 +34,7 @@ def save_user_profileUtility(sender, instance, **kwargs):
 class Section(models.Model):
     """Model representing a section of organization"""
     name = models.CharField(max_length=50, null=True, help_text='Enter name of section(eg. Electrical & Instrumentation)')
-    initial = models.CharField(max_length=5, null=True, help_text='Enter initial of section(eg. Elins)')
+    #initial = models.CharField(max_length=5, null=True, help_text='Enter initial of section(eg. Elins)')
     description = models.CharField(max_length=200, null=True, help_text='Enter description of section')
     # Foreign Key used because section can only have one department, but department can have multiple sections
     # Section as a string rather than object because it hasn't been declared yet in the file
@@ -50,7 +50,7 @@ class Section(models.Model):
 class Department(models.Model):
     """Model representing a department of organization"""
     name = models.CharField(max_length=50, null=True, help_text='Enter name of section(eg. Maintenance)')
-    initial = models.CharField(max_length=5, null=True, help_text='Enter initial of section(eg. Mntc)')
+    #initial = models.CharField(max_length=5, null=True, help_text='Enter initial of section(eg. Mntc)')
     description = models.CharField(max_length=200, null=True, help_text='Enter description of department')
     
     ROLE_STATUS = (
