@@ -57,7 +57,7 @@ class SectionForm(ModelForm):
 
 class ImportFileForm(forms.Form):
     file_name = forms.FileField(widget=forms.FileInput(attrs={'accept':'.xls,.xlsx'}))
-    sheet_name = forms.CharField(widget=forms.TextInput())
+    sheet_index = forms.IntegerField(widget=forms.TextInput())
 
     def clean_file_name(self):
        data = self.cleaned_data['file_name']
@@ -80,20 +80,15 @@ class ImportFileForm(forms.Form):
        return data
 
     def __init__(self, *args, **kwargs):
-        sheetNames = kwargs.pop('sheetNames') #take sheetNames from view
-        sheetList =[]
-        super(ImportFileForm, self).__init__(*args, **kwargs)
-        if sheetNames:
-            sheetDict ={}
-            i=0
-            for sheet in sheetNames:
-                sheetDict[i]=sheet
-                i+=1
-            # Converting into list of tuple 
-            sheetList = list(sheetDict.items())
 
-        self.fields['sheet_name'].widget = Select(choices=sheetList)
-        self.fields['sheet_name'].required = False
+        sheetNames = kwargs.pop('sheetNames') #take sheetNames from view
+        if not sheetNames:
+            sheetNames=[]
+
+        super(ImportFileForm, self).__init__(*args, **kwargs)
+
+        self.fields['sheet_index'].widget = Select(choices=sheetNames)
+        self.fields['sheet_index'].required = False
 
     class Meta:
         template_name = 'utility/ImportFileForm.html'  # Specify your own template name/location

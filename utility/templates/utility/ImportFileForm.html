@@ -23,8 +23,11 @@
 
         <!--Multiple submit buttons-->
         <!--Open file button-->
-        <input type="submit" name="open_file" 
+        <div id="selected_file">
+          Selected file : {{file_name}}, 
+          <input type="submit" name="open_file" 
           value="Open file" />
+        </div>
 
         <!--Read file button-->
         <input type="submit" name="read_file" 
@@ -41,7 +44,6 @@
       <table class="WoForm">
         <caption>
           <div>
-            Data Imported : {{file_name}}, 
             Rec : {{dataDict|get_rowNbr}},
             DB before : {{countBefore}},
             DB after : {{countAfter}}

@@ -120,6 +120,7 @@ class SectionCreate(LoginRequiredMixin, CreateView):
         return super(SectionCreate,self).form_valid(form)    
 
 from xlrd import open_workbook
+from cmms import settings 
 class ImportFileFormView(FormView):
     template_name = 'utility/ImportFileForm.html'
     form_class = ImportFileForm
@@ -130,10 +131,9 @@ class ImportFileFormView(FormView):
 
     def get_initial(self):
         initial = super(ImportFileFormView, self).get_initial()
-        file_name = 'cmmsConfig.xls'
 
         #get parameter from request.POST parameters, and put default value if none 'key': 
-        initial['file_name'] = self.plus_context.get('file_name', file_name)
+        initial['file_name'] = self.plus_context.get('file_name', None)
         #print(f"initial['file_name'] : {initial['file_name']}")
 
         return initial
@@ -152,7 +152,7 @@ class ImportFileFormView(FormView):
 
         #restore previous value
         context['file_name'] = self.plus_context.get('file_name', None)
-        context['sheetNames'] = self.plus_context.get('sheetNames', None)
+        context['sheetNames'] = self.plus_context.get('sheetNames', [])
 
         isFileAvailable = self.plus_context.get('isFileAvailable', False)
         if isFileAvailable:
@@ -167,19 +167,20 @@ class ImportFileFormView(FormView):
 
         #get data from form 
         file_name = form.cleaned_data.get('file_name')
+        if not file_name:
+            file_name = self.plus_context.get('file_name', None)
 
         if 'open_file' in self.request.POST:
             if len(file_name):
+                self.plus_context['file_name'] = file_name
                 self.plus_context['sheetNames'] = self.openFile(file_name)
 
         elif 'read_file' in self.request.POST:
             if len(file_name):
-                dataDict = self.readFile(file_name, 'status')
-
                 #persistance previous value
+                sheet_index = form.cleaned_data.get('sheet_index')
                 self.plus_context['isFileAvailable'] = True
-                self.plus_context['file_name'] = file_name
-                self.plus_context['dataDict'] = dataDict
+                self.plus_context['dataDict'] = self.readFile(file_name, sheet_index)
 
         elif 'save_database' in self.request.POST:
             self.savaUpdateDatabase()
@@ -187,23 +188,55 @@ class ImportFileFormView(FormView):
         return super(ImportFileFormView,self).form_valid(form)    
 
     def openFile(self, file_name):
-        dataDict = ''
+        sheetList =[]
         
-        #path = 'F:\\Projects\\djangoProjects\\cmms-assets\\Design data\\'
-        path = 'D:\\Projects\\djangoProjects\\cmms-assets\\Design data\\'
-        fileName = f'{path}{file_name}'
-        book = open_workbook(fileName)
+        file_name = f'{settings.MEDIA_ROOT}\{file_name}'
+        book = open_workbook(file_name)
+        sheetNames = book.sheet_names()
 
-        return book.sheet_names()
-        
+        if sheetNames:
+            sheetDict ={}
+            i=0
+            for sheet in sheetNames:
+                sheetDict[i]=sheet
+                i+=1
+            # Converting into list of tuple 
+            sheetList = list(sheetDict.items())
 
+        return sheetList
 
-    def readFile(self, file_name, sheet_name):
-        dataFrame = pd.read_excel(file_name, sheet_name)
+    def readFile(self, file_name, sheet_index):
+
+        #get list of tuple
+        file_name = f'{settings.MEDIA_ROOT}\{file_name}'
+        sheet_name = self.plus_context.get('sheetNames')
+
+        sheetIdx = sheet_name[sheet_index]
+        sheet = sheetIdx[1]
+
+        dataFrame = pd.read_excel(file_name, sheet)
         dataDict = dataFrame.to_dict()
-        
+
         # self.__showDict(dataDict)
+        print(self.__toPairDict(dataDict))
+        
         return (dataDict)
+
+    def savaUpdateDatabase(self):
+        dataDict = self.plus_context.get('dataDict',None)
+        sts = Status.objects.all()
+
+        for row in range(dataDict.shape[0]):
+            name = dataDict.loc[row].at['name']
+            description = dataDict.loc[row].at['description']
+
+            #update or create
+            obj, created = Status.objects.update_or_create(
+                name=name,
+                defaults={'description': description},
+            )
+
+        self.plus_context['countAfter'] = Status.objects.all().count()
 
     def __showDict(self, dictDta):        
         '''show 2D dictionary'''
@@ -227,7 +260,7 @@ class ImportFileFormView(FormView):
             print(rowData)
 
     def __getFields(self, dictData):
-        '''get fields of 2D dictionary'''
+        '''get fields of 2D dictionary, return list'''
         fields =[]
         for field in dictData.keys():
             fields.append(field)        
@@ -249,25 +282,23 @@ class ImportFileFormView(FormView):
         return dataList
 
     def __getRowData(self, dictData, row):
-        '''get row data of 2D dictionary'''
+        '''get row data of 2D dictionary, return list'''
         rowData =[]
         for field in dictData.keys():
             rowData.append(dictData.get(field).get(row))
         return rowData
 
-    def savaUpdateDatabase(self):
-        dataDict = self.plus_context.get('dataDict',None)
-        sts = Status.objects.all()
+    def __toPairDict(self,dictData):
+        listPair=[]
+        rowDict ={}
+        dataList = self.__toList(dictData)
+        fields = self.__getFields(dictData)
+        rows = len(dataList[len(fields)-1])
+        for row in range(rows):
+            for fld in range(len(fields)):
+                rowDict[fields[fld]]=dataList[fld][row]
+            listPair.append(rowDict.copy())
+        
+        return listPair
 
-        for row in range(dataDict.shape[0]):
-            name = dataDict.loc[row].at['name']
-            description = dataDict.loc[row].at['description']
 
-            #check if name is exist
-            #sts.filter(name=name)
-            obj, created = Status.objects.update_or_create(
-                name=name,
-                defaults={'description': description},
-            )
-
-        self.plus_context['countAfter'] = Status.objects.all().count()
