@@ -9,8 +9,6 @@ from workOrder.models import Status
 
 class ProfileUtility(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    #nik = models.IntegerField(null=True)
-    #initial = models.CharField(max_length=3, null=True)
     forward_path = models.IntegerField(null=True)
     reverse_path = models.IntegerField(null=True)
 
@@ -53,18 +51,6 @@ class Department(models.Model):
     #initial = models.CharField(max_length=5, null=True, help_text='Enter initial of section(eg. Mntc)')
     description = models.CharField(max_length=200, null=True, help_text='Enter description of department')
     
-    ROLE_STATUS = (
-        ('e', 'Executor'),
-        ('o', 'Originator'),
-        ('a', 'Any'),
-    )
-
-    role = models.CharField(max_length=1,
-        choices=ROLE_STATUS,
-        blank=True,
-        default='o',
-        help_text = 'Select role')
-
     class Meta:
         ordering = ['name']
 

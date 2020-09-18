@@ -58,38 +58,50 @@ class SectionForm(ModelForm):
 class ImportFileForm(forms.Form):
     file_name = forms.FileField(widget=forms.FileInput(attrs={'accept':'.xls,.xlsx'}))
     sheet_index = forms.IntegerField(widget=forms.TextInput())
+    model_index = forms.IntegerField(widget=forms.TextInput())
 
     def clean_file_name(self):
        data = self.cleaned_data['file_name']
        
-       # other check logic if needed
-       #if data < datetime.date.today():
-       #    raise ValidationError(_('Invalid date - renewal in past'))
-
        # Remember to always return the cleaned data.
        return data
 
-    def clean_sheet_name(self):
-       data = self.cleaned_data['sheet_name']
+    def clean_sheet_index(self):
+       data = self.cleaned_data['sheet_index']
        
-       # other check logic if needed
-       #if data < datetime.date.today():
-       #    raise ValidationError(_('Invalid date - renewal in past'))
+       # Remember to always return the cleaned data.
+       return data
 
+    def clean_model_index(self):
+       data = self.cleaned_data['model_index']
+       
        # Remember to always return the cleaned data.
        return data
 
     def __init__(self, *args, **kwargs):
 
+        initSheet = 0
+        initModel = 0
         sheetNames = kwargs.pop('sheetNames') #take sheetNames from view
-        if not sheetNames:
-            sheetNames=[]
+        modelNames = kwargs.pop('modelNames') #take modelNames from view
+        initSheet = kwargs.pop('sheet_index') #take modelNames from view
+        initModel = kwargs.pop('model_index') #take modelNames from view
 
         super(ImportFileForm, self).__init__(*args, **kwargs)
 
-        self.fields['sheet_index'].widget = Select(choices=sheetNames)
-        self.fields['sheet_index'].required = False
+        if not sheetNames:
+            sheetNames = ((0,''),)
+        if not modelNames:
+            modelNames = ((0,''),)
 
+        self.fields['sheet_index'].required = False
+        self.fields['sheet_index'].widget = Select(choices=sheetNames)
+        self.fields['sheet_index'].initial = initSheet
+
+        self.fields['model_index'].required = False
+        self.fields['model_index'].widget = Select(choices=modelNames)
+        self.fields['model_index'].initial = initModel
+    
     class Meta:
         template_name = 'utility/ImportFileForm.html'  # Specify your own template name/location
 

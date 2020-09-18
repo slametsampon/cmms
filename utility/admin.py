@@ -8,8 +8,8 @@ from django.forms import Select
 # Register the Admin classes for Department using the decorator
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
-    list_display = ('name','description', 'role')
-    list_filter = ('name','description', 'role')
+    list_display = ('name','description')
+    list_filter = ('name','description')
 
 # Register the Admin classes for Section using the decorator
 @admin.register(Section)

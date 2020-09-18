@@ -18,7 +18,10 @@ from django.views.generic.edit import FormView
 from utility.forms import UserForm, ProfileForm, DepartmentForm, SectionForm, ImportFileForm
 from utility.models import ProfileUtility, Department, Section
 from workOrder.models import Status
+from django.contrib.auth.models import User
 import pandas as pd
+from xlrd import open_workbook
+from cmms import settings 
 
 # Create your views here.
 @login_required
@@ -119,13 +122,18 @@ class SectionCreate(LoginRequiredMixin, CreateView):
 
         return super(SectionCreate,self).form_valid(form)    
 
-from xlrd import open_workbook
-from cmms import settings 
 class ImportFileFormView(FormView):
     template_name = 'utility/ImportFileForm.html'
     form_class = ImportFileForm
     success_url = '/utility/config/import/'
 
+    MODEL = (
+        (0,'Department'),
+        (1,'Section'),
+        (2,'Action'),
+        (3,'User'),
+        (4,'ProfileUtility')
+    )
     #buffer context
     plus_context = {}
 
@@ -143,9 +151,13 @@ class ImportFileFormView(FormView):
     def get_form_kwargs(self):
         kwargs = super(ImportFileFormView, self).get_form_kwargs()
         kwargs.update({'sheetNames': self.plus_context.get('sheetNames', None)})
+        kwargs.update({'modelNames': self.plus_context.get('modelNames', None)})
+        kwargs.update({'sheet_index': self.plus_context.get('sheet_index', 0)})
+        kwargs.update({'model_index': self.plus_context.get('model_index', 0)})
         return kwargs
 
     def get_context_data(self, **kwargs):
+        self.plus_context['modelNames'] = self.MODEL
 
         # Call the base implementation first to get a context self.kwargs.get("pk")
         context = super().get_context_data(**kwargs)
@@ -153,6 +165,7 @@ class ImportFileFormView(FormView):
         #restore previous value
         context['file_name'] = self.plus_context.get('file_name', None)
         context['sheetNames'] = self.plus_context.get('sheetNames', [])
+        context['modelNames'] = self.plus_context.get('modelNames', [])
 
         isFileAvailable = self.plus_context.get('isFileAvailable', False)
         if isFileAvailable:
@@ -167,6 +180,7 @@ class ImportFileFormView(FormView):
 
         #get data from form 
         file_name = form.cleaned_data.get('file_name')
+        model_index = form.cleaned_data.get('model_index')
         if not file_name:
             file_name = self.plus_context.get('file_name', None)
 
@@ -178,12 +192,14 @@ class ImportFileFormView(FormView):
         elif 'read_file' in self.request.POST:
             if len(file_name):
                 #persistance previous value
-                sheet_index = form.cleaned_data.get('sheet_index')
                 self.plus_context['isFileAvailable'] = True
+                sheet_index = form.cleaned_data.get('sheet_index')
                 self.plus_context['dataDict'] = self.readFile(file_name, sheet_index)
+                self.plus_context['sheet_index'] = sheet_index
 
         elif 'save_database' in self.request.POST:
-            self.savaUpdateDatabase()
+            self.plus_context['model_index'] = model_index
+            self.savaUpdateDatabase(model_index)
 
         return super(ImportFileFormView,self).form_valid(form)    
 
@@ -218,25 +234,64 @@ class ImportFileFormView(FormView):
         dataDict = dataFrame.to_dict()
 
         # self.__showDict(dataDict)
-        print(self.__toPairDict(dataDict))
+        # print(self.__toPairDict(dataDict))
         
         return (dataDict)
 
-    def savaUpdateDatabase(self):
+    def savaUpdateDatabase(self,model_index):
+        modelIdx = self.MODEL[model_index]
+        modelName = modelIdx[1]
+
         dataDict = self.plus_context.get('dataDict',None)
-        sts = Status.objects.all()
+        if modelName == 'Department':
+            for dtDict in self.__toPairDict(dataDict):
+                k=None
+                for k,v in dtDict.items():
+                    if k:
+                        break
+                #name as unique value
+                try:
+                    obj = Department.objects.get(name=v)
+                    for key, value in dtDict.items():
+                        setattr(obj, key, value)
+                    obj.save()
+                except Department.DoesNotExist:
+                    obj = Department(**dtDict)
+                    obj.save()
+            self.plus_context['countAfter'] = Department.objects.all().count()
 
-        for row in range(dataDict.shape[0]):
-            name = dataDict.loc[row].at['name']
-            description = dataDict.loc[row].at['description']
+        elif modelName == 'Section':
+            print('Section')
 
-            #update or create
-            obj, created = Status.objects.update_or_create(
-                name=name,
-                defaults={'description': description},
-            )
+        elif modelName == 'Action':
+            for dtDict in self.__toPairDict(dataDict):
+                k=None
+                for k,v in dtDict.items():
+                    if k:
+                        break
+                #name as unique value
+                obj, created = Status.objects.update_or_create(
+                    name=v,
+                    defaults=dtDict,
+                )            
+            self.plus_context['countAfter'] = Status.objects.all().count()
 
-        self.plus_context['countAfter'] = Status.objects.all().count()
+        elif modelName == 'User':
+            print('User')
+            for dtDict in self.__toPairDict(dataDict):
+                k=None
+                for k,v in dtDict.items():
+                    if k:
+                        break
+                #username as unique value
+                obj, created = User.objects.update_or_create(
+                    username=v,
+                    defaults=dtDict,
+                )    
+            self.plus_context['countAfter'] = User.objects.all().count()
+
+        elif modelName == 'ProfileUtility':
+            print('ProfileUtility')
 
     def __showDict(self, dictDta):        
         '''show 2D dictionary'''
@@ -246,6 +301,7 @@ class ImportFileFormView(FormView):
                 headStr = f'{head}'
             else:
                 headStr += f',{head}'
+        #display header/fields
         print(headStr)
 
         dataList = self.__toList(dictDta)
@@ -257,6 +313,7 @@ class ImportFileFormView(FormView):
                     rowData = f'{dataList[fld][row]}'
                 else:
                     rowData += f',{dataList[fld][row]}'
+            #display data each row
             print(rowData)
 
     def __getFields(self, dictData):
