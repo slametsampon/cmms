@@ -6,78 +6,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
-
-class Section(models.Model):
-    """Model representing a section of organization"""
-    name = models.CharField(max_length=50, null=True, help_text='Enter name of section(eg. Electrical & Instrumentation)')
-    initial = models.CharField(max_length=5, null=True, help_text='Enter initial of section(eg. Elins)')
-    description = models.CharField(max_length=200, null=True, help_text='Enter description of section')
-    # Foreign Key used because section can only have one department, but department can have multiple sections
-    # Section as a string rather than object because it hasn't been declared yet in the file
-    department = models.ForeignKey('Department', on_delete=models.SET_NULL, null=True)
-
-    class Meta:
-        ordering = ['department','name']
-
-    def __str__(self):
-        """String for representing the Model object."""
-        return self.name
-
-class Department(models.Model):
-    """Model representing a department of organization"""
-    name = models.CharField(max_length=50, null=True, help_text='Enter name of section(eg. Maintenance)')
-    initial = models.CharField(max_length=5, null=True, help_text='Enter initial of section(eg. Mntc)')
-    description = models.CharField(max_length=200, null=True, help_text='Enter description of department')
-    
-    ROLE_STATUS = (
-        ('e', 'Executor'),
-        ('o', 'Originator'),
-        ('a', 'Any'),
-    )
-
-    role = models.CharField(max_length=1,
-        choices=ROLE_STATUS,
-        blank=True,
-        default='o',
-        help_text = 'Select role')
-
-    class Meta:
-        ordering = ['name']
-
-
-    def __str__(self):
-        """String for representing the Model object."""
-        return self.name
-
-#models for Work order 
+from utility.models import Section, Department
+from utility.models import Action as Status
 from django.urls import reverse
-
-class Status(models.Model):
-    """Model representing a Status of organization"""
-    name = models.CharField(max_length=20, null=True, help_text='Enter name of Status(eg. Open, Close, Reject...)')
-    description = models.CharField(max_length=100, null=True, help_text='Enter description of Status')
-    class Meta:
-        ordering = ['name']
-
-    def __str__(self):
-        """String for representing the Model object."""
-        return self.name
-
-    @classmethod
-    def update_or_create_dict(cls,dtDict):
-
-        #get first key for unique key
-        k=None
-        for k,v in dtDict.items():
-            if k:
-                break
-        
-        #name as unique value, kindly modify as needed
-        return cls.objects.update_or_create(
-            name=v,
-            defaults=dtDict,
-        )            
 
 class Work_order(models.Model):
     """Model representing a work order"""
@@ -132,14 +63,6 @@ class Work_order(models.Model):
         #"""Returns the url to access a detail record for this work order."""
         return reverse('workOrder:work_order-detail', args=[str(self.id)])
         #return reverse('work_orders')
-
-    '''
-    def save(self, **kwargs):
-        mfields = iter(self._meta.fields)
-        mods = [(f.attname, kwargs[f.attname]) for f in mfields if f.attname in kwargs]
-        for fname, fval in mods: setattr(self, fname, fval)
-        super(MyModel, self).save()
-    '''
 
     def save(self, *args, **kwargs):
         # Do custom logic here (e.g. validation, logging, call third party service)

@@ -5,16 +5,43 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import models
-from workOrder.models import Status
+#from workOrder.models import Status
+
+class Action(models.Model):
+    """Model representing a Action of organization"""
+    name = models.CharField(max_length=20, null=True, help_text='Enter name of Action(eg. Open, Close, Reject...)')
+    description = models.CharField(max_length=100, null=True, help_text='Enter description of Action')
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return self.name
+
+    @classmethod
+    def update_or_create_dict(cls,dtDict):
+
+        #get first key for unique key
+        k=None
+        for k,v in dtDict.items():
+            if k:
+                break
+        
+        #name as unique value, kindly modify as needed
+        return cls.objects.update_or_create(
+            name=v,
+            defaults=dtDict,
+        )            
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     forward_path = models.IntegerField(null=True)
     reverse_path = models.IntegerField(null=True)
 
-    # ManyToManyField used because Status can contain many ProfileUtilities. ProfileUtilities can cover many Statuses.
-    # Status class has already been defined so we can specify the object above.
-    actions = models.ManyToManyField(Status, help_text='Select actions')
+    # ManyToManyField used because Action can contain many ProfileUtilities. ProfileUtilities can cover many Actiones.
+    # Action class has already been defined so we can specify the object above.
+    actions = models.ManyToManyField(Action, help_text='Select actions')
 
     # Foreign Key used because user can only have one section, but section can have multiple users
     # Section as a string rather than object because it hasn't been declared yet in the file
@@ -64,7 +91,7 @@ class Profile(models.Model):
         userProfile = Profile.objects.get(user = user)
 
         #get action
-        act = Status.objects.get(name=dtDict.get('action'))
+        act = Action.objects.get(name=dtDict.get('action'))
 
         #add action to user profile
         userProfile.actions.add(act)

@@ -16,8 +16,8 @@ import datetime
 from django import forms
 from django.views.generic.edit import FormView
 from utility.forms import UserForm, ProfileForm, DepartmentForm, SectionForm, ImportFileForm
-from utility.models import Profile, Department, Section
-from workOrder.models import Status
+from utility.models import Profile, Department, Section, Action
+#from workOrder.models import Status
 from django.contrib.auth.models import User
 import pandas as pd
 from xlrd import open_workbook
@@ -172,7 +172,7 @@ class ImportFileFormView(FormView):
         if isFileAvailable:
             self.plus_context['isFileAvailable'] = False
             context['dataDict']=self.plus_context.get('dataDict',None)
-            context['countBefore'] = Status.objects.all().count()
+            context['countBefore'] = Action.objects.all().count()
             context['countAfter']=self.plus_context.get('countAfter',None)
 
         return context
@@ -265,8 +265,8 @@ class ImportFileFormView(FormView):
             for dtDict in self.__toPairDict(dataDict):
 
                 #update_or_create for first field as unique value
-                obj, created = Status.update_or_create_dict(dtDict)            
-            self.plus_context['countAfter'] = Status.objects.all().count()
+                obj, created = Action.update_or_create_dict(dtDict)            
+            self.plus_context['countAfter'] = Action.objects.all().count()
 
         elif modelName == 'User':
             for dtDict in self.__toPairDict(dataDict):
