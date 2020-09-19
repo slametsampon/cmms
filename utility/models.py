@@ -18,7 +18,9 @@ class Action(models.Model):
         """String for representing the Model object."""
         return self.name
 
+    #this decorator make posible to call method w/o instantiate class
     @classmethod
+    #use cls instead of self
     def update_or_create_dict(cls,dtDict):
 
         #get first key for unique key
@@ -47,7 +49,9 @@ class Profile(models.Model):
     # Section as a string rather than object because it hasn't been declared yet in the file
     section = models.ForeignKey('Section', on_delete=models.SET_NULL, null=True)
 
+    #this decorator make posible to call method w/o instantiate class
     @classmethod
+    #use cls instead of self
     def update_or_create_dict(cls,dtDict):
 
         #insert User
@@ -84,7 +88,9 @@ class Profile(models.Model):
             defaults=dtDict,
         )            
 
+    #this decorator make posible to call method w/o instantiate class
     @classmethod
+    #use cls instead of self
     def update_or_create_action_dict(cls,dtDict):
         #insert User
         user = User.objects.get(username = dtDict.get('username'))
@@ -121,7 +127,9 @@ class Section(models.Model):
         """String for representing the Model object."""
         return self.name
 
+    #this decorator make posible to call method w/o instantiate class
     @classmethod
+    #use cls instead of self
     def update_or_create_dict(cls,dtDict):
 
         #get dept object
@@ -160,7 +168,9 @@ class Department(models.Model):
         """String for representing the Model object."""
         return self.name
 
+    #this decorator make posible to call method w/o instantiate class
     @classmethod
+    #use cls instead of self
     def update_or_create_dict(cls,dtDict):
 
         #get first key for unique key

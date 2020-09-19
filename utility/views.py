@@ -1,27 +1,28 @@
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.urls import reverse
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-import datetime
-
 from django import forms
 from django.views.generic.edit import FormView
-from utility.forms import UserForm, ProfileForm, DepartmentForm, SectionForm, ImportFileForm
-from utility.models import Profile, Department, Section, Action
-#from workOrder.models import Status
-from django.contrib.auth.models import User
+import datetime
+
 import pandas as pd
 from xlrd import open_workbook
+
 from cmms import settings 
+from utility.forms import UserForm, ProfileForm, DepartmentForm, SectionForm, ImportFileForm
+from utility.models import Profile, Department, Section, Action
+from utility.transform import dict_helper as dh
 
 # Create your views here.
 @login_required
@@ -237,9 +238,6 @@ class ImportFileFormView(FormView):
         dataFrame = pd.read_excel(file_name, sheet)
         dataDict = dataFrame.to_dict()
 
-        # self.__showDict(dataDict)
-        # print(self.__toPairDict(dataDict))
-        
         return (dataDict)
 
     def savaUpdateDatabase(self,model_index):
@@ -248,28 +246,28 @@ class ImportFileFormView(FormView):
 
         dataDict = self.plus_context.get('dataDict',None)
         if modelName == 'Department':
-            for dtDict in self.__toPairDict(dataDict):
+            for dtDict in dh.to_pair_dict(dataDict):
 
                 #update_or_create for first field as unique value
                 obj, created = Department.update_or_create_dict(dtDict)            
             self.plus_context['countAfter'] = Department.objects.all().count()
 
         elif modelName == 'Section':
-            for dtDict in self.__toPairDict(dataDict):
+            for dtDict in dh.to_pair_dict(dataDict):
                 
                 #update_or_create for first field as unique value
                 obj, created = Section.update_or_create_dict(dtDict)            
             self.plus_context['countAfter'] = Section.objects.all().count()
 
         elif modelName == 'Action':
-            for dtDict in self.__toPairDict(dataDict):
+            for dtDict in dh.to_pair_dict(dataDict):
 
                 #update_or_create for first field as unique value
                 obj, created = Action.update_or_create_dict(dtDict)            
             self.plus_context['countAfter'] = Action.objects.all().count()
 
         elif modelName == 'User':
-            for dtDict in self.__toPairDict(dataDict):
+            for dtDict in dh.to_pair_dict(dataDict):
                 k=None
                 for k,v in dtDict.items():
                     if k:
@@ -282,7 +280,7 @@ class ImportFileFormView(FormView):
             self.plus_context['countAfter'] = User.objects.all().count()
 
         elif modelName == 'Profile':
-            for dtDict in self.__toPairDict(dataDict):
+            for dtDict in dh.to_pair_dict(dataDict):
 
                 #update_or_create for first field as unique value
                 obj, created = Profile.update_or_create_dict(dtDict)            
@@ -290,75 +288,9 @@ class ImportFileFormView(FormView):
 
         elif modelName == 'ProfileAction':
             print('ProfileAction')
-            for dtDict in self.__toPairDict(dataDict):
+            for dtDict in dh.to_pair_dict(dataDict):
                 
                 #update_or_create_action_dict
                 Profile.update_or_create_action_dict(dtDict)            
             self.plus_context['countAfter'] = Profile.objects.all().count()
-
-
-    def __showDict(self, dictDta):        
-        '''show 2D dictionary'''
-        headStr = ''
-        for head in self.__getFields(dictDta):
-            if headStr == '':
-                headStr = f'{head}'
-            else:
-                headStr += f',{head}'
-        #display header/fields
-        print(headStr)
-
-        dataList = self.__toList(dictDta)
-        fieldNbr = len(dataList)
-        rowNbr = len(dataList[0])
-        for row in range(rowNbr):
-            for fld in range (fieldNbr):
-                if fld == 0:
-                    rowData = f'{dataList[fld][row]}'
-                else:
-                    rowData += f',{dataList[fld][row]}'
-            #display data each row
-            print(rowData)
-
-    def __getFields(self, dictData):
-        '''get fields of 2D dictionary, return list'''
-        fields =[]
-        for field in dictData.keys():
-            fields.append(field)        
-        return fields
-
-    def __toList(self, dictData):
-        '''get row data of 2D dictionary'''
-        dataList=[]
-        rowData =[]
-        for field in dictData.keys():
-            for row in dictData.get(field):
-                rowData.append(dictData.get(field).get(row))
-            
-            #use copy for avoid resetting data
-            dataList.append(rowData.copy())
-            
-            #reset/clear data, after saving
-            rowData.clear()
-        return dataList
-
-    def __getRowData(self, dictData, row):
-        '''get row data of 2D dictionary, return list'''
-        rowData =[]
-        for field in dictData.keys():
-            rowData.append(dictData.get(field).get(row))
-        return rowData
-
-    def __toPairDict(self,dictData):
-        listPair=[]
-        rowDict ={}
-        dataList = self.__toList(dictData)
-        fields = self.__getFields(dictData)
-        rows = len(dataList[len(fields)-1])
-        for row in range(rows):
-            for fld in range(len(fields)):
-                rowDict[fields[fld]]=dataList[fld][row]
-            listPair.append(rowDict.copy())
-        
-        return listPair
 
