@@ -1,6 +1,7 @@
 import datetime
-from workOrder.models import User, Profile, Section, Department
+from workOrder.models import User, Section, Department
 from workOrder.models import Work_order, Work_order_journal, Work_order_completion
+from utility.models import Profile
 
 class WoMisc():
     MAX_WO_NBR = 4

@@ -7,7 +7,7 @@ from django.dispatch import receiver
 from django.db import models
 from workOrder.models import Status
 
-class ProfileUtility(models.Model):
+class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     forward_path = models.IntegerField(null=True)
     reverse_path = models.IntegerField(null=True)
@@ -61,7 +61,7 @@ class ProfileUtility(models.Model):
     def update_or_create_action_dict(cls,dtDict):
         #insert User
         user = User.objects.get(username = dtDict.get('username'))
-        userProfile = ProfileUtility.objects.get(user = user)
+        userProfile = Profile.objects.get(user = user)
 
         #get action
         act = Status.objects.get(name=dtDict.get('action'))
@@ -71,12 +71,12 @@ class ProfileUtility(models.Model):
         userProfile.save()
 
 @receiver(post_save, sender=User)
-def create_user_profileUtility(sender, instance, created, **kwargs):
+def create_user_Profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 
 @receiver(post_save, sender=User)
-def save_user_profileUtility(sender, instance, **kwargs):
+def save_user_Profile(sender, instance, **kwargs):
     instance.profile.save()
 
 class Section(models.Model):

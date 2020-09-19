@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Section, Department, ProfileUtility
+from .models import Section, Department, Profile
 from .forms import ProfileForm
 from django.forms import Select
 
@@ -18,8 +18,8 @@ class SectionAdmin(admin.ModelAdmin):
     list_filter = ('name', 'description')
         
 # Register the Admin classes for Section using the decorator
-@admin.register(ProfileUtility)
-class ProfileUtilityAdmin(admin.ModelAdmin):
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
     form = ProfileForm
     list_display = ('user','section','forward_path', 'reverse_path')
     list_filter = ('section', 'user')

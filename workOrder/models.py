@@ -7,24 +7,6 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    nik = models.IntegerField(null=True)
-    initial = models.CharField(max_length=3, null=True)
-    forward_path = models.CharField(max_length=3, null=True)
-    reverse_path = models.CharField(max_length=3, null=True)
-    # Foreign Key used because user can only have one section, but section can have multiple users
-    # Section as a string rather than object because it hasn't been declared yet in the file
-    section = models.ForeignKey('Section', on_delete=models.SET_NULL, null=True)
-
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
 
 class Section(models.Model):
     """Model representing a section of organization"""

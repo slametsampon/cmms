@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 import datetime
-from utility.models import ProfileUtility, Department, Section
+from utility.models import Profile, Department, Section
 
 class UserForm(ModelForm):
     class Meta:
@@ -26,7 +26,7 @@ class ProfileForm(ModelForm):
         # Converting into list of tuple 
         userlist = list(userDict.items()) 
         
-        model = ProfileUtility
+        model = Profile
         fields = '__all__'
         widgets = { 
             'nik': forms.TextInput(attrs={'size':10}),

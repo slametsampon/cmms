@@ -16,7 +16,7 @@ import datetime
 from django import forms
 from django.views.generic.edit import FormView
 from utility.forms import UserForm, ProfileForm, DepartmentForm, SectionForm, ImportFileForm
-from utility.models import ProfileUtility, Department, Section
+from utility.models import Profile, Department, Section
 from workOrder.models import Status
 from django.contrib.auth.models import User
 import pandas as pd
@@ -132,7 +132,7 @@ class ImportFileFormView(FormView):
         (1,'Section'),
         (2,'Action'),
         (3,'User'),
-        (4,'ProfileUtility'),
+        (4,'Profile'),
         (5,'ProfileAction'),
     )
     #buffer context
@@ -281,20 +281,20 @@ class ImportFileFormView(FormView):
                 )    
             self.plus_context['countAfter'] = User.objects.all().count()
 
-        elif modelName == 'ProfileUtility':
+        elif modelName == 'Profile':
             for dtDict in self.__toPairDict(dataDict):
 
                 #update_or_create for first field as unique value
-                obj, created = ProfileUtility.update_or_create_dict(dtDict)            
-            self.plus_context['countAfter'] = ProfileUtility.objects.all().count()
+                obj, created = Profile.update_or_create_dict(dtDict)            
+            self.plus_context['countAfter'] = Profile.objects.all().count()
 
         elif modelName == 'ProfileAction':
             print('ProfileAction')
             for dtDict in self.__toPairDict(dataDict):
                 
                 #update_or_create_action_dict
-                ProfileUtility.update_or_create_action_dict(dtDict)            
-            self.plus_context['countAfter'] = ProfileUtility.objects.all().count()
+                Profile.update_or_create_action_dict(dtDict)            
+            self.plus_context['countAfter'] = Profile.objects.all().count()
 
 
     def __showDict(self, dictDta):        
