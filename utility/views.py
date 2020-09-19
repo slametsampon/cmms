@@ -181,6 +181,12 @@ class ImportFileFormView(FormView):
         #get data from form 
         file_name = form.cleaned_data.get('file_name')
         model_index = form.cleaned_data.get('model_index')
+        sheet_index = form.cleaned_data.get('sheet_index')
+
+        #persistance previous value
+        self.plus_context['sheet_index'] = sheet_index
+        self.plus_context['model_index'] = model_index
+
         if not file_name:
             file_name = self.plus_context.get('file_name', None)
 
@@ -193,12 +199,9 @@ class ImportFileFormView(FormView):
             if len(file_name):
                 #persistance previous value
                 self.plus_context['isFileAvailable'] = True
-                sheet_index = form.cleaned_data.get('sheet_index')
                 self.plus_context['dataDict'] = self.readFile(file_name, sheet_index)
-                self.plus_context['sheet_index'] = sheet_index
 
         elif 'save_database' in self.request.POST:
-            self.plus_context['model_index'] = model_index
             self.savaUpdateDatabase(model_index)
 
         return super(ImportFileFormView,self).form_valid(form)    
@@ -245,35 +248,23 @@ class ImportFileFormView(FormView):
         dataDict = self.plus_context.get('dataDict',None)
         if modelName == 'Department':
             for dtDict in self.__toPairDict(dataDict):
-                k=None
-                for k,v in dtDict.items():
-                    if k:
-                        break
-                #name as unique value
-                try:
-                    obj = Department.objects.get(name=v)
-                    for key, value in dtDict.items():
-                        setattr(obj, key, value)
-                    obj.save()
-                except Department.DoesNotExist:
-                    obj = Department(**dtDict)
-                    obj.save()
+
+                #update_or_create for first field as unique value
+                obj, created = Department.update_or_create_dict(dtDict)            
             self.plus_context['countAfter'] = Department.objects.all().count()
 
         elif modelName == 'Section':
-            print('Section')
+            for dtDict in self.__toPairDict(dataDict):
+                
+                #update_or_create for first field as unique value
+                obj, created = Section.update_or_create_dict(dtDict)            
+            self.plus_context['countAfter'] = Section.objects.all().count()
 
         elif modelName == 'Action':
             for dtDict in self.__toPairDict(dataDict):
-                k=None
-                for k,v in dtDict.items():
-                    if k:
-                        break
-                #name as unique value
-                obj, created = Status.objects.update_or_create(
-                    name=v,
-                    defaults=dtDict,
-                )            
+
+                #update_or_create for first field as unique value
+                obj, created = Status.update_or_create_dict(dtDict)            
             self.plus_context['countAfter'] = Status.objects.all().count()
 
         elif modelName == 'User':
@@ -292,6 +283,19 @@ class ImportFileFormView(FormView):
 
         elif modelName == 'ProfileUtility':
             print('ProfileUtility')
+            for dtDict in self.__toPairDict(dataDict):
+                self.__update_or_create_dict(ProfileUtility,dtDict)
+
+    def __update_or_create_dict(self, model,dictData):
+        mfields = iter(model._meta.fields)
+        k=None
+        for k,v in dtDict.items():
+            if k:
+                break
+        for dt in mfields:
+            if dt.attname == k:
+                obj = Department.objects.get(dt=v)
+
 
     def __showDict(self, dictDta):        
         '''show 2D dictionary'''

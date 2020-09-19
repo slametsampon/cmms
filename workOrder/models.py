@@ -82,6 +82,21 @@ class Status(models.Model):
         """String for representing the Model object."""
         return self.name
 
+    @classmethod
+    def update_or_create_dict(cls,dtDict):
+
+        #get first key for unique key
+        k=None
+        for k,v in dtDict.items():
+            if k:
+                break
+        
+        #name as unique value, kindly modify as needed
+        return cls.objects.update_or_create(
+            name=v,
+            defaults=dtDict,
+        )            
+
 class Work_order(models.Model):
     """Model representing a work order"""
     wo_number = models.CharField(max_length=20, null=True)
@@ -135,6 +150,14 @@ class Work_order(models.Model):
         #"""Returns the url to access a detail record for this work order."""
         return reverse('workOrder:work_order-detail', args=[str(self.id)])
         #return reverse('work_orders')
+
+    '''
+    def save(self, **kwargs):
+        mfields = iter(self._meta.fields)
+        mods = [(f.attname, kwargs[f.attname]) for f in mfields if f.attname in kwargs]
+        for fname, fval in mods: setattr(self, fname, fval)
+        super(MyModel, self).save()
+    '''
 
     def save(self, *args, **kwargs):
         # Do custom logic here (e.g. validation, logging, call third party service)

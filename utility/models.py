@@ -32,7 +32,6 @@ def save_user_profileUtility(sender, instance, **kwargs):
 class Section(models.Model):
     """Model representing a section of organization"""
     name = models.CharField(max_length=50, null=True, help_text='Enter name of section(eg. Electrical & Instrumentation)')
-    #initial = models.CharField(max_length=5, null=True, help_text='Enter initial of section(eg. Elins)')
     description = models.CharField(max_length=200, null=True, help_text='Enter description of section')
     # Foreign Key used because section can only have one department, but department can have multiple sections
     # Section as a string rather than object because it hasn't been declared yet in the file
@@ -44,6 +43,31 @@ class Section(models.Model):
     def __str__(self):
         """String for representing the Model object."""
         return self.name
+
+    @classmethod
+    def update_or_create_dict(cls,dtDict):
+
+        #get dept object
+        depName = dtDict.get('foreign_department')
+        dept = Department.objects.get(name = depName)
+
+        #remove key foreign_department
+        dtDict.pop('foreign_department')
+
+        #insert Department
+        dtDict['department']=dept
+
+        #get first key for unique key
+        k=None
+        for k,v in dtDict.items():
+            if k:
+                break
+        
+        #name as unique value, kindly modify as needed
+        return cls.objects.update_or_create(
+            name=v,
+            defaults=dtDict,
+        )            
 
 class Department(models.Model):
     """Model representing a department of organization"""
@@ -58,3 +82,18 @@ class Department(models.Model):
     def __str__(self):
         """String for representing the Model object."""
         return self.name
+
+    @classmethod
+    def update_or_create_dict(cls,dtDict):
+
+        #get first key for unique key
+        k=None
+        for k,v in dtDict.items():
+            if k:
+                break
+        
+        #name as unique value, kindly modify as needed
+        return cls.objects.update_or_create(
+            name=v,
+            defaults=dtDict,
+        )            
