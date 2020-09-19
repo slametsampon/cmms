@@ -132,7 +132,8 @@ class ImportFileFormView(FormView):
         (1,'Section'),
         (2,'Action'),
         (3,'User'),
-        (4,'ProfileUtility')
+        (4,'ProfileUtility'),
+        (5,'ProfileAction'),
     )
     #buffer context
     plus_context = {}
@@ -268,7 +269,6 @@ class ImportFileFormView(FormView):
             self.plus_context['countAfter'] = Status.objects.all().count()
 
         elif modelName == 'User':
-            print('User')
             for dtDict in self.__toPairDict(dataDict):
                 k=None
                 for k,v in dtDict.items():
@@ -282,19 +282,19 @@ class ImportFileFormView(FormView):
             self.plus_context['countAfter'] = User.objects.all().count()
 
         elif modelName == 'ProfileUtility':
-            print('ProfileUtility')
             for dtDict in self.__toPairDict(dataDict):
-                self.__update_or_create_dict(ProfileUtility,dtDict)
 
-    def __update_or_create_dict(self, model,dictData):
-        mfields = iter(model._meta.fields)
-        k=None
-        for k,v in dtDict.items():
-            if k:
-                break
-        for dt in mfields:
-            if dt.attname == k:
-                obj = Department.objects.get(dt=v)
+                #update_or_create for first field as unique value
+                obj, created = ProfileUtility.update_or_create_dict(dtDict)            
+            self.plus_context['countAfter'] = ProfileUtility.objects.all().count()
+
+        elif modelName == 'ProfileAction':
+            print('ProfileAction')
+            for dtDict in self.__toPairDict(dataDict):
+                
+                #update_or_create_action_dict
+                ProfileUtility.update_or_create_action_dict(dtDict)            
+            self.plus_context['countAfter'] = ProfileUtility.objects.all().count()
 
 
     def __showDict(self, dictDta):        
@@ -361,5 +361,4 @@ class ImportFileFormView(FormView):
             listPair.append(rowDict.copy())
         
         return listPair
-
 

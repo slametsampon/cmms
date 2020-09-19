@@ -14,11 +14,61 @@ class ProfileUtility(models.Model):
 
     # ManyToManyField used because Status can contain many ProfileUtilities. ProfileUtilities can cover many Statuses.
     # Status class has already been defined so we can specify the object above.
-    action = models.ManyToManyField(Status, help_text='Select actions')
+    actions = models.ManyToManyField(Status, help_text='Select actions')
 
     # Foreign Key used because user can only have one section, but section can have multiple users
     # Section as a string rather than object because it hasn't been declared yet in the file
     section = models.ForeignKey('Section', on_delete=models.SET_NULL, null=True)
+
+    @classmethod
+    def update_or_create_dict(cls,dtDict):
+
+        #insert User
+        dtDict['user'] = User.objects.get(username = dtDict.get('username'))
+        #remove key username
+        dtDict.pop('username')
+
+        #insert section
+        dtDict['section'] = Section.objects.get(name = dtDict.get('foreign_section'))
+        #remove key foreign_section
+        dtDict.pop('foreign_section')
+
+        #update from name to id
+        usr = None
+        if dtDict.get('forward_path'):
+            usr = User.objects.get(username = dtDict.get('forward_path'))
+        dtDict['forward_path'] = usr.id
+
+        #update from name to id
+        usr = None
+        if dtDict.get('reverse_path'):
+            usr = User.objects.get(username = dtDict.get('reverse_path'))
+        dtDict['reverse_path'] = usr.id
+
+        #get first key for unique key
+        k=None
+        for k,v in dtDict.items():
+            if k:
+                break
+        
+        #user as unique value, kindly modify as needed
+        return cls.objects.update_or_create(
+            user=dtDict.get('user'),
+            defaults=dtDict,
+        )            
+
+    @classmethod
+    def update_or_create_action_dict(cls,dtDict):
+        #insert User
+        user = User.objects.get(username = dtDict.get('username'))
+        userProfile = ProfileUtility.objects.get(user = user)
+
+        #get action
+        act = Status.objects.get(name=dtDict.get('action'))
+
+        #add action to user profile
+        userProfile.actions.add(act)
+        userProfile.save()
 
 @receiver(post_save, sender=User)
 def create_user_profileUtility(sender, instance, created, **kwargs):

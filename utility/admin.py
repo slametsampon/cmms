@@ -28,7 +28,7 @@ class ProfileUtilityAdmin(admin.ModelAdmin):
             'fields': ('user',  'section')
         }),
         ('Approval Path', {
-            'fields': ('forward_path', 'reverse_path', 'action')
+            'fields': ('forward_path', 'reverse_path', 'actions')
         }),
     )
     
