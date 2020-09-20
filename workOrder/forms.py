@@ -13,9 +13,6 @@ class WoJournalForm(ModelForm):
        data = self.cleaned_data['comment']
        
        # other check logic if needed
-       #if data < datetime.date.today():
-       #    raise ValidationError(_('Invalid date - renewal in past'))
-
        # Remember to always return the cleaned data.
        return data
     
@@ -23,47 +20,23 @@ class WoJournalForm(ModelForm):
        data = self.cleaned_data['action']
        
        # other check logic if needed
-       #if data < datetime.date.today():
-       #    raise ValidationError(_('Invalid date - renewal in past'))
-
        # Remember to always return the cleaned data.
        return data
 
     def __init__(self, *args, **kwargs):
-        ACTIONS = (
-            ('f', 'Forward'),
-            ('r', 'Return'),
-        )
+
         self.user = kwargs.pop('user')
         super(WoJournalForm, self).__init__(*args, **kwargs)
 
-        #selesct form ACTIONS as user
-        for g in self.user.groups.all():
-            status = 'ot' #other
+        #get actions from Profile - user
+        actDict = {}
+        for action in Profile.objects.get(user=self.user):
+            actDict[action.pk] = action.name
 
-            #originator supervisor
-            if 'ORG_SPV' == g.name:
-                ACTIONS = (
-                    ('f', 'Forward'),
-                    ('c', 'Close'),
-                )
-            elif 'EXC_SPV' == g.name:
-                ACTIONS = (
-                    ('f', 'Forward'),
-                    ('r', 'Return'),
-                    ('t', 'Complete'),
-                )
-            elif 'EXC_SPTD' == g.name:
-                ACTIONS = (
-                    ('f', 'Forward'),
-                    ('r', 'Return'),
-                    ('s', 'Shutdown'),
-                    ('l', 'Need Materials'),
-                    ('m', 'Need MOC'),
-                    ('o', 'Other'),
-                )
+        # Converting into list of tuple 
+        actlist = list(actDict.items()) 
         
-        self.fields['action'].widget = Select(choices=ACTIONS)
+        self.fields['action'].widget = Select(choices=actlist)
 
     class Meta:
         template_name = 'workOrder/WoJournal_form.html'  # Specify your own template name/location
@@ -74,11 +47,7 @@ class WoJournalForm(ModelForm):
 
         labels = {'comment': _('comment')}
         widgets = { 'comment': forms.Textarea(attrs={'rows':3})}
-        #help_texts = {'comment': _('Enter comment')} 
-
         labels = {'action': _('action')}
-        #help_texts = {'action': _('Select action')} 
-        #widgets = {'action': Select(choices=ACTIONS)}
 
 class WoCompletion_form(ModelForm):
 
@@ -163,9 +132,6 @@ class WoSummaryReportForm(forms.Form):
        data = self.cleaned_data['start_date']
        
        # other check logic if needed
-       #if data < datetime.date.today():
-       #    raise ValidationError(_('Invalid date - renewal in past'))
-
        # Remember to always return the cleaned data.
        return data
 
@@ -173,9 +139,6 @@ class WoSummaryReportForm(forms.Form):
        data = self.cleaned_data['end_date']
        
        # other check logic if needed
-       #if data < datetime.date.today():
-       #    raise ValidationError(_('Invalid date - renewal in past'))
-
        # Remember to always return the cleaned data. datetime.timedelta(days=30)
        return data
 
@@ -183,8 +146,5 @@ class WoSummaryReportForm(forms.Form):
        data = self.cleaned_data['wo_status']
        
        # other check logic if needed
-       #if data < datetime.date.today():
-       #    raise ValidationError(_('Invalid date - renewal in past'))
-
        # Remember to always return the cleaned data. datetime.timedelta(days=30)
        return data

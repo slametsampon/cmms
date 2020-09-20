@@ -34,7 +34,7 @@ class SectionAdmin(admin.ModelAdmin):
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     form = ProfileForm
-    list_display = ('user','section','forward_path', 'reverse_path')
+    list_display = ('user','section','forward_path', 'reverse_path', 'actions')
     list_filter = ('section', 'user')
     fieldsets = (
         (None, {

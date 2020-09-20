@@ -191,10 +191,11 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
         self.object.save()
 
         #get data from form
-        action = form.cleaned_data.get('action')
+        action_id = form.cleaned_data.get('action')
+        action = Action.objects.get(id=action_id).name
 
         #complete role is special case since, all data Work order available in this area
-        if action == 't': #complete
+        if action == 'Complete': #complete
             #get id Originator
             current_user_id = wO_on_process.originator.id
             #wO_completed.updateExecutorUserId(self.request.user.id)
