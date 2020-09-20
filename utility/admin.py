@@ -1,21 +1,28 @@
 from django.contrib import admin
 
-from .models import Section, Department, Profile, Action
+from .models import Section, Department, Profile, Action, Mode
 from .forms import ProfileForm
 from django.forms import Select
 
 # Register your models here.
+
+# Register the Admin classes for Department using the decorator
+@admin.register(Mode)
+class ModeAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    list_filter = ('name',)
+
 # Register the Admin classes for Department using the decorator
 @admin.register(Action)
 class ActionAdmin(admin.ModelAdmin):
-    list_display = ('name','description')
-    list_filter = ('name','description')
+    list_display = ('name','mode','description')
+    list_filter = ('name','mode','description')
 
 # Register the Admin classes for Department using the decorator
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
-    list_display = ('name','description')
-    list_filter = ('name','description')
+    list_display = ('name', 'initial','description')
+    list_filter = ('name', 'initial','description')
 
 # Register the Admin classes for Section using the decorator
 @admin.register(Section)

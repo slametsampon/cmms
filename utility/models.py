@@ -5,12 +5,16 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import models
-#from workOrder.models import Status
 
 class Action(models.Model):
     """Model representing a Action of organization"""
     name = models.CharField(max_length=20, null=True, help_text='Enter name of Action(eg. Open, Close, Reject...)')
     description = models.CharField(max_length=100, null=True, help_text='Enter description of Action')
+
+    # Foreign Key used because user can only have one section, but section can have multiple users
+    # Section as a string rather than object because it hasn't been declared yet in the file
+    mode = models.ForeignKey('Mode', on_delete=models.SET_NULL, null=True)
+
     class Meta:
         ordering = ['name']
 
@@ -22,6 +26,16 @@ class Action(models.Model):
     @classmethod
     #use cls instead of self
     def update_or_create_dict(cls,dtDict):
+
+        #get dept object
+        modeName = dtDict.get('foreign_mode')
+        md = Mode.objects.get(name = modeName)
+
+        #remove key foreign_mode
+        dtDict.pop('foreign_mode')
+
+        #insert Department
+        dtDict['mode']=md
 
         #get first key for unique key
         k=None
@@ -157,12 +171,52 @@ class Section(models.Model):
 class Department(models.Model):
     """Model representing a department of organization"""
     name = models.CharField(max_length=50, null=True, help_text='Enter name of section(eg. Maintenance)')
-    #initial = models.CharField(max_length=5, null=True, help_text='Enter initial of section(eg. Mntc)')
+    
+    #initial for numbering of work order PROD/xxxx, HRGA/xxxx
+    initial = models.CharField(max_length=5, null=True, help_text='Enter initial of section(eg. Mntc)')
     description = models.CharField(max_length=200, null=True, help_text='Enter description of department')
     
     class Meta:
         ordering = ['name']
 
+    def __str__(self):
+        """String for representing the Model object."""
+        return self.name
+
+    #this decorator make posible to call method w/o instantiate class
+    @classmethod
+    #use cls instead of self
+    def update_or_create_dict(cls,dtDict):
+
+        #get first key for unique key
+        k=None
+        for k,v in dtDict.items():
+            if k:
+                break
+        
+        #name as unique value, kindly modify as needed
+        return cls.objects.update_or_create(
+            name=v,
+            defaults=dtDict,
+        )            
+
+class Mode(models.Model):
+    """Model representing a Mode of organization"""
+    name = models.CharField(max_length=10, null=True, help_text='Enter name of Mode(eg. Reverse, Forward, Stay)')
+    MODE = (
+        ('Forward', 'Forward'),
+        ('Reverse', 'Reverse'),
+        ('Stay', 'Stay'),
+    )
+
+    name = models.CharField(max_length=10,
+        choices=MODE,
+        blank=True,
+        help_text='Select Mode',
+        default='Forward')
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         """String for representing the Model object."""

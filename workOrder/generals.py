@@ -1,7 +1,9 @@
+from django.contrib.auth.models import User
+
+from workOrder.models import Work_order, Wo_journal, Wo_completion
+from utility.models import Profile, Section, Department, Action
+
 import datetime
-from workOrder.models import User, Section, Department
-from workOrder.models import Work_order, Work_order_journal, Work_order_completion
-from utility.models import Profile
 
 class WoMisc():
     MAX_WO_NBR = 4
@@ -14,35 +16,35 @@ class WoMisc():
             status = 'ot' #other
 
             #originator supervisor
-            if 'ORG_SPV' == g.name:
+            if 'SPV_ORG' == g.name:
                 if action == 'f': #forward action
                     status = 'op' # Open
                 elif action == 'c': #close
                     status = 'cl' #Close
 
             #originator superintendent
-            if 'ORG_SPTD' == g.name:
+            if 'SPTD_ORG' == g.name:
                 if action == 'f': #forward action
                     status = 'ck' # Check
                 elif action == 'r': #return
                     status = 'rv' #Revise
 
             #originator manager
-            if 'ORG_MGR' == g.name:
+            if 'MGR_ORG' == g.name:
                 if action == 'f': #forward action
                     status = 'ap' # Approve
                 elif action == 'r': #return
                     status = 'rc' #Re-check
 
             #executor manager
-            if 'EXC_MGR' == g.name:
+            if 'MGR_EXE' == g.name:
                 if action == 'f': #forward action
                     status = 'rw' # Review
                 elif action == 'r': #return
                     status = 'rj' #Reject
 
             #executor superintendent
-            if 'EXC_SPTD' == g.name:
+            if 'SPTD_EXE' == g.name:
                 if action == 'f': #forward action
                     status = 'sc' # Schedule
                 elif action == 'r': #return
@@ -57,7 +59,7 @@ class WoMisc():
                     status = 'ot' #Need Regulation, etc
 
             #executor supervisor
-            if 'EXC_SPV' == g.name:
+            if 'SPV_EXE' == g.name:
                 if action == 'f': #forward action
                     status = 'ec' # Execute
                 elif action == 'r': #return
@@ -66,7 +68,7 @@ class WoMisc():
                     status = 'cm' #Complete
 
             #executor foreman
-            if 'EXC_FRM' == g.name:
+            if 'FRM_EXE' == g.name:
                 if action == 'h': #finish action
                     status = 'fn' # Finish
                 elif action == 'i': #in progress
@@ -78,7 +80,8 @@ class WoMisc():
 
     def getWoNumber(self):
         # get user department - initial
-        userProfile = Profile.objects.get(id=self.user.id)
+
+        userProfile = Profile.objects.get(user=self.user)
         userSection = Section.objects.get(id=userProfile.section.id)
         userDept = Department.objects.get(id=userSection.department.id)
 
@@ -98,54 +101,49 @@ class WoMisc():
 
         return (f'{userDept.initial}/{woNbr}')
 
-    def getCurrentUser(self, action):
-        pendingList = ["s", "l", "m", "o"] #Shutdown, Need Material, MOC, Other
+    def get_next_user(self, act_id):
+        '''get next user after action of current user'''
         # get user - approver
-        userProfile = Profile.objects.get(id=self.user.id)
+        userProfile = Profile.objects.get(user=self.user)
 
-        currentUserId = self.user.id
+        next_user_id = self.user.id
+
+        #for human readable
+        action_mode = Action.objects.get(id = act_id).mode.name
 
         #role for general user
-        if action in pendingList:
-            currentUserId = self.user.id
-        elif action == 'f': #forward action
-            currentUserId = Profile.objects.get(initial=userProfile.forward_path).id
-        elif action == 'r': #return
-            currentUserId = Profile.objects.get(initial=userProfile.reverse_path).id
-
-        #role for foreman executor
-        for g in self.user.groups.all():
-
-            #Executor Foreman
-            if 'EXC_FRM' == g.name:
-                if action == 'h': #finish action
-                    currentUserId = Profile.objects.get(initial=userProfile.reverse_path).id
-
-                elif action == 'i': #in progress action
-                    currentUserId = self.user.id
+        if action_mode == 'Reverse':
+            next_user_id = Profile.objects.get(user=self.user).reverse_path
+        elif action_mode == 'Forward': #forward action
+            next_user_id = Profile.objects.get(user=self.user).forward_path
+        else: #Stay action
+            next_user_id = self.user.id
 
         #role during off hour, by pass mode
         if not(self.__isOfficeWorkingHour()): 
             for g in self.user.groups.all():
                 #originator supervisor
-                if 'ORG_SPV' == g.name:
-                    if action == 'f': #forward action
-                        currentUserId = self.__getForemanExecutorId()
+                if 'SPV_ORG' == g.name:
+                    if action_mode == 'Forward': #forward action
+                        next_user_id = self.__getForemanExecutorId()
 
-        currentUser = User.objects.get(id=currentUserId)
-        return currentUser
+        next_user = User.objects.get(id=next_user_id)
+        return next_user
 
     def woInitJournal(self):
         # get user - woOnProcess and update 
         woOnProcess = Work_order.objects.get(id=self.num_work_orders)
 
+        #it just opening
+        act = Action.objects.get(name='Open')
+
         #To create and save an object in a single step, use the create() method.
         comment = 'Opening with bypass mode'
         if self.__isOfficeWorkingHour():
             comment = 'Opening with normal mode'
-        woJournal = Work_order_journal.objects.create(
+        woJournal = Wo_journal.objects.create(
             comment=comment,
-            action='f',#forward
+            action=act,#Open, just opening
             concern_user=self.user,
             wO_on_process=woOnProcess,
             date=datetime.date.today(),
@@ -177,6 +175,6 @@ class WoMisc():
     def __getForemanExecutorId(self):
         for usr in User.objects.all():
             for g in usr.groups.all():
-                if 'EXC_FRM' == g.name:
+                if 'FRM_EXE' == g.name:
                     return usr.id 
     

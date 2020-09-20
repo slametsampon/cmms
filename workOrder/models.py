@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from utility.models import Section, Department
-from utility.models import Action as Status
+from utility.models import Action
 from django.urls import reverse
 
 class Work_order(models.Model):
@@ -28,7 +28,7 @@ class Work_order(models.Model):
         on_delete=models.SET_NULL,
         null=True)
 
-    PRIORITY_STATUS = (
+    PRIORITY = (
         ('n', 'Normal'),
         ('e', 'Emergency'),
         ('s', 'Shutdown'),
@@ -36,7 +36,7 @@ class Work_order(models.Model):
     )
 
     priority = models.CharField(max_length=1,
-        choices=PRIORITY_STATUS,
+        choices=PRIORITY,
         blank=True,
         default='n')
 
@@ -45,13 +45,10 @@ class Work_order(models.Model):
 
     # Foreign Key used because work order can only have one Status, but Status can have multiple work order
     # Status class has already been defined so we can specify the object above.
-    status_wo = models.ForeignKey(Status,
+    status = models.ForeignKey(Action,
         on_delete=models.SET_NULL,
         null=True)
 
-    status = models.CharField(max_length=2,
-        blank=True)
-    
     current_user_id = models.IntegerField(null=True)
     executor_user_id = models.IntegerField(null=True)
 
@@ -100,7 +97,7 @@ class Work_order(models.Model):
         """String for representing the Model object."""
         return f'{self.wo_number}'
 
-class Work_order_journal(models.Model):
+class Wo_journal(models.Model):
     """Model representing a work order journal"""
     comment = models.CharField(max_length=200, null=True)
     date = models.DateField()
@@ -118,16 +115,11 @@ class Work_order_journal(models.Model):
         on_delete=models.SET_NULL,
         null=True)
 
-    ACTION_STATUS = (
-        ('f', 'Forward'),
-        ('r', 'Return'),
-        ('o', 'Other'),
-    )
-
-    action = models.CharField(max_length=1,
-        #choices=ACTION_STATUS,
-        blank=True,
-        default='f')
+    # Foreign Key used because work order can only have one Action, but Action can have multiple work order journal
+    # Action class has already been defined so we can specify the object above.
+    action = models.ForeignKey(Action,
+        on_delete=models.SET_NULL,
+        null=True)
 
     class Meta:
         ordering = ['-date', '-time']
@@ -140,7 +132,7 @@ class Work_order_journal(models.Model):
         """String for representing the Model object."""
         return f'{self.concern_user}'
 
-class Work_order_completion(models.Model):
+class Wo_completion(models.Model):
     """Model representing a work order completion"""
     action = models.TextField(max_length=1000, null=True, help_text='Enter action')
     manPower = models.TextField(max_length=100, null=True, help_text='Man power name')
@@ -149,13 +141,13 @@ class Work_order_completion(models.Model):
     date = models.DateField(null=True)
     duration = models.IntegerField(help_text='Enter duration (hours)', null=True)
     
-    # Foreign Key used because Work_order_completion can only have one acted_user, but acted_user can have multiple Work_order_completion
+    # Foreign Key used because Wo_completion can only have one acted_user, but acted_user can have multiple Wo_completion
     # User class has already been defined so we can specify the object above.
     acted_user = models.ForeignKey(User,
         on_delete=models.SET_NULL,
         null=True)
 
-    # Foreign Key used because Work_order_completion can only have one wO_completed, but wO_completed can have multiple Work_order_completion
+    # Foreign Key used because Wo_completion can only have one wO_completed, but wO_completed can have multiple Wo_completion
     # User class has already been defined so we can specify the object above.
     wO_completed = models.ForeignKey(Work_order,
         on_delete=models.SET_NULL,
@@ -180,4 +172,24 @@ class Work_order_completion(models.Model):
 
     def __str__(self):
         """String for representing the Model object."""
-        return f'Work order cmpletion'
+        return f'Work order completion'
+
+class Wo_instruction(models.Model):
+    """Model representing a work order instruction"""
+    action = models.TextField(max_length=1000, null=True, help_text='Enter action')
+    
+    # Foreign Key used because Wo_completion can only have one acted_user, but acted_user can have multiple Wo_completion
+    # User class has already been defined so we can specify the object above.
+    user = models.ForeignKey(User,
+        on_delete=models.SET_NULL,
+        null=True)
+
+    # Foreign Key used because Wo_completion can only have one wO_completed, but wO_completed can have multiple Wo_completion
+    # User class has already been defined so we can specify the object above.
+    work_order = models.ForeignKey(Work_order,
+        on_delete=models.SET_NULL,
+        null=True)
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return f'Work order instruction'

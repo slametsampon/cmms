@@ -15,9 +15,9 @@ from django import forms
 from django.views.generic.edit import FormView
 from workOrder.forms import WoJournalForm
 from workOrder.forms import WoCompletion_form, WoSummaryReportForm
-from workOrder.models import Work_order, Work_order_journal, Work_order_completion
-from workOrder.models import Status
+from workOrder.models import Work_order, Wo_journal, Wo_completion
 from workOrder.generals import WoMisc as WM
+from utility.models import Action
 
 @login_required
 def index(request):
@@ -77,7 +77,7 @@ class Work_orderDetailView(LoginRequiredMixin, generic.DetailView):
 
         # Add in a QuerySet of journal for history listing
         context['woPK'] = context['object'].id
-        context['journal_list'] = Work_order_journal.objects.filter(wO_on_process=context['object'].id)
+        context['journal_list'] = Wo_journal.objects.filter(wO_on_process=context['object'].id)
         return context
 
 class Work_orderCreate(LoginRequiredMixin, CreateView):
@@ -86,7 +86,8 @@ class Work_orderCreate(LoginRequiredMixin, CreateView):
     fields = ['tagnumber',
                 'problem',
                 'priority',
-                'dest_section']
+                'dest_section',
+            ]
 
     def get_context_data(self, **kwargs):
         self.wm = WM(self.request.user)
@@ -110,8 +111,6 @@ class Work_orderCreate(LoginRequiredMixin, CreateView):
     def form_valid(self, form,**kwargs):
         self.wm = WM(self.request.user)
         self.object = form.save(commit=False)
-        #context = super(Work_orderCreate,self).get_context_data(**kwargs)
-        #print(f'form_valid=>context : {context}')
 
         #set work_order date_open
         self.object.date_open = datetime.date.today()
@@ -122,11 +121,11 @@ class Work_orderCreate(LoginRequiredMixin, CreateView):
         #set work_order originator
         self.object.originator = self.request.user
 
-        #set work_order status
-        self.object.status = self.wm.getWoStatus('f') #forward
+        #set work_order status for opening
+        self.object.status = Action.objects.get(name='Open')
 
         #getApprover
-        approver = self.wm.getCurrentUser('f') #forward
+        approver = self.wm.get_next_user(self.object.status.id)
 
         #set current_user_id 
         self.object.current_user_id = approver.id
@@ -145,7 +144,7 @@ class Work_orderUpdate(LoginRequiredMixin, UpdateView):
 
 class Work_orderForward(LoginRequiredMixin, CreateView):
     form_class = WoJournalForm
-    model = Work_order_journal
+    model = Wo_journal
     template_name = 'workOrder/WoJournal_form.html'  # Specify your own template name/location
 
     # Sending user object to the form, to verify which fields to display/remove (depending on group)
@@ -200,7 +199,7 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
             current_user_id = wO_on_process.originator.id
             #wO_completed.updateExecutorUserId(self.request.user.id)
         else:
-            current_user_id = self.wm.getCurrentUser(action).id
+            current_user_id = self.wm.get_next_user(action).id
 
         #update current_user_id
         wO_on_process.updateCurrentUserId(current_user_id)
@@ -214,7 +213,7 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
 class WoCompletion(LoginRequiredMixin, CreateView):
 
     form_class = WoCompletion_form
-    model = Work_order_completion
+    model = Wo_completion
     template_name = 'workOrder/WoCompletion_form.html'  # Specify your own template name/location
 
     # Sending user object to the form, to verify which fields to display/remove (depending on group)
@@ -267,7 +266,7 @@ class WoCompletion(LoginRequiredMixin, CreateView):
             wO_completed.updateDateFinish(datetime.date.today())
 
         #update work order current_user_id
-        current_user_id = self.wm.getCurrentUser(action).id
+        current_user_id = self.wm.get_next_user(action).id
         wO_completed.updateCurrentUserId(current_user_id)
 
         #update status work order

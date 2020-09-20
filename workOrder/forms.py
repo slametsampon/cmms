@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm, Select
 from django.contrib.auth.models import User
-from workOrder.models import Work_order_journal, Work_order_completion
+from workOrder.models import Wo_journal, Wo_completion
 from utility.models import Profile
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
@@ -68,7 +68,7 @@ class WoJournalForm(ModelForm):
     class Meta:
         template_name = 'workOrder/WoJournal_form.html'  # Specify your own template name/location
 
-        model = Work_order_journal
+        model = Wo_journal
         fields = ['comment',
                     'action']
 
@@ -129,7 +129,7 @@ class WoCompletion_form(ModelForm):
     class Meta:
         template_name = 'workOrder/WoCompletion_form.html'  # Specify your own template name/location
 
-        model = Work_order_completion
+        model = Wo_completion
         fields = [
             'status',
             'action',
