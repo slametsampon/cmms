@@ -30,7 +30,7 @@ class WoJournalForm(ModelForm):
 
         #get actions from Profile - user
         actDict = {}
-        for action in Profile.objects.get(user=self.user):
+        for action in Profile.objects.get(user=self.user).actions.all():
             actDict[action.pk] = action.name
 
         # Converting into list of tuple 
@@ -94,6 +94,16 @@ class WoCompletion_form(ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user') #take current user
         super(WoCompletion_form, self).__init__(*args, **kwargs)
+
+        #get actions from Profile - user
+        actDict = {}
+        for action in Profile.objects.get(user=self.user).actions.all():
+            actDict[action.pk] = action.name
+
+        # Converting into list of tuple 
+        actlist = list(actDict.items()) 
+        
+        self.fields['status'].widget = Select(choices=actlist)
 
     class Meta:
         template_name = 'workOrder/WoCompletion_form.html'  # Specify your own template name/location

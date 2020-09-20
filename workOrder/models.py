@@ -153,15 +153,11 @@ class Wo_completion(models.Model):
         on_delete=models.SET_NULL,
         null=True)
 
-    STATUS_CHOICES = (
-        ('i', 'In progress'),
-        ('h', 'Finish'),
-    )
-
-    status = models.CharField(max_length=1,
-        choices=STATUS_CHOICES,
-        blank=True,
-        default='h')
+    # Foreign Key used because work order can only have one Status, but Status can have multiple work order
+    # Status class has already been defined so we can specify the object above.
+    status = models.ForeignKey(Action,
+        on_delete=models.SET_NULL,
+        null=True)
 
     class Meta:
         ordering = ['date']

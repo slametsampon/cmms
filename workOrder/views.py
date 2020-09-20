@@ -191,8 +191,8 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
         self.object.save()
 
         #get data from form
-        action_id = form.cleaned_data.get('action')
-        action = Action.objects.get(id=action_id).name
+        action = form.cleaned_data.get('action')
+        action_id = Action.objects.get(name=action).id
 
         #complete role is special case since, all data Work order available in this area
         if action == 'Complete': #complete
@@ -200,14 +200,13 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
             current_user_id = wO_on_process.originator.id
             #wO_completed.updateExecutorUserId(self.request.user.id)
         else:
-            current_user_id = self.wm.get_next_user(action).id
+            current_user_id = self.wm.get_next_user(action_id).id
 
         #update current_user_id
         wO_on_process.updateCurrentUserId(current_user_id)
 
         #update status work order 
-        status = self.wm.getWoStatus(action)
-        wO_on_process.updateStatus(status)
+        wO_on_process.updateStatus(Action.objects.get(name=action))
 
         return super(Work_orderForward,self).form_valid(form)    
 
@@ -260,19 +259,20 @@ class WoCompletion(LoginRequiredMixin, CreateView):
 
         #get data from form, status also as action 
         action = form.cleaned_data.get('status')
+        action_id = Action.objects.get(name=action).id
 
         #finish role is special case since, all data Work order available in this area
-        if action == 'h': #finish
+        if action == 'Finish': #complete
             wO_completed.updateExecutorUserId(self.request.user.id)
             wO_completed.updateDateFinish(datetime.date.today())
 
         #update work order current_user_id
-        current_user_id = self.wm.get_next_user(action).id
+        current_user_id = self.wm.get_next_user(action_id).id
         wO_completed.updateCurrentUserId(current_user_id)
 
         #update status work order
-        status = self.wm.getWoStatus(action)
-        wO_completed.updateStatus(status)
+        #status = self.wm.getWoStatus(action)
+        wO_completed.updateStatus(Action.objects.get(name=action))
 
         return super(WoCompletion,self).form_valid(form)    
 
