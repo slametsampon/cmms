@@ -16,6 +16,10 @@ urlpatterns += [
 ]
 
 urlpatterns += [  
+    path('wo_instruction/create/', views.Wo_instruction.as_view(), name='wo_instruction-create'),
+]
+
+urlpatterns += [  
     path('work_order/summary/', views.WoSummaryReportView.as_view(), name='work_order-summary'),
 ]
 

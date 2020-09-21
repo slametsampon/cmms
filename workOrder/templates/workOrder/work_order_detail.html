@@ -10,7 +10,9 @@
 
   <p>
     {% if allowAction %}
-      {% if perms.workOrder.add_work_order %}       
+      {% if perms.workOrder.add_wo_instruction %}       
+        <a href="{% url 'workOrder:wo_instruction-create' pk=woPK %}">FORWARD/CLOSE</a>
+      {% elif perms.workOrder.add_work_order %}       
         <a href="{% url 'workOrder:work_order-forward' pk=woPK %}">FORWARD/CLOSE</a>
       {% elif perms.workOrder.add_work_order_completion %}
         <p><strong> For finishing : </strong> 

@@ -52,45 +52,44 @@ class work_order_form(ModelForm):
 
 class WoJournalForm(ModelForm):
 
-    def clean_comment(self):
-       data = self.cleaned_data['comment']
-       
-       # other check logic if needed
-       # Remember to always return the cleaned data.
-       return data
-    
-    def clean_action(self):
-       data = self.cleaned_data['action']
-       
-       # other check logic if needed
-       # Remember to always return the cleaned data.
-       return data
+   def clean_comment(self):
+      data = self.cleaned_data['comment']
+      
+      # other check logic if needed
+      # Remember to always return the cleaned data.
+      return data
+   
+   def clean_action(self):
+      data = self.cleaned_data['action']
+      
+      # other check logic if needed
+      # Remember to always return the cleaned data.
+      return data
 
-    def __init__(self, *args, **kwargs):
+   def __init__(self, *args, **kwargs):
 
-        self.user = kwargs.pop('user')
-        super(WoJournalForm, self).__init__(*args, **kwargs)
+      self.user = kwargs.pop('user')
+      super(WoJournalForm, self).__init__(*args, **kwargs)
+      #get actions from Profile - user
+      actDict = {}
+      for action in Profile.objects.get(user=self.user).actions.all():
+         actDict[action.pk] = action.name
 
-        #get actions from Profile - user
-        actDict = {}
-        for action in Profile.objects.get(user=self.user).actions.all():
-            actDict[action.pk] = action.name
+      # Converting into list of tuple 
+      actlist = list(actDict.items()) 
+      actions = Profile.objects.get(user=self.user).actions.all()               
+      self.fields['action'].widget = Select(choices=actlist)
 
-        # Converting into list of tuple 
-        actlist = list(actDict.items()) 
-        
-        self.fields['action'].widget = Select(choices=actlist)
+   class Meta:
+      template_name = 'workOrder/WoJournal_form.html'  # Specify your own template name/location
 
-    class Meta:
-        template_name = 'workOrder/WoJournal_form.html'  # Specify your own template name/location
+      model = Wo_journal
+      fields = ['comment',
+                  'action']
 
-        model = Wo_journal
-        fields = ['comment',
-                    'action']
-
-        labels = {'comment': _('comment')}
-        widgets = { 'comment': forms.Textarea(attrs={'rows':3})}
-        labels = {'action': _('action')}
+      labels = {'comment': _('comment')}
+      widgets = { 'comment': forms.Textarea(attrs={'rows':3})}
+      labels = {'action': _('action')}
 
 class WoInstruction_form(ModelForm):
 
@@ -118,78 +117,77 @@ class WoInstruction_form(ModelForm):
 
 class WoCompletion_form(ModelForm):
 
-    def clean_status(self):
-       data = self.cleaned_data['status']
-       
-       # Remember to always return the cleaned data.
-       return data
+   def clean_status(self):
+      data = self.cleaned_data['status']
+      
+      # Remember to always return the cleaned data.
+      return data
 
-    def clean_action(self):
-       data = self.cleaned_data['action']
-       
-       # Remember to always return the cleaned data.
-       return data
+   def clean_activity(self):
+      data = self.cleaned_data['activity']
+      
+      # Remember to always return the cleaned data.
+      return data
 
-    def clean_manPower(self):
-       data = self.cleaned_data['manPower']
-       
-       # Remember to always return the cleaned data.
-       return data
+   def clean_manPower(self):
+      data = self.cleaned_data['manPower']
+      
+      # Remember to always return the cleaned data.
+      return data
 
-    def clean_duration(self):
-       data = self.cleaned_data['duration']
-       
-       # other check logic if needed
-       if data <= 0:
-           raise ValidationError(_('Invalid duration - can not zero/minus'))
+   def clean_duration(self):
+      data = self.cleaned_data['duration']
+      
+      # other check logic if needed
+      if data <= 0:
+         raise ValidationError(_('Invalid duration - can not zero/minus'))
 
-       # Remember to always return the cleaned data.
-       return data
+      # Remember to always return the cleaned data.
+      return data
 
-    def clean_material(self):
-       data = self.cleaned_data['material']
-       
-       # Remember to always return the cleaned data.
-       return data
+   def clean_material(self):
+      data = self.cleaned_data['material']
+      
+      # Remember to always return the cleaned data.
+      return data
 
-    def clean_tool(self):
-       data = self.cleaned_data['tool']
-       
-       # Remember to always return the cleaned data.
-       return data
+   def clean_tool(self):
+      data = self.cleaned_data['tool']
+      
+      # Remember to always return the cleaned data.
+      return data
 
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user') #take current user
-        super(WoCompletion_form, self).__init__(*args, **kwargs)
+   def __init__(self, *args, **kwargs):
+      self.user = kwargs.pop('user') #take current user
+      super(WoCompletion_form, self).__init__(*args, **kwargs)
 
-        #get actions from Profile - user
-        actDict = {}
-        for action in Profile.objects.get(user=self.user).actions.all():
-            actDict[action.pk] = action.name
+      #get actions from Profile - user
+      actDict = {}
+      for action in Profile.objects.get(user=self.user).actions.all():
+         actDict[action.pk] = action.name
 
-        # Converting into list of tuple 
-        actlist = list(actDict.items()) 
-        
-        self.fields['status'].widget = Select(choices=actlist)
+      # Converting into list of tuple 
+      actlist = list(actDict.items()) 
+      self.fields['status'].widget = Select(choices=actlist)
 
-    class Meta:
-        template_name = 'workOrder/WoCompletion_form.html'  # Specify your own template name/location
+   class Meta:
+      template_name = 'workOrder/WoCompletion_form.html'  # Specify your own template name/location
 
-        model = Wo_completion
-        fields = [
-            'status',
-            'action',
-            'manPower',
-            'duration',
-            'material',
-            'tool',
-            ]
-        widgets = { 
-            'manPower': forms.Textarea(attrs={'rows':2}),
-            'action': forms.Textarea(attrs={'rows':5}),
-            'tool': forms.Textarea(attrs={'rows':5}),
-            'material': forms.Textarea(attrs={'rows':5}),
-            }
+      model = Wo_completion
+      fields = [
+         'status',
+         'activity',
+         'manPower',
+         'duration',
+         'material',
+         'tool',
+         ]
+      widgets = { 
+         'manPower': forms.Textarea(attrs={'rows':2}),
+         'action': forms.Textarea(attrs={'rows':5}),
+         'tool': forms.Textarea(attrs={'rows':5}),
+         'material': forms.Textarea(attrs={'rows':5}),
+         }
 
 from functools import partial
 DateInput = partial(forms.DateInput, {'class': 'datepicker'})

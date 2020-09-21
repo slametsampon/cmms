@@ -127,7 +127,8 @@ class Wo_journal(models.Model):
 
 class Wo_completion(models.Model):
     """Model representing a work order completion"""
-    action = models.TextField(max_length=1000, null=True, help_text='Enter action')
+    #action = models.TextField(max_length=1000, null=True, help_text='Enter action')
+    activity = models.TextField(max_length=1000, null=True, help_text='Enter activity')
     manPower = models.TextField(max_length=100, null=True, help_text='Man power name')
     material = models.TextField(max_length=500, null=True, help_text='Enter material')
     tool = models.TextField(max_length=500, null=True, help_text='Enter action')

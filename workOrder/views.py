@@ -214,7 +214,7 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
 
         return super(Work_orderForward,self).form_valid(form)    
 
-class Work_orderInstruction(LoginRequiredMixin, CreateView):
+class Wo_instruction(LoginRequiredMixin, CreateView):
     form_class = WoInstruction_form
     model = Wo_instruction
     template_name = 'workOrder/WoInstruction_form.html'  # Specify your own template name/location
