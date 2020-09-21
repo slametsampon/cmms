@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm, Select
 from django.contrib.auth.models import User
-from workOrder.models import Wo_journal, Wo_completion, Work_order
+from workOrder.models import Wo_journal, Wo_completion, Work_order, Wo_instruction
 from utility.models import Profile, Wo_priority
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
@@ -91,6 +91,30 @@ class WoJournalForm(ModelForm):
         labels = {'comment': _('comment')}
         widgets = { 'comment': forms.Textarea(attrs={'rows':3})}
         labels = {'action': _('action')}
+
+class WoInstruction_form(ModelForm):
+
+    def clean_instruction(self):
+       data = self.cleaned_data['instruction']
+       
+       # other check logic if needed
+       # Remember to always return the cleaned data.
+       return data
+    
+    def __init__(self, *args, **kwargs):
+
+        #self.user = kwargs.pop('user')
+        super(WoInstruction_form, self).__init__(*args, **kwargs)
+
+    class Meta:
+        template_name = 'workOrder/WoInstruction_form.html'  # Specify your own template name/location
+
+        model = Wo_instruction
+        fields = [
+           'instruction',
+            ]
+
+        widgets = { 'instruction': forms.Textarea(attrs={'rows':5})}
 
 class WoCompletion_form(ModelForm):
 

@@ -1,0 +1,25 @@
+{% extends "base_workOrder.html" %}
+
+{% block title %}
+    <title>Wo Instruction</title>
+{% endblock %}
+{% block content %}
+  {% include 'woHeader.html' %}
+
+  <form action="" method="post">
+    {% csrf_token %}
+    <table class="WoForm">
+      <caption>Work Order Instruction</caption>
+      <thead>
+        <tr>
+          <th scope="col">Item</th>
+          <th scope="col">Data</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ form.as_table }}
+      </tbody>
+    </table>
+    <input type="submit" value="Submit">
+  </form>
+{% endblock %}

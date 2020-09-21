@@ -13,9 +13,9 @@ import datetime
 
 from django import forms
 from django.views.generic.edit import FormView
-from workOrder.forms import WoJournalForm
+from workOrder.forms import WoJournalForm, WoInstruction_form
 from workOrder.forms import WoCompletion_form, WoSummaryReportForm, work_order_form
-from workOrder.models import Work_order, Wo_journal, Wo_completion
+from workOrder.models import Work_order, Wo_journal, Wo_completion, Wo_instruction
 from workOrder.generals import WoMisc as WM
 from utility.models import Action
 
@@ -213,6 +213,85 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
         wO_on_process.updateStatus(Action.objects.get(name=action))
 
         return super(Work_orderForward,self).form_valid(form)    
+
+class Work_orderInstruction(LoginRequiredMixin, CreateView):
+    form_class = WoInstruction_form
+    model = Wo_instruction
+    template_name = 'workOrder/WoInstruction_form.html'  # Specify your own template name/location
+
+    # Sending user object to the form, to verify which fields to display/remove (depending on group)
+    def get_form_kwargs(self):
+        kwargs = super(Work_orderInstruction, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+    def get_initial(self):        
+        initial = super(Work_orderInstruction, self).get_initial()
+
+        return initial
+        # now the form will be shown with the link_pk bound to a value
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(Work_orderInstruction,self).get_context_data(**kwargs)
+        woOnProcess = Work_order.objects.get(id=self.kwargs.get("pk"))
+
+        # Add object in context wo_number use for woHeader.html
+        context['work_order'] = woOnProcess
+
+        return context
+
+    def form_valid(self, form,**kwargs):
+        self.wm = WM(self.request.user)
+        self.object = form.save(commit=False)
+
+        #set work_order_journal date - done by program
+        self.object.date = datetime.date.today()
+
+        #set work_order_journal time - done by program
+        self.object.time = datetime.datetime.now().time()
+
+        #set concern_user date_open
+        self.object.concern_user = self.request.user
+
+        #get wO_on_process - done by program
+        wO_on_process = Work_order.objects.get(id=self.kwargs.get("pk"))
+
+        #set work_order  - done by program
+        self.object.wO_on_process = wO_on_process
+
+        self.object.save()
+
+        #get data from form
+        action = 'Execute'
+        action_id = Action.objects.get(name=action).id
+
+        #complete role is special case since, all data Work order available in this area
+        if action == 'Complete': #complete
+            #get id Originator
+            current_user_id = wO_on_process.originator.id
+            #wO_completed.updateExecutorUserId(self.request.user.id)
+        else:
+            current_user_id = self.wm.get_next_user(action_id).id
+
+        #update current_user_id
+        wO_on_process.updateCurrentUserId(current_user_id)
+
+        #update status work order 
+        wO_on_process.updateStatus(Action.objects.get(name=action))
+
+        #create new journal
+        #To create and save an object in a single step, use the create() method.
+        woJournal = Wo_journal.objects.create(
+            comment='Please read instruction',
+            action=action,#Execute
+            concern_user=self.user,
+            wO_on_process=woOnProcess,
+            date=datetime.date.today(),
+            time=datetime.datetime.now().time()
+            )
+
+        return super(Work_orderInstruction,self).form_valid(form)    
 
 class WoCompletion(LoginRequiredMixin, CreateView):
 
