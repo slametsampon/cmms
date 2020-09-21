@@ -49,14 +49,18 @@
             </li>
         </ul>
         <!--Work Order End-->
-        <br>
-        <h5>Work Order Flow Chart</h5>
-        <br>
         {% load static %}
+
         <!--Make sure to file's name and ext are exactly same -->
-        <img src="{% static 'workOrder/images/WoFlowChart.PNG' %}" 
+        <img src="{% static 'help/images/cmms_work_order_class_diagram.svg' %}" 
+        alt="cmms_work_order_class_diagram.svg" 
+        width="70%" height="40%" ><br><br>  
+
+        <h5>Work Order Flow Chart</h5>
+        <!--Make sure to file's name and ext are exactly same -->
+        <img src="{% static 'help/images/WoFlowChart.PNG' %}" 
         alt="WoFlowChart" 
-        width="70%" height="40%" >    
+        width="80%" height="40%" >    
 
     </div>
 

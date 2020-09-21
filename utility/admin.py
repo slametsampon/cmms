@@ -1,11 +1,17 @@
 from django.contrib import admin
 
-from .models import Section, Department, Profile, Action, Mode
+from .models import Section, Department, Profile, Action, Mode, Wo_priority
 from .forms import ProfileForm
 from django.forms import Select
 
 # Register your models here.
 
+# Register the Admin classes for Section using the decorator
+@admin.register(Wo_priority)
+class Wo_priorityAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description')
+    list_filter = ('name', 'description')
+        
 # Register the Admin classes for Department using the decorator
 @admin.register(Mode)
 class ModeAdmin(admin.ModelAdmin):

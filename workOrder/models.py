@@ -6,8 +6,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from utility.models import Section, Department
-from utility.models import Action
+from utility.models import Section, Department, Action, Wo_priority
 from django.urls import reverse
 
 class Work_order(models.Model):
@@ -28,24 +27,18 @@ class Work_order(models.Model):
         on_delete=models.SET_NULL,
         null=True)
 
-    PRIORITY = (
-        ('n', 'Normal'),
-        ('e', 'Emergency'),
-        ('s', 'Shutdown'),
-        ('o', 'Other'),
-    )
-
-    priority = models.CharField(max_length=1,
-        choices=PRIORITY,
-        blank=True,
-        default='n')
-
     date_open = models.DateField()
     date_finish = models.DateField(null=True)
 
     # Foreign Key used because work order can only have one Status, but Status can have multiple work order
     # Status class has already been defined so we can specify the object above.
     status = models.ForeignKey(Action,
+        on_delete=models.SET_NULL,
+        null=True)
+
+    # Foreign Key used because work order can only have one priority, but priority can have multiple work order
+    # Wo_priority class has already been defined so we can specify the object above.
+    priority = models.ForeignKey(Wo_priority,
         on_delete=models.SET_NULL,
         null=True)
 
@@ -126,7 +119,7 @@ class Wo_journal(models.Model):
 
     def get_absolute_url(self):
         """Returns the url to access a list of work_orders."""
-        return reverse('work_orders')
+        return reverse('workOrder:work_orders')
 
     def __str__(self):
         """String for representing the Model object."""
@@ -164,7 +157,7 @@ class Wo_completion(models.Model):
 
     def get_absolute_url(self):
         """Returns the url to access a list of work_orders."""
-        return reverse('work_orders')
+        return reverse('workOrder:work_orders')
 
     def __str__(self):
         """String for representing the Model object."""
@@ -189,3 +182,4 @@ class Wo_instruction(models.Model):
     def __str__(self):
         """String for representing the Model object."""
         return f'Work order instruction'
+

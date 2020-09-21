@@ -14,7 +14,7 @@ import datetime
 from django import forms
 from django.views.generic.edit import FormView
 from workOrder.forms import WoJournalForm
-from workOrder.forms import WoCompletion_form, WoSummaryReportForm
+from workOrder.forms import WoCompletion_form, WoSummaryReportForm, work_order_form
 from workOrder.models import Work_order, Wo_journal, Wo_completion
 from workOrder.generals import WoMisc as WM
 from utility.models import Action
@@ -81,13 +81,17 @@ class Work_orderDetailView(LoginRequiredMixin, generic.DetailView):
         return context
 
 class Work_orderCreate(LoginRequiredMixin, CreateView):
+    form_class = work_order_form
     model = Work_order
     template_name = 'workOrder/work_order_form.html'  # Specify your own template name/location
+
+    '''
     fields = ['tagnumber',
                 'problem',
                 'priority',
                 'dest_section',
             ]
+    '''
 
     def get_context_data(self, **kwargs):
         self.wm = WM(self.request.user)

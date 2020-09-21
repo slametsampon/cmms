@@ -1,11 +1,54 @@
 from django import forms
 from django.forms import ModelForm, Select
 from django.contrib.auth.models import User
-from workOrder.models import Wo_journal, Wo_completion
-from utility.models import Profile
+from workOrder.models import Wo_journal, Wo_completion, Work_order
+from utility.models import Profile, Wo_priority
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 import datetime
+
+class work_order_form(ModelForm):
+
+   def clean_tagnumber(self):
+      data = self.cleaned_data['tagnumber']
+      
+      # Remember to always return the cleaned data.
+      return data
+
+   def clean_problem(self):
+      data = self.cleaned_data['problem']
+      
+      # Remember to always return the cleaned data.
+      return data
+
+   def clean_priority(self):
+      data = self.cleaned_data['priority']
+      
+      # Remember to always return the cleaned data.
+      return data
+
+   def clean_dest_section(self):
+      data = self.cleaned_data['dest_section']
+      
+      # Remember to always return the cleaned data.
+      return data
+
+   def __init__(self, *args, **kwargs):
+      #self.user = kwargs.pop('user') #take current user
+      super(work_order_form, self).__init__(*args, **kwargs)
+
+      self.fields['tagnumber'].widget = forms.TextInput()
+      self.fields['problem'].widget = forms.Textarea(attrs={'rows':3})
+
+   class Meta:
+      template_name = 'workOrder/WoCompletion_form.html'  # Specify your own template name/location
+
+      model = Work_order
+      fields = ['tagnumber',
+                  'problem',
+                  'priority',
+                  'dest_section',
+               ]
 
 class WoJournalForm(ModelForm):
 

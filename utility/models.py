@@ -49,7 +49,6 @@ class Action(models.Model):
             defaults=dtDict,
         )            
 
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     forward_path = models.IntegerField(null=True)
@@ -215,6 +214,36 @@ class Mode(models.Model):
         help_text='Select Mode',
         default='Forward')
 
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return self.name
+
+    #this decorator make posible to call method w/o instantiate class
+    @classmethod
+    #use cls instead of self
+    def update_or_create_dict(cls,dtDict):
+
+        #get first key for unique key
+        k=None
+        for k,v in dtDict.items():
+            if k:
+                break
+        
+        #name as unique value, kindly modify as needed
+        return cls.objects.update_or_create(
+            name=v,
+            defaults=dtDict,
+        )            
+
+class Wo_priority(models.Model):
+    """Model representing a Wo_priority of work order"""
+    name = models.CharField(max_length=20, null=True, help_text='Enter name of section(eg. Normal, Emergency)')
+    
+    description = models.CharField(max_length=100, null=True, help_text='Enter description of priority')
+    
     class Meta:
         ordering = ['name']
 

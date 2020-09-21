@@ -21,7 +21,7 @@ from xlrd import open_workbook
 
 from cmms import settings 
 from utility.forms import UserForm, ProfileForm, DepartmentForm, SectionForm, ImportFileForm
-from utility.models import Profile, Department, Section, Action
+from utility.models import Profile, Department, Section, Action, Wo_priority
 from utility.transform import dict_helper as dh
 
 # Create your views here.
@@ -135,6 +135,7 @@ class ImportFileFormView(FormView):
         (3,'User'),
         (4,'Profile'),
         (5,'ProfileAction'),
+        (6,'Wo_priority'),
     )
     #buffer context
     plus_context = {}
@@ -287,10 +288,17 @@ class ImportFileFormView(FormView):
             self.plus_context['countAfter'] = Profile.objects.all().count()
 
         elif modelName == 'ProfileAction':
-            print('ProfileAction')
             for dtDict in dh.to_pair_dict(dataDict):
                 
                 #update_or_create_action_dict
-                Profile.update_or_create_action_dict(dtDict)            
-            self.plus_context['countAfter'] = Profile.objects.all().count()
+                obj, created = ProfileAction.update_or_create_action_dict(dtDict)            
+            self.plus_context['countAfter'] = ProfileAction.objects.all().count()
+
+        elif modelName == 'Wo_priority':
+            print('Wo_priority')
+            for dtDict in dh.to_pair_dict(dataDict):
+                
+                #update_or_create_action_dict
+                obj, created = Wo_priority.update_or_create_dict(dtDict)           
+            self.plus_context['countAfter'] = Wo_priority.objects.all().count()
 
