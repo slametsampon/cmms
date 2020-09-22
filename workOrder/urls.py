@@ -16,7 +16,7 @@ urlpatterns += [
 ]
 
 urlpatterns += [  
-    path('wo_instruction/create/', views.Wo_instruction.as_view(), name='wo_instruction-create'),
+    path('wo_instruction/<int:pk>/create/', views.Wo_instructionCreate.as_view(), name='wo_instruction-create'),
 ]
 
 urlpatterns += [  

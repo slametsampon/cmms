@@ -145,7 +145,7 @@ class WoMisc():
             comment=comment,
             action=act,#Open, just opening
             concern_user=self.user,
-            wO_on_process=woOnProcess,
+            work_order=woOnProcess,
             date=datetime.date.today(),
             time=datetime.datetime.now().time()
             )

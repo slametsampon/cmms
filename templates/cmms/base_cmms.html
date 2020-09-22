@@ -16,7 +16,7 @@
             <ul>
                 <li><a href="{% url 'home-cmms' %}">Home</a></li>
                 {% if user.is_authenticated %}
-                    <li><a href="{% url 'workOrder:work_orders'%}">Work Order</a></li>   
+                    <li><a href="{% url 'workOrder:index'%}">Work Order</a></li>   
                     <li><a href="{% url 'pm_pdm:index'%}">PM PdM</a></li>   
                     <li><a href="{% url 'equipment:index'%}">Equipment</a></li>   
                     <li><a href="{% url 'utility:index'%}">Utility</a></li>   
@@ -27,15 +27,19 @@
                     <li><a href="{% url 'help:cmms'%}">Help</a></li>   
                     <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>   
                 {% endif %} 
-
+                {% if user.is_authenticated %}
+                    <li>User : {{ user.get_username }}</li>
+                {% endif %} 
             </ul>
         </div>
         <div>{% block content %}{% endblock %}</div>
 
+        <!---
         <div class="footer">
             {% if user.is_authenticated %}
                 User : {{ user.get_username }}
             {% endif %} 
         </div>          
+        -->
     </body>
 </html>

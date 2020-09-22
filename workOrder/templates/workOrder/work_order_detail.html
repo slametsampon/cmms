@@ -8,24 +8,34 @@
 
   {% include 'woHeader.html' %}
 
-  <p>
+  <ul>
     {% if allowAction %}
       {% if perms.workOrder.add_wo_instruction %}       
-        <a href="{% url 'workOrder:wo_instruction-create' pk=woPK %}">FORWARD/CLOSE</a>
+        <li>
+          <a href="{% url 'workOrder:wo_instruction-create' pk=woPK %}">INSTRUCTION</a>
+          <a href="{% url 'workOrder:work_order-forward' pk=woPK %}">COMPLETE/RETURN</a>
+        </li>
+
       {% elif perms.workOrder.add_work_order %}       
-        <a href="{% url 'workOrder:work_order-forward' pk=woPK %}">FORWARD/CLOSE</a>
+        <li>
+          <a href="{% url 'workOrder:work_order-forward' pk=woPK %}">FORWARD/CLOSE</a>
+        </li>
+
       {% elif perms.workOrder.add_work_order_completion %}
-        <p><strong> For finishing : </strong> 
+        <li><strong> For finishing :</strong> 
           <a href="{% url 'workOrder:work_order-complete' pk=woPK %}">FINISH</a>
-        </p>       
-        <p><strong> For cancelling : </strong> 
+          <strong> For cancelling :</strong> 
           <a href="{% url 'workOrder:work_order-forward' pk=woPK %}">CANCEL</a> 
-        </p>
+        </li>
+
       {% else %}
-        <a href="{% url 'workOrder:work_order-forward' pk=woPK %}">FORWARD/RETURN</a>
+        <li>
+          <a href="{% url 'workOrder:work_order-forward' pk=woPK %}">FORWARD/RETURN</a>
+        </li>
+
       {% endif %}
     {% endif %}
-  </p>
+  </ul>
   {% if journal_list %}
     <table class="WoHistory">
       <caption>History</caption>

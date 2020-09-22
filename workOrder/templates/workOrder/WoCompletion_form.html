@@ -8,6 +8,32 @@
 
   {% include 'woHeader.html' %}
 
+  <!--Put instruction here-->
+  <table class="WoHeader">
+    <caption>Instruction</caption>
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col"></th>
+    </tr>    
+
+    </thead>
+    <tbody>
+      <tr>
+        <th>User</th>
+        <td>{{Wo_instruction.user}}</td>
+      </tr>
+      <tr>
+        <th>Date/Time</th>
+        <td>{{Wo_instruction.date}}/{{Wo_instruction.time}}</td>
+      </tr>
+      <tr>
+        <th>Instruction</th>
+        <td>{{Wo_instruction.instruction}}</td>
+      </tr>
+    </tbody>
+  </table>
+
   <form action="" method="post">
     {% csrf_token %}
     <table class="WoCompletion">
@@ -23,13 +49,11 @@
             <!--Row 1, Col1 for Status, first char should Capital-->
             {% if field.label == 'Status' %}
               <td>
-                <p><strong>Date : </strong>{{date}}</p>
+                <div><strong>Date : </strong>{{date}}</div>
                 <div class="fieldWrapper form-group" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
-                  <div>
                     <strong>{{ field.label_tag }}</strong>
                     {% if field.field.required %}<span class="required" style="color: red;">*</span>{% endif %}
-                  </div>
-                  {{ field }}
+                    {{ field }}
                 </div>
               </td>
 
@@ -37,11 +61,9 @@
               {% elif field.label == 'ManPower' %}
               <td>
                 <div class="fieldWrapper form-group" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
-                  <div>
                     <strong>{{ field.label_tag }}</strong>
                     {% if field.field.required %}<span class="required" style="color: red;">*</span>{% endif %}
-                  </div>
-                  {{ field }}
+                    {{ field }}
                 </div>
               </td>
 
@@ -49,11 +71,9 @@
               {% elif field.label == 'Duration' %}
               <td>
                 <div class="fieldWrapper form-group" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
-                  <div>
                     <strong>{{ field.label_tag }}</strong>
                     {% if field.field.required %}<span class="required" style="color: red;">*</span>{% endif %}
-                  </div>
-                  {{ field }}
+                    {{ field }}
                 </div>
               </td>
 
@@ -64,8 +84,8 @@
         <!--Row 2-->
         <tr>
           {% for field in form %}
-            <!--Row 2, Col1 for Action, first char should Capital-->
-            {% if field.label == 'Action' %}
+            <!--Row 2, Col1 for Activity, first char should Capital-->
+            {% if field.label == 'Activity' %}
               <td>
                 <div class="fieldWrapper form-group" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
                   <div>

@@ -4,9 +4,89 @@
     <title>cmms Work Order</title>
 {% endblock %}
 {% block content %}
-  <h3>Work Order System</h3>
-  <p>The work order need concerning:</p>
-  <ul>
-    <li><strong>Work Order on concern:</strong> {{ woNwoOnConcernumber }}</li>
-  </ul>
+
+  <style>
+    ul {
+        padding: 0px 0px 0px 20px;
+    }
+  </style>
+
+  <div class="row">
+    <div class="column side">
+      <h3>Work Order System</h3>
+      <p>The work order need concerning:</p>
+      <ul>
+        {%if woNwoOnConcernumber%}
+            <li><a href="{% url 'workOrder:work_orders'%}"><strong>Work Order :</strong> {{ woNwoOnConcernumber }}</a></li>   
+        {% else %}
+            <li><strong>Work Order :</strong> {{ woNwoOnConcernumber }}</li>   
+        {% endif %} 
+        {% if perms.workOrder.add_work_order %}       
+            <li><a href="{% url 'workOrder:work_order-create' %}">Create Work Order</a></li>
+        {% endif %}
+        </ul>
+    </div>
+    
+    <div class="column middle">
+        <!--Work Order Start-->
+        <h2>Work Order</h2>
+        <p>
+            Tindakan perbaikan/korektif terhadap aset yang menunjang bisnis dapat
+            dilakukan dengan melakukan permintaan pekerjaan terkait dengan kondisi 
+            aset. Tindakan perbaikan ini guna menjaga unjuk kerja dari aset agar tetap terjaga
+            ssesuai name plate-nya. Tindakan perbaikan ini dapat bersumber dari pengguna aset
+            (produksi), ataupun internal dari hasil inspeksi. Selain itu, permintaan pekerjaan 
+            juga dapat secara otomatis diterbitkan oleh program terkait dengan jadwal pemeliharaan
+            terencana (Preventive dan Predictive Maintenane) termasuk didalamnya adalah jadwal kalibrasi.
+            Penanganan permintaan pekerjaan ini meliputi jam kerja normal dan waktu libur.
+            Dalam module ini ada bebera fungsi sbb:
+        </p>
+        <ul>
+            <li>
+                Membuat/membuka permintaan pekerjaan
+            </li>
+            <li>
+                Melakukan pemeriksaan serta menyetujui work order
+            </li>
+            <li>
+                Melakukan pelacakan
+            </li>
+            <li>
+                Menuliskan kegiatan, serta sumber daya yang diperlukan
+            </li>
+        </ul>
+        <!--Work Order End-->
+        {% load static %}
+
+        <h5>Work Order Flow Chart</h5>
+        <!--Make sure to file's name and ext are exactly same -->
+        <img src="{% static 'help/images/WoFlowChart.PNG' %}" 
+        alt="WoFlowChart" 
+        width="80%" height="40%" >    
+
+    </div>
+
+    <div class="column side">
+        <h2>Work Order Modules</h2>
+        <p>
+            Penanganan permintaan mulai dari opening, approval, koreksi, pelaksanaan,
+            sampai pada penutupan (closing)
+        </p>
+        <ul>
+            <li>
+                Flow Chart Approval
+            </li>
+            <li>
+                Status Work Order
+            </li>
+            <li>
+                Pending item
+            </li>
+            <li>
+                Summary
+            </li>
+        </ul>
+    </div>
+  </div>    
+
 {% endblock %}

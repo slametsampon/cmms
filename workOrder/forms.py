@@ -102,7 +102,7 @@ class WoInstruction_form(ModelForm):
     
     def __init__(self, *args, **kwargs):
 
-        #self.user = kwargs.pop('user')
+        self.user = kwargs.pop('user')
         super(WoInstruction_form, self).__init__(*args, **kwargs)
 
     class Meta:
@@ -176,17 +176,17 @@ class WoCompletion_form(ModelForm):
       model = Wo_completion
       fields = [
          'status',
-         'activity',
          'manPower',
          'duration',
+         'activity',
          'material',
          'tool',
          ]
       widgets = { 
-         'manPower': forms.Textarea(attrs={'rows':2}),
-         'action': forms.Textarea(attrs={'rows':5}),
-         'tool': forms.Textarea(attrs={'rows':5}),
-         'material': forms.Textarea(attrs={'rows':5}),
+         'manPower': forms.Textarea(attrs={'rows':1}),
+         'activity': forms.Textarea(attrs={'rows':4}),
+         'tool': forms.Textarea(attrs={'rows':4}),
+         'material': forms.Textarea(attrs={'rows':4}),
          }
 
 from functools import partial

@@ -25,15 +25,19 @@
                 {% else %}
                     <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>   
                 {% endif %} 
-
+                {% if user.is_authenticated %}
+                    <li>User : {{ user.get_username }}</li>
+                {% endif %} 
             </ul>
         </div>
         <div>{% block content %}{% endblock %}</div>
 
+        <!---
         <div class="footer">
             {% if user.is_authenticated %}
                 User : {{ user.get_username }}
             {% endif %} 
         </div>          
+        -->
     </body>
 </html>

@@ -59,32 +59,24 @@ class Work_order(models.Model):
         # Run default save() method
         super(Work_order,self).save(*args, **kwargs)
 
-    def updateFields(self,**kwargs):
+    def updateField(self,**kwargs):
         '''update fields model'''
-        print(f'updateFileds=>len(kwargs):{len(kwargs)}')
-        print(f'updateFileds=>kwargs.keys():{kwargs.keys()}')
-        print(f'updateFileds=>kwargs.values():{kwargs.values()}')
-        #self.save(update_fields=['name'])updateExecutorUserId
 
-    def updateStatus(self,fieldVal):
-        '''update status field'''
-        self.status = fieldVal
-        self.save(update_fields=['status'])
+        if kwargs.get('status', None):
+            self.status=kwargs['status']
+            self.save(update_fields=['status'])
 
-    def updateCurrentUserId(self,fieldVal):
-        '''update current_user_id field'''
-        self.current_user_id = fieldVal
-        self.save(update_fields=['current_user_id'])
+        elif kwargs.get('current_user_id', None):
+            self.current_user_id=kwargs['current_user_id']
+            self.save(update_fields=['current_user_id'])
 
-    def updateExecutorUserId(self,fieldVal):
-        '''update executor_user_id field'''
-        self.executor_user_id = fieldVal
-        self.save(update_fields=['executor_user_id'])
+        elif kwargs.get('executor_user_id', None):
+            self.executor_user_id=kwargs['executor_user_id']
+            self.save(update_fields=['executor_user_id'])
 
-    def updateDateFinish(self,fieldVal):
-        '''update executor_user_id field'''
-        self.date_finish = fieldVal
-        self.save(update_fields=['date_finish'])
+        elif kwargs.get('date_finish', None):
+            self.date_finish=kwargs['date_finish']
+            self.save(update_fields=['date_finish'])
 
     def __str__(self):
         """String for representing the Model object."""
@@ -96,19 +88,19 @@ class Wo_journal(models.Model):
     date = models.DateField(null=True)
     time = models.TimeField(null=True)
     
-    # Foreign Key used because Work_order_journal can only have one concern_user, but Work_order_journal can have multiple concern_user
+    # Foreign Key used because Wo_journal can only have one concern_user, but Wo_journal can have multiple concern_user
     # User class has already been defined so we can specify the object above.
     concern_user = models.ForeignKey(User,
         on_delete=models.SET_NULL,
         null=True)
     
-    # Foreign Key used because Work_order_journal can only have one wO_on_process, but wO_on_process can have multiple Work_order_journal
+    # Foreign Key used because Wo_journal can only have one work_order, but work_order can have multiple Wo_journal
     # User class has already been defined so we can specify the object above.
-    wO_on_process = models.ForeignKey(Work_order,
+    work_order = models.ForeignKey(Work_order,
         on_delete=models.SET_NULL,
         null=True)
 
-    # Foreign Key used because work order can only have one Action, but Action can have multiple work order journal
+    # Foreign Key used because work order can only have one Action, but Action can have multiple Wo_journal
     # Action class has already been defined so we can specify the object above.
     action = models.ForeignKey(Action,
         on_delete=models.SET_NULL,
@@ -141,9 +133,9 @@ class Wo_completion(models.Model):
         on_delete=models.SET_NULL,
         null=True)
 
-    # Foreign Key used because Wo_completion can only have one wO_completed, but wO_completed can have multiple Wo_completion
+    # Foreign Key used because Wo_completion can only have one work_order, but work_order can have multiple Wo_completion
     # User class has already been defined so we can specify the object above.
-    wO_completed = models.ForeignKey(Work_order,
+    work_order = models.ForeignKey(Work_order,
         on_delete=models.SET_NULL,
         null=True)
 
@@ -166,7 +158,7 @@ class Wo_completion(models.Model):
 
 class Wo_instruction(models.Model):
     """Model representing a work order instruction"""
-    instruction = models.TextField(max_length=1000, null=True, help_text='Enter action')
+    instruction = models.TextField(max_length=1000, null=True)
     date = models.DateField(null=True)
     time = models.TimeField(null=True)
     

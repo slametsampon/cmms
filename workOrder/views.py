@@ -70,6 +70,7 @@ class Work_orderDetailView(LoginRequiredMixin, generic.DetailView):
         wo_current_user_id = context['object'].current_user_id
         userId = self.request.user.id
         
+        #permisive for updating work order by valid user
         allowAction = False
         if wo_current_user_id == userId:
             allowAction = True
@@ -77,7 +78,7 @@ class Work_orderDetailView(LoginRequiredMixin, generic.DetailView):
 
         # Add in a QuerySet of journal for history listing
         context['woPK'] = context['object'].id
-        context['journal_list'] = Wo_journal.objects.filter(wO_on_process=context['object'].id)
+        context['journal_list'] = Wo_journal.objects.filter(work_order=context['object'].id)
         return context
 
 class Work_orderCreate(LoginRequiredMixin, CreateView):
@@ -186,11 +187,11 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
         #set concern_user date_open
         self.object.concern_user = self.request.user
 
-        #get wO_on_process - done by program
-        wO_on_process = Work_order.objects.get(id=self.kwargs.get("pk"))
+        #get Wo_on_process - done by program
+        Wo_on_process = Work_order.objects.get(id=self.kwargs.get("pk"))
 
         #set work_order  - done by program
-        self.object.wO_on_process = wO_on_process
+        self.object.work_order = Wo_on_process
 
         self.object.save()
 
@@ -201,39 +202,38 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
         #complete role is special case since, all data Work order available in this area
         if action == 'Complete': #complete
             #get id Originator
-            current_user_id = wO_on_process.originator.id
-            #wO_completed.updateExecutorUserId(self.request.user.id)
+            current_user_id = Wo_on_process.originator.id
         else:
             current_user_id = self.wm.get_next_user(action_id).id
 
         #update current_user_id
-        wO_on_process.updateCurrentUserId(current_user_id)
+        Wo_on_process.updateField(current_user_id=current_user_id)
 
         #update status work order 
-        wO_on_process.updateStatus(Action.objects.get(name=action))
+        Wo_on_process.updateField(status=Action.objects.get(name=action))
 
         return super(Work_orderForward,self).form_valid(form)    
 
-class Wo_instruction(LoginRequiredMixin, CreateView):
+class Wo_instructionCreate(LoginRequiredMixin, CreateView):
     form_class = WoInstruction_form
     model = Wo_instruction
     template_name = 'workOrder/WoInstruction_form.html'  # Specify your own template name/location
 
     # Sending user object to the form, to verify which fields to display/remove (depending on group)
     def get_form_kwargs(self):
-        kwargs = super(Work_orderInstruction, self).get_form_kwargs()
+        kwargs = super(Wo_instructionCreate, self).get_form_kwargs()
         kwargs.update({'user': self.request.user})
         return kwargs
 
     def get_initial(self):        
-        initial = super(Work_orderInstruction, self).get_initial()
+        initial = super(Wo_instructionCreate, self).get_initial()
 
         return initial
         # now the form will be shown with the link_pk bound to a value
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
-        context = super(Work_orderInstruction,self).get_context_data(**kwargs)
+        context = super(Wo_instructionCreate,self).get_context_data(**kwargs)
         woOnProcess = Work_order.objects.get(id=self.kwargs.get("pk"))
 
         # Add object in context wo_number use for woHeader.html
@@ -252,46 +252,45 @@ class Wo_instruction(LoginRequiredMixin, CreateView):
         self.object.time = datetime.datetime.now().time()
 
         #set concern_user date_open
-        self.object.concern_user = self.request.user
+        self.object.user = self.request.user
 
-        #get wO_on_process - done by program
-        wO_on_process = Work_order.objects.get(id=self.kwargs.get("pk"))
+        #get Wo_on_process - done by program
+        Wo_on_process = Work_order.objects.get(id=self.kwargs.get("pk"))
 
         #set work_order  - done by program
-        self.object.wO_on_process = wO_on_process
+        self.object.work_order = Wo_on_process
 
         self.object.save()
 
         #get data from form
-        action = 'Execute'
-        action_id = Action.objects.get(name=action).id
+        action = Action.objects.get(name='Execute')
+        action_id = action.id
 
         #complete role is special case since, all data Work order available in this area
         if action == 'Complete': #complete
             #get id Originator
-            current_user_id = wO_on_process.originator.id
-            #wO_completed.updateExecutorUserId(self.request.user.id)
+            current_user_id = Wo_on_process.originator.id
         else:
             current_user_id = self.wm.get_next_user(action_id).id
 
         #update current_user_id
-        wO_on_process.updateCurrentUserId(current_user_id)
+        Wo_on_process.updateField(current_user_id=current_user_id)
 
         #update status work order 
-        wO_on_process.updateStatus(Action.objects.get(name=action))
+        Wo_on_process.updateField(status=Action.objects.get(name=action))
 
         #create new journal
         #To create and save an object in a single step, use the create() method.
-        woJournal = Wo_journal.objects.create(
+        Wo_journal.objects.create(
             comment='Please read instruction',
             action=action,#Execute
-            concern_user=self.user,
-            wO_on_process=woOnProcess,
+            concern_user=self.request.user,
+            work_order=Wo_on_process,
             date=datetime.date.today(),
             time=datetime.datetime.now().time()
             )
 
-        return super(Work_orderInstruction,self).form_valid(form)    
+        return super(Wo_instructionCreate,self).form_valid(form)    
 
 class WoCompletion(LoginRequiredMixin, CreateView):
 
@@ -314,10 +313,14 @@ class WoCompletion(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(WoCompletion,self).get_context_data(**kwargs)
-        wO_completed = Work_order.objects.get(id=self.kwargs.get("pk"))
+        Wo_completed = Work_order.objects.get(id=self.kwargs.get("pk"))
+        WoInstruction = Wo_instruction.objects.get(work_order=Wo_completed)
+
+        # Add object in context Wo_instruction use for WoCompletion_form.html
+        context['Wo_instruction'] = WoInstruction
 
         # Add object in context wo_number use for woHeader.html
-        context['work_order'] = wO_completed
+        context['work_order'] = Wo_completed
 
         # Add object in context date_open use in form
         context['date'] = datetime.date.today()
@@ -334,9 +337,9 @@ class WoCompletion(LoginRequiredMixin, CreateView):
         #set acted_user - done by program
         self.object.acted_user = self.request.user
 
-        #set wO_completed - done by program
-        wO_completed = Work_order.objects.get(id=self.kwargs.get("pk"))
-        self.object.wO_completed = wO_completed
+        #set Wo_completed - done by program
+        Wo_completed = Work_order.objects.get(id=self.kwargs.get("pk"))
+        self.object.work_order = Wo_completed
 
         self.object.save()
 
@@ -346,16 +349,15 @@ class WoCompletion(LoginRequiredMixin, CreateView):
 
         #finish role is special case since, all data Work order available in this area
         if action == 'Finish': #complete
-            wO_completed.updateExecutorUserId(self.request.user.id)
-            wO_completed.updateDateFinish(datetime.date.today())
+            Wo_completed.updateField(executor_user_id=self.request.user.id)
+            Wo_completed.updateField(date_finish=datetime.date.today())
 
         #update work order current_user_id
         current_user_id = self.wm.get_next_user(action_id).id
-        wO_completed.updateCurrentUserId(current_user_id)
+        Wo_completed.updateCurrentUserId(current_user_id)
 
         #update status work order
-        #status = self.wm.getWoStatus(action)
-        wO_completed.updateStatus(Action.objects.get(name=action))
+        Wo_completed.updateField(status=Action.objects.get(name=action))
 
         return super(WoCompletion,self).form_valid(form)    
 
