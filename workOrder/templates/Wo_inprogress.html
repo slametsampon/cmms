@@ -1,0 +1,30 @@
+{% block content %}
+    <ul>
+        {% if allowAction %}
+            {% if perms.workOrder.add_wo_instruction %}       
+                <li>
+                    <a href="{% url 'workOrder:wo_instruction-create' pk=woPK %}">INSTRUCTION</a>
+                    <a href="{% url 'workOrder:work_order-forward' pk=woPK %}">COMPLETE/RETURN</a>
+                </li>
+
+            {% elif perms.workOrder.add_work_order %}       
+                <li>
+                    <a href="{% url 'workOrder:work_order-forward' pk=woPK %}">FORWARD/CLOSE</a>
+                </li>
+
+            {% elif perms.workOrder.add_work_order_completion %}
+                <li><strong> For finishing :</strong> 
+                    <a href="{% url 'workOrder:work_order-complete' pk=woPK %}">FINISH</a>
+                    <strong> For cancelling :</strong> 
+                    <a href="{% url 'workOrder:work_order-forward' pk=woPK %}">CANCEL</a> 
+                </li>
+
+            {% else %}
+                <li>
+                    <a href="{% url 'workOrder:work_order-forward' pk=woPK %}">FORWARD/RETURN</a>
+                </li>
+
+            {% endif %}
+        {% endif %}
+    </ul>
+{% endblock %}

@@ -52,7 +52,6 @@ class Work_order(models.Model):
         """Returns the url to access a list of work_orders."""
         #"""Returns the url to access a detail record for this work order."""
         return reverse('workOrder:work_order-detail', args=[str(self.id)])
-        #return reverse('work_orders')
 
     def save(self, *args, **kwargs):
         # Do custom logic here (e.g. validation, logging, call third party service)
