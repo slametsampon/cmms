@@ -1,0 +1,37 @@
+{% block content %}
+<table class="WoHeader">
+    <caption>Execution</caption>
+    <thead>
+      <tr>
+        <th scope="col">Item</th>
+        <th scope="col">Description</th>
+    </tr>    
+    </thead>
+    <tbody>
+      <tr>
+        <th>Manpower</th>
+        <td>{{Wo_completion.manPower}}</td>
+      </tr>
+      <tr>
+        <th>Date</th>
+        <td>{{Wo_completion.date}}</td>
+      </tr>
+      <tr>
+        <th>Duration</th>
+        <td>{{Wo_completion.duration}}</td>
+      </tr>
+      <tr>
+        <th>activity</th>
+        <td>{{Wo_completion.activity}}</td>
+      </tr>
+      <tr>
+        <th>Material</th>
+        <td>{{Wo_completion.material}}</td>
+      </tr>
+      <tr>
+        <th>Tool</th>
+        <td>{{Wo_completion.tool}}</td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock %}

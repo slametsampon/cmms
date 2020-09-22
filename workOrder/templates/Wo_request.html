@@ -1,6 +1,6 @@
 {% block content %}
     <table class="WoHeader">
-        <caption>Detail</caption>
+        <caption>Request</caption>
         <thead>
             <tr>
                 <th scope="col">Item</th>
@@ -31,13 +31,9 @@
             <tr>
                 <th scope="row">Status</th>
                 <!-- get data from script logic-->
-                <td id = "status"></td> 
+                <td>{{ work_order.status }}</td>
             </tr>
         </tbody>
     </table> 
 
-    <script type="text/javascript"> 
-        var status = getStatus("{{work_order.status}}"); /*get data from django*/
-        document.getElementById("status").innerHTML = status;
-    </script>
 {% endblock %}

@@ -13,7 +13,7 @@ import datetime
 
 from django import forms
 from django.views.generic.edit import FormView
-from workOrder.forms import WoJournalForm, WoInstruction_form
+from workOrder.forms import WoJournalForm, WoInstruction_form, WoReportForm
 from workOrder.forms import WoCompletion_form, WoSummaryReportForm, work_order_form
 from workOrder.models import Work_order, Wo_journal, Wo_completion, Wo_instruction
 from workOrder.generals import WoMisc as WM
@@ -200,7 +200,7 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
         action_id = Action.objects.get(name=action).id
 
         #complete role is special case since, all data Work order available in this area
-        if action == 'Complete': #complete
+        if action.name == 'Complete': #complete
             #get id Originator
             current_user_id = Wo_on_process.originator.id
         else:
@@ -354,7 +354,7 @@ class WoCompletion(LoginRequiredMixin, CreateView):
 
         #update work order current_user_id
         current_user_id = self.wm.get_next_user(action_id).id
-        Wo_completed.updateCurrentUserId(current_user_id)
+        Wo_completed.updateField(current_user_id=current_user_id)
 
         #update status work order
         Wo_completed.updateField(status=Action.objects.get(name=action))
@@ -449,3 +449,7 @@ class WoSummaryReportView(FormView):
 
         return super(WoSummaryReportView,self).form_valid(form)    
 
+class WoReportView(FormView):
+    template_name = 'workOrder/WoReport_form.html'
+    form_class = WoReportForm
+    success_url = '/workOrder/report/'

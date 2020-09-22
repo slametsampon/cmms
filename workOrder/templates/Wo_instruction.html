@@ -1,0 +1,25 @@
+{% block content %}
+<table class="WoHeader">
+    <caption>Instruction</caption>
+    <thead>
+      <tr>
+        <th scope="col">Item</th>
+        <th scope="col">Description</th>
+    </tr>    
+    </thead>
+    <tbody>
+      <tr>
+        <th>User</th>
+        <td>{{Wo_instruction.user}}</td>
+      </tr>
+      <tr>
+        <th>Date/Time</th>
+        <td>{{Wo_instruction.date}}/{{Wo_instruction.time}}</td>
+      </tr>
+      <tr>
+        <th>Instruction</th>
+        <td>{{Wo_instruction.instruction}}</td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock %}

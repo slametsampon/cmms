@@ -1,0 +1,35 @@
+{% block content %}
+    {% if journal_list %}
+        <table class="WoHistory">
+            <caption>History</caption>
+            <thead>
+                <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Time</th>
+                <th scope="col">PIC</th>
+                <th scope="col">Comment</th>
+                </tr>    
+            </thead>
+            <tbody>
+                {% for journal in journal_list %}
+                <tr>
+                    <td>
+                    {{journal.date}}
+                    </td>
+                    <td>
+                    {{journal.time}}
+                    </td>
+                    <td>
+                    {{journal.concern_user}} 
+                    </td>
+                    <td>
+                    {{journal.comment}}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>  
+    {% else %}
+        <p>There are no histories</p>
+    {% endif %}       
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base_workOrder.html" %}
+
+{% block title %}
+    <title>Wo Report</title>
+{% endblock %}
+
+{% block content %}
+
+    <h4>Work Order Report</h4>
+    <!--For Work order request-->
+    {% include 'Wo_request.html' %}
+
+    <!--For Work order instruction-->
+    {% include 'Wo_instruction.html' %}
+
+    <!--For Work order instruction-->
+    {% include 'Wo_execution.html' %}
+
+{% endblock %}

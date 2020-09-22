@@ -21,6 +21,7 @@ urlpatterns += [
 
 urlpatterns += [  
     path('work_order/summary/', views.WoSummaryReportView.as_view(), name='work_order-summary'),
+    path('report/', views.WoReportView.as_view(), name='workOrder-report'),
 ]
 
 # Use static() to add url mapping to serve static files during development (only)

@@ -223,3 +223,8 @@ class WoSummaryReportForm(forms.Form):
        # other check logic if needed
        # Remember to always return the cleaned data. datetime.timedelta(days=30)
        return data
+
+class WoReportForm(forms.Form):
+
+    class Meta:
+        template_name = 'workOrder/WoReport_form.html'  # Specify your own template name/location

@@ -4,7 +4,9 @@
     <title>Wo Forwader</title>
 {% endblock %}
 {% block content %}
-  {% include 'woHeader.html' %}
+
+  <!--For Work order request-->
+  {% include 'Wo_request.html' %}
 
   <form action="" method="post">
     {% csrf_token %}
