@@ -200,7 +200,7 @@ class Department(models.Model):
         )            
 
 class Mode(models.Model):
-    """Model representing a Mode of organization"""
+    """Model representing a Mode of Action"""
     name = models.CharField(max_length=10, null=True, help_text='Enter name of Mode(eg. Reverse, Forward, Stay)')
     MODE = (
         ('Forward', 'Forward'),
@@ -244,6 +244,50 @@ class Wo_priority(models.Model):
     
     description = models.CharField(max_length=100, null=True, help_text='Enter description of priority')
     
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return self.name
+
+    #this decorator make posible to call method w/o instantiate class
+    @classmethod
+    #use cls instead of self
+    def update_or_create_dict(cls,dtDict):
+
+        #get first key for unique key
+        k=None
+        for k,v in dtDict.items():
+            if k:
+                break
+        
+        #name as unique value, kindly modify as needed
+        return cls.objects.update_or_create(
+            name=v,
+            defaults=dtDict,
+        )            
+
+class CategoryAction(models.Model):
+    """Model representing a Category of actions"""
+    name = models.CharField(max_length=10, null=True, help_text='Enter name of Mode(eg. Reverse, Forward, Stay)')
+    CATEGORY = (
+        ('Pending', 'Pending'),
+        ('Finish', 'Finish'),
+        ('Schedule', 'Schedule'),
+        ('Close', 'Close'),
+    )
+
+    name = models.CharField(max_length=10,
+        choices=CATEGORY,
+        blank=True,
+        help_text='Select Category',
+        default='Pending')
+
+    # ManyToManyField used because Action can contain many ProfileUtilities. ProfileUtilities can cover many Actiones.
+    # Action class has already been defined so we can specify the object above.
+    actions = models.ManyToManyField(Action, help_text='Select actions')
+
     class Meta:
         ordering = ['name']
 
