@@ -12,7 +12,8 @@
   <!--For Work order request-->
   {% include 'Wo_inprogress.html' %}
   
-  {% if work_order.status.name == 'Complete' %}
+  {% if Wo_complete_report %}
+
     <!--For Work order instruction-->
     {% include 'Wo_instruction.html' %}
 

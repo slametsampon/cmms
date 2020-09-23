@@ -11,73 +11,6 @@ class WoMisc():
     def __init__(self, user):
         self.user = user
 
-    def getWoStatus(self, action):
-        for g in self.user.groups.all():
-            status = 'ot' #other
-
-            #originator supervisor
-            if 'SPV_ORG' == g.name:
-                if action == 'f': #forward action
-                    status = 'op' # Open
-                elif action == 'c': #close
-                    status = 'cl' #Close
-
-            #originator superintendent
-            if 'SPTD_ORG' == g.name:
-                if action == 'f': #forward action
-                    status = 'ck' # Check
-                elif action == 'r': #return
-                    status = 'rv' #Revise
-
-            #originator manager
-            if 'MGR_ORG' == g.name:
-                if action == 'f': #forward action
-                    status = 'ap' # Approve
-                elif action == 'r': #return
-                    status = 'rc' #Re-check
-
-            #executor manager
-            if 'MGR_EXE' == g.name:
-                if action == 'f': #forward action
-                    status = 'rw' # Review
-                elif action == 'r': #return
-                    status = 'rj' #Reject
-
-            #executor superintendent
-            if 'SPTD_EXE' == g.name:
-                if action == 'f': #forward action
-                    status = 'sc' # Schedule
-                elif action == 'r': #return
-                    status = 'rt' #Return
-                elif action == 's': #Shutdown
-                    status = 'ns' #Need Shutdown
-                elif action == 'l': #Need Material
-                    status = 'nl' #Need Materials
-                elif action == 'm': #Need MOC
-                    status = 'nm' #Need MOC
-                elif action == 'o': #Other
-                    status = 'ot' #Need Regulation, etc
-
-            #executor supervisor
-            if 'SPV_EXE' == g.name:
-                if action == 'f': #forward action
-                    status = 'ec' # Execute
-                elif action == 'r': #return
-                    status = 'rt' #Return
-                elif action == 't': #complete
-                    status = 'cm' #Complete
-
-            #executor foreman
-            if 'FRM_EXE' == g.name:
-                if action == 'h': #finish action
-                    status = 'fn' # Finish
-                elif action == 'i': #in progress
-                    status = 'ip' #in progress
-                elif action == 'r': #return
-                    status = 'cn' #Cancel
-
-            return status
-
     def getWoNumber(self):
         # get user department - initial
 
@@ -109,7 +42,8 @@ class WoMisc():
         next_user_id = self.user.id
 
         #for human readable
-        action_mode = Action.objects.get(id = act_id).mode.name
+        action = Action.objects.get(id = act_id)
+        action_mode = action.mode.name
 
         #role for general user
         if action_mode == 'Reverse':
@@ -154,6 +88,13 @@ class WoMisc():
         # get list of WO on concern in journal myModel.field_object
         woListId=[]
         woList = Work_order.objects.filter(current_user_id=self.user.id)
+
+        #special for originator supervisor
+        for g in self.user.groups.all():
+            if 'SPV_ORG' == g.name:
+                woList = Work_order.objects.filter(current_user_id=self.user.id
+                    ).exclude(status=Action.objects.get(name='Close'))
+        
         for wo in woList:
             woListId.append(wo.id)
         return woListId

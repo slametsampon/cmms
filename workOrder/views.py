@@ -24,8 +24,10 @@ def index(request):
     """View function for home page of site."""
 
     # Generate counts of some of the main objects
-    #num_work_orders = Work_order.objects.all().count()
-    woOnConcern = Work_order.objects.all().filter(current_user_id=request.user.id).count()
+    woOnConcern = Work_order.objects.filter(current_user_id=request.user.id
+        ).exclude(status=Action.objects.get(name='Close')).count()
+        
+    #woOnConcern = Work_order.objects.all().filter(current_user_id=request.user.id).count()
     
     context = {
         'woNwoOnConcernumber': woOnConcern,
@@ -49,7 +51,7 @@ class Work_orderListView(LoginRequiredMixin, generic.ListView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         
-        SUMMARY_LIST =['EXC_MGR','EXC_SPTD','EXC_SPV']
+        SUMMARY_LIST =['MGR_EXE','SPTD_EXE','SPV_EXE']
         allowSummary = False
         for g in self.request.user.groups.all():
             #set for allowSummary
@@ -67,18 +69,27 @@ class Work_orderDetailView(LoginRequiredMixin, generic.DetailView):
         context = super().get_context_data(**kwargs)
 
         #get Work order concern id
-        wo_current_user_id = context['object'].current_user_id
-        userId = self.request.user.id
-        
-        #permisive for updating work order by valid user
-        allowAction = False
-        if wo_current_user_id == userId:
-            allowAction = True
-        context['allowAction'] = allowAction
+        woDetail = context.get('object', None)
+        if woDetail:
+            wo_current_user_id = woDetail.current_user_id
+            userId = self.request.user.id
+            
+            #permisive for updating work order by valid user
+            allowAction = False
+            if wo_current_user_id == userId:
+                allowAction = True
+            context['allowAction'] = allowAction
 
-        # Add in a QuerySet of journal for history listing
-        context['woPK'] = context['object'].id
-        context['journal_list'] = Wo_journal.objects.filter(work_order=context['object'].id)
+            # Add in a QuerySet of journal for history listing
+            context['woPK'] = woDetail.id
+            context['journal_list'] = Wo_journal.objects.filter(work_order=woDetail.id)
+
+            FINISH_LIST = ['Finish', 'Complete', 'Close']
+            if woDetail.status.name in FINISH_LIST:
+                context['Wo_instruction'] = Wo_instruction.objects.get(work_order=woDetail)
+                context['Wo_completion'] = Wo_completion.objects.get(work_order=woDetail)
+                context['Wo_complete_report'] = True
+
         return context
 
 class Work_orderCreate(LoginRequiredMixin, CreateView):
@@ -184,7 +195,7 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
         #set work_order_journal time - done by program
         self.object.time = datetime.datetime.now().time()
 
-        #set concern_user date_open
+        #set concern_user 
         self.object.concern_user = self.request.user
 
         #get Wo_on_process - done by program
@@ -195,12 +206,15 @@ class Work_orderForward(LoginRequiredMixin, CreateView):
 
         self.object.save()
 
-        #get data from form
+        #get data from form and update Work_order
         action = form.cleaned_data.get('action')
         action_id = Action.objects.get(name=action).id
 
         #complete role is special case since, all data Work order available in this area
-        if action.name == 'Complete': #complete
+        if action.name == 'Complete': #Complete
+            #get id Originator
+            current_user_id = Wo_on_process.originator.id
+        elif action.name == 'Close': #Close
             #get id Originator
             current_user_id = Wo_on_process.originator.id
         else:
@@ -381,10 +395,31 @@ class WoSummaryReportView(FormView):
         # now the form will be shown with the link_pk bound to a value
 
     def get_context_data(self, **kwargs):
-        pendingList = ["ns", "nl", "nm", "ot"] #Shutdown, Need Material, MOC, Other
-        finishList = ["fn", "cm"] #finish, complete
-        scheduleList = ["ec", "ip", "sc"] #Execute, in progress, schedule
-        closeList = ["cl"] #close
+
+        PENDING_LIST = [
+            "Need shutdown",
+            "Need materials",
+            "Need MOC",
+            "Need Regulations"] #Shutdown, Need Material, MOC, Other
+        FINISH_LIST = ["Finish", "Complete"] #finish, complete
+        SCHEDULE_LIST = ["Execute", "In progress", "Schedule"] #Execute, in progress, schedule
+        CLOSE_LIST = ["Close"] #close
+
+        PENDING_STATUSES = []
+        for sts in Action.objects.all().filter(name__in=PENDING_LIST):
+            PENDING_STATUSES.append(sts)
+
+        SCHEDULE_STATUSES = []
+        for sts in Action.objects.all().filter(name__in=SCHEDULE_LIST):
+            SCHEDULE_STATUSES.append(sts)
+
+        FINISH_STATUSES = []
+        for sts in Action.objects.all().filter(name__in=FINISH_LIST):
+            FINISH_STATUSES.append(sts)
+
+        CLOSE_STATUSES = []
+        for sts in Action.objects.all().filter(name__in=CLOSE_LIST):
+            CLOSE_STATUSES.append(sts)
 
         # Call the base implementation first to get a context self.kwargs.get("pk")
         context = super().get_context_data(**kwargs)
@@ -397,16 +432,16 @@ class WoSummaryReportView(FormView):
 
         woList = Work_order.objects.all().filter(date_open__range=[start_date, end_date])
         if wo_status == 's':#schedule
-            woList = woList.filter(status__in=scheduleList)
+            woList = woList.filter(status__in=SCHEDULE_STATUSES)
             caption = 'Schedule - Work Order List'
-        elif wo_status == 't':#finishList
-            woList = woList.filter(status__in=finishList)
+        elif wo_status == 't':#FINISH_LIST
+            woList = woList.filter(status__in=FINISH_STATUSES)
             caption = 'Finish - Work Order List'
-        elif wo_status == 'p':#pendingList
-            woList = woList.filter(status__in=pendingList)
+        elif wo_status == 'p':#PENDING_LIST
+            woList = woList.filter(status__in=PENDING_STATUSES)
             caption = 'Pending - Work Order List'
         elif wo_status == 'c':#close
-            woList = woList.filter(status__in=closeList)
+            woList = woList.filter(status__in=CLOSE_STATUSES)
             caption = 'Close - Work Order List'
         else:
             woList = woList
@@ -417,20 +452,21 @@ class WoSummaryReportView(FormView):
         context['caption'] = caption
         context['woOpen'] = woOpen
 
+        woList = Work_order.objects.all().filter(date_open__range=[start_date, end_date])
         # Add in a number of journal for woClose
-        woClose = woList.filter(status__in=closeList).count()
+        woClose = woList.filter(status__in=CLOSE_STATUSES).count()
         context['woClose'] = woClose
 
         # Add in a number of journal for woPending
-        woPending = woList.filter(status__in=pendingList).count()
+        woPending = woList.filter(status__in=PENDING_STATUSES).count()
         context['woPending'] = woPending
 
         # Add in a number of journal for woFinishComplete
-        woFinishComplete = woList.filter(status__in=finishList).count()
+        woFinishComplete = woList.filter(status__in=FINISH_STATUSES).count()
         context['woFinishComplete'] = woFinishComplete
 
         # Add in a number of journal for woInprogress
-        woInprogress = woList.filter(status__in=scheduleList).count()
+        woInprogress = woList.filter(status__in=SCHEDULE_STATUSES).count()
         context['woInprogress'] = woInprogress
 
         return context
