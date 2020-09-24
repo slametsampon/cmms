@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ModelForm, Select
 from django.contrib.auth.models import User
 from workOrder.models import Wo_journal, Wo_completion, Work_order, Wo_instruction
-from utility.models import Profile, Wo_priority
+from utility.models import Profile, Wo_priority, CategoryAction
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 import datetime
@@ -192,37 +192,41 @@ class WoCompletion_form(ModelForm):
 from functools import partial
 DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 class WoSummaryReportForm(forms.Form):
-    WO_STATUS = (
-        ('i', 'In coming'),
-        ('p', 'Pending'),
-        ('s', 'Schedule'),
-        ('t', 'Complete'),
-        ('c', 'Close'),
-    )
-    start_date = forms.DateField(widget=DateInput())
-    end_date = forms.DateField(widget=DateInput())
-    wo_status = forms.CharField(widget=Select(choices=WO_STATUS))
 
-    def clean_start_date(self):
-       data = self.cleaned_data['start_date']
-       
-       # other check logic if needed
-       # Remember to always return the cleaned data.
-       return data
+   catDict = {}
+   for cat in CategoryAction.objects.all():
+      catDict[cat.name] = cat.name
 
-    def clean_end_date(self):
-       data = self.cleaned_data['end_date']
-       
-       # other check logic if needed
-       # Remember to always return the cleaned data. datetime.timedelta(days=30)
-       return data
+   #add one more for Incoming
+   catDict['Incoming'] = 'Incoming'
 
-    def clean_wo_status(self):
-       data = self.cleaned_data['wo_status']
-       
-       # other check logic if needed
-       # Remember to always return the cleaned data. datetime.timedelta(days=30)
-       return data
+   # Converting into list of tuple 
+   catlist = list(catDict.items()) 
+
+   start_date = forms.DateField(widget=DateInput())
+   end_date = forms.DateField(widget=DateInput())
+   wo_category = forms.CharField(widget=Select(choices=catlist))
+
+   def clean_start_date(self):
+      data = self.cleaned_data['start_date']
+      
+      # other check logic if needed
+      # Remember to always return the cleaned data.
+      return data
+
+   def clean_end_date(self):
+      data = self.cleaned_data['end_date']
+      
+      # other check logic if needed
+      # Remember to always return the cleaned data. datetime.timedelta(days=30)
+      return data
+
+   def clean_wo_status(self):
+      data = self.cleaned_data['wo_status']
+      
+      # other check logic if needed
+      # Remember to always return the cleaned data. datetime.timedelta(days=30)
+      return data
 
 class WoReportForm(forms.Form):
 

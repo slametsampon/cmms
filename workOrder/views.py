@@ -17,7 +17,7 @@ from workOrder.forms import WoJournalForm, WoInstruction_form, WoReportForm
 from workOrder.forms import WoCompletion_form, WoSummaryReportForm, work_order_form
 from workOrder.models import Work_order, Wo_journal, Wo_completion, Wo_instruction
 from workOrder.generals import WoMisc as WM
-from utility.models import Action
+from utility.models import Action, CategoryAction
 
 @login_required
 def index(request):
@@ -384,63 +384,55 @@ class WoSummaryReportView(FormView):
         initial = super(WoSummaryReportView, self).get_initial()
         end_date = datetime.date.today()
         start_date = end_date - datetime.timedelta(days=30)
-        wo_status ='i'
+        wo_category ='Incoming'
 
         #get parameter from request.GET parameters, and put default value if none
         initial['start_date'] = self.request.GET.get("start_date",start_date)
         initial['end_date'] = self.request.GET.get("end_date",end_date)
-        initial['wo_status'] = self.request.GET.get("wo_status",wo_status)
+        initial['wo_category'] = self.request.GET.get("wo_category",wo_category)
 
         return initial
         # now the form will be shown with the link_pk bound to a value
 
     def get_context_data(self, **kwargs):
 
-        PENDING_LIST = [
-            "Need shutdown",
-            "Need materials",
-            "Need MOC",
-            "Need Regulations"] #Shutdown, Need Material, MOC, Other
-        FINISH_LIST = ["Finish", "Complete"] #finish, complete
-        SCHEDULE_LIST = ["Execute", "In progress", "Schedule"] #Execute, in progress, schedule
-        CLOSE_LIST = ["Close"] #close
-
-        PENDING_STATUSES = []
-        for sts in Action.objects.all().filter(name__in=PENDING_LIST):
-            PENDING_STATUSES.append(sts)
-
-        SCHEDULE_STATUSES = []
-        for sts in Action.objects.all().filter(name__in=SCHEDULE_LIST):
-            SCHEDULE_STATUSES.append(sts)
-
-        FINISH_STATUSES = []
-        for sts in Action.objects.all().filter(name__in=FINISH_LIST):
-            FINISH_STATUSES.append(sts)
-
-        CLOSE_STATUSES = []
-        for sts in Action.objects.all().filter(name__in=CLOSE_LIST):
-            CLOSE_STATUSES.append(sts)
-
         # Call the base implementation first to get a context self.kwargs.get("pk")
         context = super().get_context_data(**kwargs)
 
-        frm = context["form"]
+        PENDING_STATUSES = []
+        for act in CategoryAction.objects.get(name='Pending').actions.all():
+            PENDING_STATUSES.append(act)
+
+        SCHEDULE_STATUSES = []
+        for act in CategoryAction.objects.get(name='Schedule').actions.all():
+            SCHEDULE_STATUSES.append(act)
+
+        FINISH_STATUSES = []
+        for act in CategoryAction.objects.get(name='Finish').actions.all():
+            FINISH_STATUSES.append(act)
+
+        CLOSE_STATUSES = []
+        for act in CategoryAction.objects.get(name='Close').actions.all():
+            CLOSE_STATUSES.append(act)
+
+        #get form from context
+        frm = context.get('form')
         # Add in a QuerySet of journal for woOpen .filter(some_datetime_field__range=[start, new_end])
         end_date = frm['end_date'].value()
         start_date = frm['start_date'].value()
-        wo_status = frm['wo_status'].value()
+        wo_category = frm['wo_category'].value()
 
         woList = Work_order.objects.all().filter(date_open__range=[start_date, end_date])
-        if wo_status == 's':#schedule
+        if wo_category == 'Schedule':#schedule
             woList = woList.filter(status__in=SCHEDULE_STATUSES)
             caption = 'Schedule - Work Order List'
-        elif wo_status == 't':#FINISH_LIST
+        elif wo_category == 'Finish':#FINISH_LIST
             woList = woList.filter(status__in=FINISH_STATUSES)
             caption = 'Finish - Work Order List'
-        elif wo_status == 'p':#PENDING_LIST
+        elif wo_category == 'Pending':#PENDING_LIST
             woList = woList.filter(status__in=PENDING_STATUSES)
             caption = 'Pending - Work Order List'
-        elif wo_status == 'c':#close
+        elif wo_category == 'Close':#close
             woList = woList.filter(status__in=CLOSE_STATUSES)
             caption = 'Close - Work Order List'
         else:
@@ -470,20 +462,6 @@ class WoSummaryReportView(FormView):
         context['woInprogress'] = woInprogress
 
         return context
-
-    def form_valid(self, form,**kwargs):
-
-        #get data from form 
-        start_date = form.cleaned_data.get('start_date')
-        end_date = form.cleaned_data.get('end_date')
-        wo_status = form.cleaned_data.get('wo_status')
-
-        print('form_valid')
-        print(f'start_date => {start_date}')
-        print(f'end_date => {end_date}')
-        print(f'wo_status => {wo_status}')
-
-        return super(WoSummaryReportView,self).form_valid(form)    
 
 class WoReportView(FormView):
     template_name = 'workOrder/WoReport_form.html'

@@ -22,6 +22,7 @@ from xlrd import open_workbook
 from cmms import settings 
 from utility.forms import UserForm, ProfileForm, DepartmentForm, SectionForm, ImportFileForm
 from utility.models import Profile, Department, Section, Action, Wo_priority
+from utility.models import CategoryAction
 from utility.transform import dict_helper as dh
 
 # Create your views here.
@@ -132,10 +133,12 @@ class ImportFileFormView(FormView):
         (0,'Department'),
         (1,'Section'),
         (2,'Action'),
-        (3,'User'),
-        (4,'Profile'),
-        (5,'ProfileAction'),
-        (6,'Wo_priority'),
+        (3,'Category'),
+        (4,'CategoryAction'),
+        (5,'User'),
+        (6,'Profile'),
+        (7,'ProfileAction'),
+        (8,'Wo_priority'),
     )
     #buffer context
     plus_context = {}
@@ -267,6 +270,20 @@ class ImportFileFormView(FormView):
                 obj, created = Action.update_or_create_dict(dtDict)            
             self.plus_context['countAfter'] = Action.objects.all().count()
 
+        elif modelName == 'Category':
+            for dtDict in dh.to_pair_dict(dataDict):
+                
+                #update_or_create_dict
+                obj, created = CategoryAction.update_or_create_dict(dtDict)            
+            self.plus_context['countAfter'] = CategoryAction.objects.all().count()
+
+        elif modelName == 'CategoryAction':
+            for dtDict in dh.to_pair_dict(dataDict):
+                
+                #update_or_create_action_dict
+                CategoryAction.update_or_create_action_dict(dtDict)            
+            self.plus_context['countAfter'] = CategoryAction.objects.all().count()
+
         elif modelName == 'User':
             for dtDict in dh.to_pair_dict(dataDict):
                 k=None
@@ -291,7 +308,7 @@ class ImportFileFormView(FormView):
             for dtDict in dh.to_pair_dict(dataDict):
                 
                 #update_or_create_action_dict
-                obj, created = ProfileAction.update_or_create_action_dict(dtDict)            
+                ProfileAction.update_or_create_action_dict(dtDict)            
             self.plus_context['countAfter'] = ProfileAction.objects.all().count()
 
         elif modelName == 'Wo_priority':

@@ -101,6 +101,7 @@ class Profile(models.Model):
             defaults=dtDict,
         )            
 
+    #Many to many relationship
     #this decorator make posible to call method w/o instantiate class
     @classmethod
     #use cls instead of self
@@ -311,3 +312,18 @@ class CategoryAction(models.Model):
             name=v,
             defaults=dtDict,
         )            
+
+    #Many to many relationship
+    #this decorator make posible to call method w/o instantiate class
+    @classmethod
+    #use cls instead of self
+    def update_or_create_action_dict(cls,dtDict):
+        #insert User
+        catAct = CategoryAction.objects.get(name = dtDict.get('name'))
+
+        #get action
+        act = Action.objects.get(name=dtDict.get('action'))
+
+        #add action to user profile
+        catAct.actions.add(act)
+        catAct.save()
