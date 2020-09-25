@@ -1,0 +1,94 @@
+{% block content %}
+    <style>
+        ul {
+            padding: 0px 0px 0px 50px;
+        }
+    </style>
+
+    <div class="row">
+        <div class="column side">
+            <h2>Utility</h2>
+            <p>Module yang menangani Utility</p>
+        </div>
+        
+        <div class="column middle">
+            <!--Utility Start-->
+            <h2>Utility</h2>
+            <p>
+                Agar system CMMMS ini bisa berjalan dengan baik, diperlukan beberapa konfigurasi meliputi flow chart
+                Work Order serta keterkaitan pada masing-masing stack holder. Termasuk didalamnya perlu dilakukan
+                pengaturan kewenangan masing-masing pengguna (user) dalam kaitanya jalur approval, serta setup
+                lain yang diperlukan. Disamping itu penentuan status Work Order serta tindakan terhadapnya juga
+                perlu didefinisikan. Dalam module ini berfungsi sebagai berikut :
+            </p>
+            <ul>
+                <li>
+                    Setup organisasi (Departement, Section)
+                    <ul>
+                        <li>
+                            Nama
+                        </li>
+                        <li>
+                            Description
+                        </li>
+                        <li>
+                            Initial
+                        </li>
+                        <li>
+                            Role (Originator, Executor)
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    Setup user (flow chart approval)
+                    <ul>
+                        <li>
+                            Username
+                        </li>
+                        <li>
+                            Initial
+                        </li>
+                        <li>
+                            Forward/Reverse to
+                        </li>
+                        <li>
+                            Setup organisasi
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <!--Utility End-->
+            {% load static %}
+            <!--Make sure to file's name and ext are exactly same -->
+            <!--img src="{% static 'workOrder/images/cmmsClassDiagram.PNG' %}" 
+            alt="cmmsClassDiagram" 
+            width="80%" height="40%" -->    
+
+            <!--Make sure to file's name and ext are exactly same -->
+            <img src="{% static 'help/images/cmms_utility_class_diagram.svg' %}" 
+            alt="cmms_utility_class_diagram.svg" 
+            width="60%" height="70%" ><br>    
+        </div>
+
+        <div class="column side">
+            <h2>Utility Modules</h2>
+            <p>
+                Penanganan setup organisasi, user serta keterkaitanya dengan system CMMS
+            </p>
+            <ul>
+                <li>
+                    Registrasi organisasi
+                </li>
+                <li>
+                    Registrasi user serta setupnya
+                </li>
+                <li>
+                    Flowchart approval
+                </li>
+                <li>
+                    Initialisasi database terkait
+                </li>
+            </ul>
+        </div>
+    </div>    
+{% endblock %}

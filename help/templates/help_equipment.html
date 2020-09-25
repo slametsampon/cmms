@@ -1,0 +1,84 @@
+{% block content %}
+    <style>
+        ul {
+            padding: 0px 0px 0px 50px;
+        }
+    </style>
+
+    <div class="row">
+        <div class="column side">
+            <h2>Equipment</h2>
+            <p>Module yang menangani Equipment</p>
+        </div>
+        
+        <div class="column middle">
+            <!--Equipment Start-->
+            <h2>Equipment</h2>
+            <p>
+                Module MPE spare part adalah modul yang menangani setup peralatan/equipment, 
+                meliputi hal hal berikut:
+                Registrasi equipment sebatas pada spesifikasi yang umum, 
+                untuk menambahkan daftar sparepart, jadual PPdM dikerjakan di MPE.            
+                Update sparepart list adalah penambahan, pengurangan daftar 
+                sparepart pada peralatan termasuk jumlahnya.
+                Merunut peralatan penggunaan sparepart yang terpasang, 
+                sehingga dengan mudah melakukan perencanaan stock terutama untuk penentuan minimum/maksimum.
+                
+            </p>
+            <ul>
+                <li>
+                    Registrasi Equipment
+                </li>
+                <li>
+                    Update spare part list untuk masing-masing peralatan, lokasi dan stocknya.
+                </li>
+                <li>
+                    Merunut peralatan pengguna spare part
+                </li>
+                <li>
+                    Melakukan perencanaan spare part terhadap kegiatan S/D, 
+                    budget tahunan berdasar dari tingkat prioritas peralatan.
+                </li>
+                <li>
+                    Registrasi tameplate PPdM
+                </li>
+                <li>
+                    Perencanaan PPdM, serta grading RBM
+                </li>
+                <li>
+                    Perhitungan MTBF, MTBR, FMCA
+                </li>
+                <li>
+                    Pencatatan kegiatan (Historical Card)
+                </li>
+                <li>
+                    Perencanaan PPdM
+                </li>
+            </ul>
+            <!--Equipment End-->
+            <!--Make sure to file's name and ext are exactly same -->
+            {% load static %}
+            <img src="{% static 'help/images/cmms_plant_equipment_class_diagram.svg' %}" 
+            alt="cmms_plant_equipment_class_diagram.svg" 
+            width="80%" height="40%" ><br>    
+        </div>
+
+        <div class="column side">
+            <h2>Equipment Modules</h2>
+            <p>
+                Penanganan setup peralatan terkait dengan PPDM
+            </p>
+            <ul>
+                <li>
+                    Registrasi peralatan
+                </li>
+                <li>
+                    Setup PPDM
+                </li>
+                <li>
+                    Setup template PPDM
+                </li>
+            </ul>
+        </div>
+    </div>    
+{% endblock %}

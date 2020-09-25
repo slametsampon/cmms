@@ -1,0 +1,124 @@
+{% block content %}
+    <style>
+        ul {
+            padding: 0px 0px 0px 50px;
+        }
+    </style>
+
+    <div class="row">
+        <div class="column side">
+            <h2>CMMS</h2>
+            <p>Computer Maintenance Management System</p>
+        </div>
+        
+        <div class="column middle">
+            <!--CMMS Start-->
+            <h2>CMMS - Integrated System</h2>
+            <p>
+                CMMS (Computer Maintenance Management System) adalah 
+                sebuah system yang dirancang untuk pengelolaan (manage) 
+                seluruh kegiatan maintenance (pemeliharaan) pabrik. 
+                System ini dibuat web-base sehingga dilakukan akses via internet. 
+                Adapun keunggulan yang diperoleh dengan CMMS ini adalah :
+            </p>
+            <ul>
+                <li>
+                    Paperless
+                </li>
+                <li>
+                    Traceability pada setiap kegiatan
+                </li>
+                <li>
+                    OTE : One Time Entry
+                </li>
+                <li>
+                    Minimize pekerjaan administrasi dengan system OTE
+                </li>
+            </ul><br>
+            <!--CMMS End-->
+            {% load static %}
+            <!--Make sure to file's name and ext are exactly same -->
+            <!--img src="{% static 'workOrder/images/cmmsClassDiagram.PNG' %}" 
+            alt="cmmsClassDiagram" 
+            width="80%" height="40%" -->    
+
+            <!--Make sure to file's name and ext are exactly same -->
+            <img src="{% static 'help/images/cmmsClassDiagram.svg' %}" 
+            alt="cmmsClassDiagram" 
+            width="80%" height="40%" >
+
+            <!--Work Order Start-->
+            <h2>Work Order - Permintaan Pekerjaan</h2>
+            <p>
+                Module MWO adalah modul yang menangani permintaan pekerjaan (work order), 
+                meliputi hal hal berikut:                </p>
+            <ul>
+                <li>
+                    Membuat permintaan pekerjaan
+                </li>
+                <li>
+                    Approval herarcy
+                </li>
+                <li>
+                    Tracing/Tracking Work Order
+                </li>
+                <li>
+                    Action reporting
+                </li>
+                <li>
+                    Searching Work Order
+                </li>
+                <li>
+                    Summary Work Order
+                </li>
+            </ul>
+            <!--Work Oredr End-->
+
+            <!--PM PdM Start-->
+            <h2>PM PdM - Preventive and Predictive Maintenance</h2>
+            <p>
+                Module PPdM adalah module yang menangani Preventive dan Predictive Maintenance termasuk di dalamnya kalibrasi, 
+                meliputi hal-hal berikut ini :
+            </p>
+            <ul>
+                <li>
+                    Set-up dan konfigurasi 
+                </li>
+                <li>
+                    Scheduling
+                </li>
+                <li>
+                    Automatic Work Order
+                </li>
+                <li>
+                    Action reporting
+                </li>
+            </ul>
+            <!--PM PdM End-->
+
+        </div>
+
+        <div class="column side">
+            <h2>CMMS Modules</h2>
+            <p>
+                Terdiri dari beberapa module yang terintegrasi sehingga 
+                membentuk sistem secara keseluruhan dalam pengelolaan (manage) pemeliharaan aset.
+            </p>
+            <ul>
+                <li><a href="{% url 'help:workOrder-Help' %}">Work Order</a></li>
+                <li>
+                    <a href="{% url 'help:PmPdm-Help' %}">Preventive & Predictive Maintenance</a>
+                </li>
+                <li>
+                    <a href="{% url 'help:Equipment-Help' %}">Equipment</a>
+                </li>
+                <li>
+                    <a href="{% url 'help:Utility-Help' %}">Utility</a>
+                </li>
+                <li>
+                    <a href="{% url 'help:Reporting-Help' %}">Reporting</a>
+                </li>
+            </ul>
+        </div>
+    </div>    
+{% endblock %}

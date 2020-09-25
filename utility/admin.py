@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Section, Department, Profile, Action, Mode, Wo_priority
+from .models import Section, Department, Profile, Action, Mode, Wo_priority, CategoryAction
 from .forms import ProfileForm
 from django.forms import Select
 
@@ -25,10 +25,22 @@ class ActionAdmin(admin.ModelAdmin):
     list_filter = ('name','mode','description')
 
 # Register the Admin classes for Department using the decorator
+@admin.register(CategoryAction)
+class CategoryActionAdmin(admin.ModelAdmin):
+    list_display = ('name','actions',)
+    list_filter = ('name','actions',)
+
+class SectionInline(admin.TabularInline):
+    model = Section
+
+# Register the Admin classes for Department using the decorator
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
     list_display = ('name', 'initial','description')
     list_filter = ('name', 'initial','description')
+    inlines = [
+        SectionInline,
+    ]
 
 # Register the Admin classes for Section using the decorator
 @admin.register(Section)

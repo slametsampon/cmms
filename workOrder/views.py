@@ -97,14 +97,6 @@ class Work_orderCreate(LoginRequiredMixin, CreateView):
     model = Work_order
     template_name = 'workOrder/work_order_form.html'  # Specify your own template name/location
 
-    '''
-    fields = ['tagnumber',
-                'problem',
-                'priority',
-                'dest_section',
-            ]
-    '''
-
     def get_context_data(self, **kwargs):
         self.wm = WM(self.request.user)
         # Call the base implementation first to get a context

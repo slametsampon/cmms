@@ -4,6 +4,23 @@
     <title>cmms utility</title>
 {% endblock %}
 {% block content %}
+  <!--get from help-->
+  {% include 'help_equipment.html' %}
+
+    <div class="column middle">
+        <h2>Utility Modules</h2>
+        <p>
+            Penanganan setup organisasi, user serta keterkaitanya dengan system CMMS
+        </p>
+        <ul>
+            <li><a href="{% url 'admin:index'%}">Admin Index</a></li>   
+            <li><a href="{% url 'admin:utility_department_add'%}">Registrasi Department</a></li>   
+            <li><a href="{% url 'admin:utility_section_add'%}">Registrasi Section</a></li>   
+            <li><a href="{% url 'admin:utility_action_add'%}">Registrasi Work Order Status</a></li>   
+        </ul>
+    </div>
+<!--
+
 <style>
   ul {
       padding: 0px 0px 0px 50px;
@@ -17,7 +34,6 @@
   </div>
   
   <div class="column middle">
-      <!--Utility Start-->
       <h2>Utility</h2>
       <p>
           Agar system CMMMS ini bisa berjalan dengan baik, diperlukan beberapa konfigurasi meliputi flow chart
@@ -62,7 +78,6 @@
               </ul>
           </li>
       </ul>
-      <!--Utility End--> admin:polls_choice_change
   </div>
 
   <div class="column side">
@@ -71,11 +86,12 @@
             Penanganan setup organisasi, user serta keterkaitanya dengan system CMMS
         </p>
         <ul>
-            <li><a href="{% url 'admin:index'%}">Admin Idex</a></li>   
+            <li><a href="{% url 'admin:index'%}">Admin Index</a></li>   
             <li><a href="{% url 'admin:utility_department_add'%}">Registrasi Department</a></li>   
             <li><a href="{% url 'admin:utility_section_add'%}">Registrasi Section</a></li>   
             <li><a href="{% url 'admin:utility_action_add'%}">Registrasi Work Order Status</a></li>   
         </ul>
   </div>
 </div>    
+-->
 {% endblock %}
