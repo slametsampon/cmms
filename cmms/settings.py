@@ -99,18 +99,32 @@ DATABASES = {
     }
 }
 
+'''
+
+# this connection has been tested by sam 18/08/2020 - not ok
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'cmms', 
+        'USER': 'postgres', 
+        'PASSWORD': 'sampon170466',
+        'HOST': '127.0.0.1', 
+        'PORT': '5432',
+    }
+}
+
 # this connection has been tested by sam 18/08/2020
-#DATABASES = {
-#    'default': {
-#    'ENGINE': 'django.db.backends.mysql',
-#    'NAME': 'cmms', # Username$database name
-#    'USER': 'cmmsUser', #Username:
-#    'PASSWORD': 'cmms',
-#    'HOST': '127.0.0.1', # Database host address           
-#    }
-#}
+DATABASES = {
+    'default': {
+    'ENGINE': 'django.db.backends.mysql',
+    'NAME': 'cmms', # Username$database name
+    'USER': 'cmmsUser', #Username:
+    'PASSWORD': 'cmms',
+    'HOST': '127.0.0.1', # Database host address           
+    }
+}
 
-
+'''
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
