@@ -228,6 +228,47 @@ class WoSummaryReportForm(forms.Form):
       # Remember to always return the cleaned data. datetime.timedelta(days=30)
       return data
 
+class Wo_search_form(forms.Form):
+
+   catDict = {}
+   for cat in CategoryAction.objects.all():
+      catDict[cat.name] = cat.name
+
+   #add one more for Incoming
+   catDict['Incoming'] = 'Incoming'
+
+   # Converting into list of tuple 
+   catlist = list(catDict.items()) 
+
+   start_date = forms.DateField(widget=DateInput())
+   end_date = forms.DateField(widget=DateInput())
+   wo_category = forms.CharField(widget=Select(choices=catlist))
+
+   def clean_start_date(self):
+      data = self.cleaned_data['start_date']
+      
+      # other check logic if needed
+      # Remember to always return the cleaned data.
+      return data
+
+   def clean_end_date(self):
+      data = self.cleaned_data['end_date']
+      
+      # other check logic if needed
+      # Remember to always return the cleaned data. datetime.timedelta(days=30)
+      return data
+
+   def clean_wo_status(self):
+      data = self.cleaned_data['wo_status']
+      
+      # other check logic if needed
+      # Remember to always return the cleaned data. datetime.timedelta(days=30)
+      return data
+
+   class Meta:
+      template_name = 'workOrder/user_work_order_list.html'  # Specify your own template name/location
+      model = Work_order
+
 class WoReportForm(forms.Form):
 
     class Meta:

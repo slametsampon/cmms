@@ -4,14 +4,6 @@
   <h3>Work Order List</h3>
   {% if user_work_order_list %}
   <ul>
-    <li style="list-style-type: none;">
-      <div>
-          <form action="" method="get">
-              <input type="text" placeholder="Search.." name="search">
-              <button type="submit">Submit</button>
-          </form>                      
-      </div>
-    </li>
     {% for work_order in user_work_order_list %}
       <li>
         <a href="{{ work_order.get_absolute_url }}">{{ work_order.wo_number }}</a> ({{work_order.tagnumber}})
@@ -21,7 +13,13 @@
   {% else %}
     <p>There are no work order</p>
   {% endif %}
-  
+
+  <div>
+    <form action="" method="get">
+      {{ form.as_p }}
+    </form>                      
+  </div>
+
   <!--Severals link-->
       {% if perms.workOrder.add_work_order %}       
         <a href="{% url 'workOrder:work_order-create' %}">Create Work Order</a>

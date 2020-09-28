@@ -13,30 +13,12 @@ import datetime
 
 from django import forms
 from django.views.generic.edit import FormView
-from workOrder.forms import WoJournalForm, WoInstruction_form, WoReportForm
+from workOrder.forms import WoJournalForm, WoInstruction_form, WoReportForm, Wo_search_form
 from workOrder.forms import WoCompletion_form, WoSummaryReportForm, work_order_form
 from workOrder.models import Work_order, Wo_journal, Wo_completion, Wo_instruction
 from workOrder.generals import WoMisc as WM
 from utility.models import Action, CategoryAction
 
-'''
-@login_required
-def index(request):
-    """View function for home page of site."""
-
-    # Generate counts of some of the main objects
-    woOnConcern = Work_order.objects.filter(current_user_id=request.user.id
-        ).exclude(status=Action.objects.get(name='Close')).count()
-        
-    #woOnConcern = Work_order.objects.all().filter(current_user_id=request.user.id).count()
-    
-    context = {
-        'woNwoOnConcernumber': woOnConcern,
-    }
-
-    # Render the HTML template index.html with the data in the context variable
-    return render(request, 'index.html', context=context)
-'''
 
 class Work_orderHomeView(LoginRequiredMixin, generic.TemplateView):
     template_name = 'workOrder/home.html'
@@ -57,12 +39,31 @@ class Work_orderHomeView(LoginRequiredMixin, generic.TemplateView):
         return context
 
 class Work_orderListView(LoginRequiredMixin, generic.ListView):
+    form_class = Wo_search_form
     model = Work_order #prinsipnya dengan ini saja sdh cukup, namun kita perlu tambahan info di bawah ini
     context_object_name = 'user_work_order_list'   # your own name for the list as a template variable
     template_name = 'workOrder/user_work_order_list.html'  # Specify your own template name/location
 
+    def get_initial(self):
+        initial = super(Work_orderListView, self).get_initial()
+        end_date = datetime.date.today()
+        start_date = end_date - datetime.timedelta(days=7)
+        wo_category ='Incoming'
+
+        #get parameter from request.GET parameters, and put default value if none
+        initial['start_date'] = self.request.GET.get("start_date",start_date)
+        initial['end_date'] = self.request.GET.get("end_date",end_date)
+        initial['wo_category'] = self.request.GET.get("wo_category",wo_category)
+
+        return initial
+
     def get_queryset(self):
         self.wm = WM(self.request.user)
+
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+        wo_category = self.request.GET.get('wo_category')
+
         
         #get wo concern base on pk list
         return Work_order.objects.filter(pk__in=self.wm.woOnCurrentUser())
@@ -80,16 +81,6 @@ class Work_orderListView(LoginRequiredMixin, generic.ListView):
         context['allowSummary'] = allowSummary
 
         return context
-    '''
-    def get(self, request, *args, **kwargs):
-        woNbr = request.GET.get('search', None)
-        if woNbr:
-            print(f'woNbr : {woNbr}')
-            woSearch = Work_order.objects.get(wo_number=woNbr)
-            return HttpResponseRedirect(reverse('workOrder:work_order-detail', args=[str(woSearch.id)]))
-        else:
-            return HttpResponseRedirect(reverse('workOrder:work_orders'))
-    '''
 
 class Work_orderDetailView(LoginRequiredMixin, generic.DetailView):
     model = Work_order #prinsipnya dengan ini saja sdh cukup, namun kita perlu tambahan info di bawah ini
