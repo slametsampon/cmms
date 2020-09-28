@@ -3,7 +3,8 @@ from . import views
 
 app_name = 'workOrder'
 urlpatterns = [
-    path('', views.index, name='index'),
+    #path('', views.index, name='index'),
+    path('', views.Work_orderHomeView.as_view(), name='index'),
     path('work_orders/', views.Work_orderListView.as_view(), name='work_orders'),
     path('work_order/<int:pk>', views.Work_orderDetailView.as_view(), name='work_order-detail'),
 ]

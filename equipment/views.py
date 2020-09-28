@@ -1,10 +1,9 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 
 # Create your views here.
-@login_required
-def index(request):
-    """View function for home page of site."""
 
-    # Render the HTML template index.html with the data in the context variable
-    return render(request, 'indexEquipment.html')
+class EquipmentHomeView(LoginRequiredMixin, TemplateView):
+    template_name = 'equipment/home.html'
+

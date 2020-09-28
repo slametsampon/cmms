@@ -1,39 +1,22 @@
 from django.shortcuts import render
+from django.views.generic import TemplateView
 
 # Create your views here.
-def cmms(request):
-    """View function for home page of site."""
 
-    # Render the HTML template index.html with the data in the context variable
-    return render(request, 'cmms.html')
+class HelpHomeView(TemplateView):
+    template_name = 'help/cmms.html'
 
-def workOrder(request):
-    """View function for home page of site."""
+class HelpWorkOrderView(TemplateView):
+    template_name = 'help/workOrder.html'
 
-    # Render the HTML template index.html with the data in the context variable
-    return render(request, 'workOrder.html')
+class HelpPmPdmView(TemplateView):
+    template_name = 'help/PmPdm.html'
 
-def PmPdm(request):
-    """View function for home page of site."""
+class HelpEquipmentView(TemplateView):
+    template_name = 'help/equipment.html'
 
-    # Render the HTML template index.html with the data in the context variable
-    return render(request, 'PmPdm.html')
+class HelpReportingView(TemplateView):
+    template_name = 'help/reporting.html'
 
-def Equipment(request):
-    """View function for home page of site."""
-
-    # Render the HTML template index.html with the data in the context variable
-    return render(request, 'equipment.html')
-
-def Reporting(request):
-    """View function for home page of site."""
-
-    # Render the HTML template index.html with the data in the context variable
-    return render(request, 'reporting.html')
-
-def Utility(request):
-    """View function for home page of site."""
-
-    # Render the HTML template index.html with the data in the context variable
-    return render(request, 'utility.html')
-
+class HelpUtilityView(TemplateView):
+    template_name = 'help/utility.html'

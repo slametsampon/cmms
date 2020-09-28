@@ -3,5 +3,5 @@ from . import views
 
 app_name = 'pm_pdm'
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.Pm_ppdmHomeView.as_view(), name='index'),
 ]

@@ -19,6 +19,7 @@ from workOrder.models import Work_order, Wo_journal, Wo_completion, Wo_instructi
 from workOrder.generals import WoMisc as WM
 from utility.models import Action, CategoryAction
 
+'''
 @login_required
 def index(request):
     """View function for home page of site."""
@@ -35,6 +36,25 @@ def index(request):
 
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
+'''
+
+class Work_orderHomeView(LoginRequiredMixin, generic.TemplateView):
+    template_name = 'workOrder/home.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Generate counts of some of the main objects
+        woOnConcern = Work_order.objects.filter(current_user_id=self.request.user.id
+            ).exclude(status=Action.objects.get(name='Close')).count()
+            
+        #woOnConcern = Work_order.objects.all().filter(current_user_id=request.user.id).count()
+        
+        context = {
+            'woNwoOnConcernumber': woOnConcern,
+        }
+
+        return context
 
 class Work_orderListView(LoginRequiredMixin, generic.ListView):
     model = Work_order #prinsipnya dengan ini saja sdh cukup, namun kita perlu tambahan info di bawah ini
@@ -60,6 +80,16 @@ class Work_orderListView(LoginRequiredMixin, generic.ListView):
         context['allowSummary'] = allowSummary
 
         return context
+    '''
+    def get(self, request, *args, **kwargs):
+        woNbr = request.GET.get('search', None)
+        if woNbr:
+            print(f'woNbr : {woNbr}')
+            woSearch = Work_order.objects.get(wo_number=woNbr)
+            return HttpResponseRedirect(reverse('workOrder:work_order-detail', args=[str(woSearch.id)]))
+        else:
+            return HttpResponseRedirect(reverse('workOrder:work_orders'))
+    '''
 
 class Work_orderDetailView(LoginRequiredMixin, generic.DetailView):
     model = Work_order #prinsipnya dengan ini saja sdh cukup, namun kita perlu tambahan info di bawah ini

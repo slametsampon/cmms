@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'cmms.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
+# this connection has been tested by sam 18/08/2020 - not ok
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -101,7 +101,6 @@ DATABASES = {
 
 '''
 
-# this connection has been tested by sam 18/08/2020 - not ok
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -109,9 +108,10 @@ DATABASES = {
         'USER': 'postgres', 
         'PASSWORD': 'sampon170466',
         'HOST': '127.0.0.1', 
-        'PORT': '5432',
+        'PORT': '5433',
     }
 }
+
 
 # this connection has been tested by sam 18/08/2020
 DATABASES = {

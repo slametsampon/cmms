@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -25,13 +24,9 @@ from utility.models import Profile, Department, Section, Action, Wo_priority
 from utility.models import CategoryAction
 from utility.transform import dict_helper as dh
 
-# Create your views here.
-@login_required
-def index(request):
-    """View function for home page of site."""
 
-    # Render the HTML template index.html with the data in the context variable
-    return render(request, 'indexUtility.html')
+class UtilityHomeView(LoginRequiredMixin, TemplateView):
+    template_name = 'utility/home.html'
 
 class ProfileUpdateView(LoginRequiredMixin, TemplateView):
 

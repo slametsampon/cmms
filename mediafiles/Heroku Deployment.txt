@@ -1,0 +1,64 @@
+source : https://www.youtube.com/watch?v=GMbVzl_aLxM
+
+A. From terminal VS Code :
+    1. heroku login
+    2. Setup git repo (included git add, and commit -m "first time")
+    3. heroku create => create app-name (app-name can be defined by us)
+    4. heroku git:remote -a app-name 
+    4.1. Will give link, and can just copied and put on browser
+    4.2. can be dirrectly heroku open
+    5. pip install gunicorn
+    6. gunicorn location_of_wsgi.wsgi (got error since gunicorn for UNIX, not for Windows)
+    7. Will get link for new local http (not 127.0.0.1)
+    8. Create Procfile (no extension, first letter is capital) with VS Code 
+    9. Put command step 6. web: gunicorn location_of_wsgi.wsgi 
+    10. heroku local (it will run heroku use Procfile)
+    11. Will get link for new different on step 7. local http (not 127.0.0.1)
+    12. Step 10 is for testing app run on local machine if ok, go to next step
+    13. pip freeze > requirements.txt
+    14. git add . (git add -A) #add All file
+    15. git commit -m "Update requirements.txt"
+    16. git push heroku master
+    17. Will get error due to static files
+    18. Add setting.py with STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    19. git add .
+    20. git commit -m "Update static root"
+    21. git push heroku master
+    22. Resolve error step 17, wil has link to real url from heroku (https://....)
+    23. Will get error on browser
+    24. Copy the url and update setting.py ALLOWED_HOSTS = ['url address step 22', 127.0.0.1]
+    25. git add .
+    26. git commit -m "Update ALLOWED_HOSTS"
+    27. git push heroku master
+    28. klik url link, and error on step 23 Resolve
+
+B. Setup postgresql:
+    1. pip instal psycopg2
+    2. pip freeze > requirements.txt
+    3. update setting.py on DATABASES = { 
+        change from sqlite to postgresql : for setting parameters go to heroku
+        and get setting from there}
+    4. heroku local (for testing postgresql from local machine, as step 10-11)
+    5. Will get error due to no table on database (postgresql)
+    6. python manage.py migrate
+    7. heroku local as step 4 => 10 - 11
+    8. error step 5 resolve, with empty data on table
+    9. git add .
+    10. git commit -m "Update postgresql"
+    11. git push heroku master
+    12. klik url link
+
+C. Setup Static files
+    1. pip install whitenoise
+    2. pip freeze > requirements.txt 
+    3. update setting.py put in MIDDLEWARE = [whitenoise ]
+    4. git add .
+    5. git commit -m "Update whitenoise"
+    6. git push heroku master
+    7. klik url link
+    8. update setting.py DEBUG = False
+    9. git add .
+    10. git commit -m "Update DEBUG"
+    11. git push heroku master
+    12. klik url link
+    
