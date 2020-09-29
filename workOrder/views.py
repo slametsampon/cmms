@@ -13,11 +13,11 @@ import datetime
 
 from django import forms
 from django.views.generic.edit import FormView
-from workOrder.forms import WoJournalForm, WoInstruction_form, WoReportForm, Wo_search_form
+from workOrder.forms import WoJournalForm, WoInstruction_form, WoReportForm
 from workOrder.forms import WoCompletion_form, WoSummaryReportForm, work_order_form
 from workOrder.models import Work_order, Wo_journal, Wo_completion, Wo_instruction
 from workOrder.generals import WoMisc as WM
-from utility.models import Action, CategoryAction
+from utility.models import Action, CategoryAction, Profile, Section, Department
 
 
 class Work_orderHomeView(LoginRequiredMixin, generic.TemplateView):
@@ -39,39 +39,21 @@ class Work_orderHomeView(LoginRequiredMixin, generic.TemplateView):
         return context
 
 class Work_orderListView(LoginRequiredMixin, generic.ListView):
-    form_class = Wo_search_form
     model = Work_order #prinsipnya dengan ini saja sdh cukup, namun kita perlu tambahan info di bawah ini
     context_object_name = 'user_work_order_list'   # your own name for the list as a template variable
     template_name = 'workOrder/user_work_order_list.html'  # Specify your own template name/location
 
-    def get_initial(self):
-        initial = super(Work_orderListView, self).get_initial()
-        end_date = datetime.date.today()
-        start_date = end_date - datetime.timedelta(days=7)
-        wo_category ='Incoming'
-
-        #get parameter from request.GET parameters, and put default value if none
-        initial['start_date'] = self.request.GET.get("start_date",start_date)
-        initial['end_date'] = self.request.GET.get("end_date",end_date)
-        initial['wo_category'] = self.request.GET.get("wo_category",wo_category)
-
-        return initial
-
     def get_queryset(self):
         self.wm = WM(self.request.user)
 
-        start_date = self.request.GET.get('start_date')
-        end_date = self.request.GET.get('end_date')
-        wo_category = self.request.GET.get('wo_category')
-
-        
         #get wo concern base on pk list
-        return Work_order.objects.filter(pk__in=self.wm.woOnCurrentUser())
+        wo_list = Work_order.objects.filter(pk__in=self.wm.woOnCurrentUser())
+        return wo_list
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        
+        '''
         SUMMARY_LIST =['MGR_EXE','SPTD_EXE','SPV_EXE']
         allowSummary = False
         for g in self.request.user.groups.all():
@@ -79,7 +61,7 @@ class Work_orderListView(LoginRequiredMixin, generic.ListView):
             if g.name in SUMMARY_LIST:
                 allowSummary = True
         context['allowSummary'] = allowSummary
-
+        '''
         return context
 
 class Work_orderDetailView(LoginRequiredMixin, generic.DetailView):
@@ -435,7 +417,26 @@ class WoSummaryReportView(FormView):
         start_date = frm['start_date'].value()
         wo_category = frm['wo_category'].value()
 
+        #filter for typical user
+        SUMMARY_LIST =['MGR_EXE','SPTD_EXE','SPV_EXE']
+        allowSummary = False
+        for g in self.request.user.groups.all():
+            #set for allowSummary
+            if g.name in SUMMARY_LIST:
+                allowSummary = True
+        context['allowSummary'] = allowSummary
+
         woList = Work_order.objects.all().filter(date_open__range=[start_date, end_date])
+        
+        #filter wo as per user department, if not in Executor Dept
+        if not allowSummary:
+            userProfile = Profile.objects.get(user=self.request.user)
+            userSection = Section.objects.get(id=userProfile.section.id)
+            userDept = Department.objects.get(id=userSection.department.id)
+
+            woList = woList.filter(wo_number__icontains = userDept.initial)
+
+
         if wo_category == 'Schedule':#schedule
             woList = woList.filter(status__in=SCHEDULE_STATUSES)
             caption = 'Schedule - Work Order List'
