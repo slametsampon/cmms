@@ -426,6 +426,7 @@ class WoSummaryReportView(FormView):
                 allowSummary = True
         context['allowSummary'] = allowSummary
 
+        #it is for all dept, just for Executor Dept
         woList = Work_order.objects.all().filter(date_open__range=[start_date, end_date])
         
         #filter wo as per user department, if not in Executor Dept
